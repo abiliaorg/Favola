@@ -19,34 +19,58 @@
         <button onclick="clearCaption()">Cancella</button>
       </div>
       <div class="sep"></div>
-      <div class="tb-group"><span class="label">Dim</span><button onclick="changeSize(-8)">A-</button><button
-          onclick="changeSize(8)">A+</button></div>
+      <div class="tb-group"><span class="label">Dim</span>
+        <button onclick="changeSize(-8)">A-</button>
+        <button onclick="changeSize(8)">A+</button>
+      </div>
       <div class="sep"></div>
-      <div class="tb-group"><span class="label">Sfondo</span><select onchange="setTheme(this.value)">
+      <div class="tb-group">
+        <span class="label">Sfondo</span>
+        <select onchange="setTheme(this.value)">
           <option value="">Scuro</option>
           <option value="white">Bianco</option>
           <option value="yellow">Giallo</option>
           <option value="green">Verde</option>
-        </select></div>
+        </select>
+      </div>
       <div class="sep"></div>
-      <div class="tb-group"><span class="label">Modalita</span><select id="mode" onchange="setMode(this.value)">
+      <div class="tb-group"><span class="label">Modalita</span>
+        <select id="mode" onchange="setMode(this.value)">
           <option value="words">Solo parole</option>
           <option value="images">Parole + immagini</option>
-        </select></div>
+        </select>
+      </div>
       <div class="sep"></div>
-      <div class="tb-group"><button onclick="togglePanel('images')">Immagini</button><button
-          onclick="togglePanel('log')">Log</button><button onclick="toggleFS()">Fullscreen</button></div>
+      <div class="tb-group">
+        <button onclick="pickVideo()">Video</button>
+        <button onclick="clearVideo()">Rimuovi Video</button>
+        <input id="video-file" type="file" accept="video/*" onchange="onVideoSelected(event)" hidden>
+      </div>
+      <div class="sep"></div>
+      <div class="tb-group">
+        <button onclick="togglePanel('images')">Immagini</button>
+        <button onclick="togglePanel('log')">Log</button><button onclick="toggleFS()">Fullscreen</button>
+      </div>
     </div>
     <div id="nosupport">Web Speech API non supportata. Apri in Chrome o Edge.</div>
-    <div id="statusbar"><span class="dot" id="sdot" style="color:var(--muted)"></span><span id="stxt">Pronto</span><span
-        style="margin-left:auto">it-IT - <span class="hi" id="szlbl">64px</span></span></div>
+    <div id="statusbar">
+      <span class="dot" id="sdot" style="color:var(--muted)"></span>
+      <span id="stxt">Pronto</span>
+      <span id="audio-source" class="audio-badge">Sorgente: microfono</span>
+      <span style="margin-left:auto">it-IT - <span class="hi" id="szlbl">64px</span></span>
+    </div>
     <div id="stage">
+      <div id="video-wrap" class="hidden">
+        <video id="story-video" controls playsinline></video>
+      </div>
       <div id="placeholder">Parla per iniziare...</div>
       <div id="caption"></div>
     </div>
   </div>
   <div id="panel">
-    <div class="ph"><span id="panel-title">Immagini</span><button onclick="closePanel()">x</button></div>
+    <div class="ph"><span id="panel-title">Immagini</span>
+      <button onclick="closePanel()">x</button>
+    </div>
     <div class="pb" id="panel-body"></div>
     <div class="pf" id="panel-footer"></div>
   </div>

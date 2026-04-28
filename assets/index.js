@@ -1,6 +1,7 @@
 let recognition = null, isOn = false, isListening = false, finalText = '', interimText = '';
 let words = [], pendingImg = null, logLines = [], fontSize = 64, currentPanel = null;
 let mode = localStorage.getItem('caption_mode') || 'words';
+let videoAudioTrack = null, videoUrl = null;
 const SPEECH_FIXES = { "fuochi":"foche", "fuoco":"foche", "carboni":"carponi", "carbone":"carponi" };
 
 function normalizeWord(s){
@@ -37,7 +38,7 @@ function initSpeech(){
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SR){ document.getElementById('nosupport').style.display='block'; return; }
   recognition = new SR(); recognition.continuous = true; recognition.interimResults = true; recognition.lang = 'it-IT';
-  recognition.onstart = () => { isListening = true; setStatus('In ascolto...', true); };
+  recognition.onstart = () => { isListening = true; setStatus('In ascolto (' + getActiveAudioSource() + ')...', true); };
   recognition.onend = () => { isListening = false; if (isOn) setTimeout(safeStart, 300); else setStatus('Fermo', false); };
   recognition.onerror = (e) => {
     isListening = false;
@@ -56,7 +57,46 @@ function initSpeech(){
   };
 }
 
-function safeStart(){ if (!recognition || !isOn || isListening) return; try { recognition.start(); } catch { setTimeout(() => { try { if (isOn && !isListening) recognition.start(); } catch {} }, 500); } }
+function getActiveAudioSource(){
+  return videoAudioTrack ? 'video' : 'microfono';
+}
+
+function refreshAudioSourceBadge(){
+  const el = document.getElementById('audio-source');
+  if (!el) return;
+  el.textContent = 'Sorgente: ' + getActiveAudioSource();
+}
+
+function safeStart(){
+  if (!recognition || !isOn || isListening) return;
+  const startRecognition = () => {
+    if (videoAudioTrack) {
+      try {
+        recognition.start(videoAudioTrack);
+      } catch {
+        recognition.start();
+        setStatus('In ascolto (microfono). Audio video non supportato dal browser.', true);
+        videoAudioTrack = null;
+        refreshAudioSourceBadge();
+      }
+    } else {
+      recognition.start();
+    }
+  };
+  try {
+    startRecognition();
+    setStatus('In ascolto (' + getActiveAudioSource() + ')...', true);
+  } catch {
+    setTimeout(() => {
+      try {
+        if (isOn && !isListening) {
+          startRecognition();
+          setStatus('In ascolto (' + getActiveAudioSource() + ')...', true);
+        }
+      } catch {}
+    }, 500);
+  }
+}
 function toggleMic(){ if (!recognition) return; isOn = !isOn; if (isOn) safeStart(); else { try { recognition.stop(); } catch {} isListening = false; setStatus('Fermo', false); } updateMicBtn(); }
 function updateMicBtn(){ const b = document.getElementById('btn-mic'); b.className = isOn ? 'danger' : 'primary'; b.innerHTML = isOn ? '<span class="dot pulse"></span> FERMA' : '<span class="dot"></span> AVVIA'; }
 function setStatus(msg, on){ document.getElementById('stxt').textContent = msg; const d = document.getElementById('sdot'); d.className = 'dot' + (on ? ' pulse' : ''); d.style.color = on ? 'var(--accent2)' : 'var(--muted)'; }
@@ -111,6 +151,82 @@ function toggleFS(){ if (!document.fullscreenElement) document.getElementById('s
 function togglePanel(name){ if (currentPanel === name){ closePanel(); return; } currentPanel = name; document.getElementById('panel').classList.add('open'); document.getElementById('panel-title').textContent = name === 'images' ? 'Immagini' : 'Log'; if (name === 'images') renderImagesPanel(); else renderLogPanel(); }
 function closePanel(){ currentPanel = null; document.getElementById('panel').classList.remove('open'); }
 
+function pickVideo(){
+  const input = document.getElementById('video-file');
+  if (input) input.click();
+}
+
+async function bindVideoTrack(video){
+  videoAudioTrack = null;
+  try {
+    if (video.captureStream) {
+      const stream = video.captureStream();
+      const tracks = stream.getAudioTracks();
+      if (tracks && tracks[0]) videoAudioTrack = tracks[0];
+    } else if (video.mozCaptureStream) {
+      const stream = video.mozCaptureStream();
+      const tracks = stream.getAudioTracks();
+      if (tracks && tracks[0]) videoAudioTrack = tracks[0];
+    }
+  } catch {}
+  refreshAudioSourceBadge();
+}
+
+async function onVideoSelected(event){
+  const file = (event.target.files || [])[0];
+  if (!file) return;
+  const videoWrap = document.getElementById('video-wrap');
+  const video = document.getElementById('story-video');
+  if (!video || !videoWrap) return;
+
+  if (videoUrl) URL.revokeObjectURL(videoUrl);
+  videoUrl = URL.createObjectURL(file);
+  video.src = videoUrl;
+  videoWrap.classList.remove('hidden');
+
+  const onCanPlay = async () => {
+    await bindVideoTrack(video);
+    try { await video.play(); } catch {}
+    if (isOn) {
+      try { recognition.stop(); } catch {}
+      isListening = false;
+      setTimeout(safeStart, 100);
+    } else {
+      setStatus('Video caricato. Sorgente audio: ' + getActiveAudioSource(), false);
+    }
+    video.removeEventListener('canplay', onCanPlay);
+  };
+  video.addEventListener('canplay', onCanPlay);
+  video.load();
+}
+
+function clearVideo(){
+  const videoWrap = document.getElementById('video-wrap');
+  const video = document.getElementById('story-video');
+  const input = document.getElementById('video-file');
+  if (!video || !videoWrap) return;
+
+  video.pause();
+  video.removeAttribute('src');
+  video.load();
+  videoWrap.classList.add('hidden');
+  videoAudioTrack = null;
+  refreshAudioSourceBadge();
+  if (videoUrl) {
+    URL.revokeObjectURL(videoUrl);
+    videoUrl = null;
+  }
+  if (input) input.value = '';
+
+  if (isOn) {
+    try { recognition.stop(); } catch {}
+    isListening = false;
+    setTimeout(safeStart, 100);
+  } else {
+    setStatus('Video rimosso. Sorgente audio: microfono', false);
+  }
+}
+
 function renderImagesPanel(){
   const b = document.getElementById('panel-body'); const f = document.getElementById('panel-footer'); b.innerHTML = '';
   if (!words.length) b.innerHTML = '<div class="empty">Nessuna parola configurata.</div>';
@@ -142,6 +258,7 @@ function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
   const builtins = await loadBuiltinWords();
   window.BUILTIN_WORDS = builtins;
   words = builtins.concat(loadUserWords());
+  refreshAudioSourceBadge();
   initSpeech();
   render();
 })();
