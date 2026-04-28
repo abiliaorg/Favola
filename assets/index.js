@@ -4,6 +4,15 @@ let mode = localStorage.getItem('caption_mode') || 'words';
 let videoAudioTrack = null, videoUrl = null;
 const SPEECH_FIXES = { "fuochi":"foche", "fuoco":"foche", "carboni":"carponi", "carbone":"carponi" };
 
+function getVideoEl(){
+  return document.getElementById('story-video');
+}
+
+function hasActiveVideo(){
+  const v = getVideoEl();
+  return !!(v && v.src);
+}
+
 function normalizeWord(s){
   return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/['’]/g, "'").trim();
 }
@@ -97,7 +106,26 @@ function safeStart(){
     }, 500);
   }
 }
-function toggleMic(){ if (!recognition) return; isOn = !isOn; if (isOn) safeStart(); else { try { recognition.stop(); } catch {} isListening = false; setStatus('Fermo', false); } updateMicBtn(); }
+async function toggleMic(){
+  if (!recognition) return;
+  isOn = !isOn;
+  const video = getVideoEl();
+
+  if (isOn) {
+    if (hasActiveVideo() && video) {
+      try { await video.play(); } catch {}
+    }
+    safeStart();
+  } else {
+    if (hasActiveVideo() && video) {
+      try { video.pause(); } catch {}
+    }
+    try { recognition.stop(); } catch {}
+    isListening = false;
+    setStatus('Fermo', false);
+  }
+  updateMicBtn();
+}
 function updateMicBtn(){ const b = document.getElementById('btn-mic'); b.className = isOn ? 'danger' : 'primary'; b.innerHTML = isOn ? '<span class="dot pulse"></span> FERMA' : '<span class="dot"></span> AVVIA'; }
 function setStatus(msg, on){ document.getElementById('stxt').textContent = msg; const d = document.getElementById('sdot'); d.className = 'dot' + (on ? ' pulse' : ''); d.style.color = on ? 'var(--accent2)' : 'var(--muted)'; }
 function clearCaption(){ finalText = ''; interimText = ''; render(); }
@@ -186,8 +214,8 @@ async function onVideoSelected(event){
 
   const onCanPlay = async () => {
     await bindVideoTrack(video);
-    try { await video.play(); } catch {}
     if (isOn) {
+      try { await video.play(); } catch {}
       try { recognition.stop(); } catch {}
       isListening = false;
       setTimeout(safeStart, 100);
@@ -197,6 +225,14 @@ async function onVideoSelected(event){
     video.removeEventListener('canplay', onCanPlay);
   };
   video.addEventListener('canplay', onCanPlay);
+  video.onended = () => {
+    if (!isOn) return;
+    isOn = false;
+    try { recognition.stop(); } catch {}
+    isListening = false;
+    updateMicBtn();
+    setStatus('Fermo', false);
+  };
   video.load();
 }
 
