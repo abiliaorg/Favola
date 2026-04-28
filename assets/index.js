@@ -10,50 +10,50 @@ let outlineMode = false;
 const wordLocationsByIdAndTime = {};
 const wordMetaById = {};
 const textUpdateSnapshots = [];
-const SPEECH_FIXES = { "fuochi":"foche", "fuoco":"foche", "carboni":"carponi", "carbone":"carponi" };
+const SPEECH_FIXES = { "fuochi": "foche", "fuoco": "foche", "carboni": "carponi", "carbone": "carponi" };
 
-function getVideoEl(){
+function getVideoEl() {
   return document.getElementById('story-video');
 }
 
-function hasActiveVideo(){
+function hasActiveVideo() {
   const v = getVideoEl();
   return !!(v && v.src);
 }
 
-function normalizeWord(s){
+function normalizeWord(s) {
   return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/['’]/g, "'").trim();
 }
 
-function fixRecognizedText(txt){
+function fixRecognizedText(txt) {
   return String(txt || '').replace(/\b(fuochi|fuoco|carboni|carbone)\b/gi, m => {
     const fixed = SPEECH_FIXES[m.toLowerCase()] || m;
     return m[0] === m[0].toUpperCase() ? fixed[0].toUpperCase() + fixed.slice(1) : fixed;
   });
 }
 
-async function loadBuiltinWords(){
+async function loadBuiltinWords() {
   try {
-    const res = await fetch('assets/word-images.json', { cache:'no-store' });
+    const res = await fetch('assets/word-images.json', { cache: 'no-store' });
     if (!res.ok) return [];
     const data = await res.json();
     return Array.isArray(data) ? data.filter(x => x && x.word && x.src) : [];
   } catch { return []; }
 }
 
-function loadUserWords(){
+function loadUserWords() {
   try { return JSON.parse(localStorage.getItem('sottotitoli_user_words') || '[]'); } catch { return []; }
 }
 
-function saveUserWords(){
+function saveUserWords() {
   const builtins = new Set((window.BUILTIN_WORDS || []).map(w => normalizeWord(w.word)));
   const user = words.filter(w => !builtins.has(normalizeWord(w.word)));
   localStorage.setItem('sottotitoli_user_words', JSON.stringify(user));
 }
 
-function initSpeech(){
+function initSpeech() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if(!SR){ document.getElementById('nosupport').style.display='block'; return; }
+  if (!SR) { document.getElementById('nosupport').style.display = 'block'; return; }
   recognition = new SR(); recognition.continuous = true; recognition.interimResults = true; recognition.lang = 'it-IT';
   recognition.onstart = () => { isListening = true; setStatus('In ascolto (' + getActiveAudioSource() + ')...', true); };
   recognition.onend = () => { isListening = false; if (isOn) setTimeout(safeStart, 300); else setStatus('Fermo', false); };
@@ -74,35 +74,35 @@ function initSpeech(){
   };
 }
 
-function getActiveAudioSource(){
+function getActiveAudioSource() {
   return videoAudioTrack ? 'video' : 'microfono';
 }
 
-function refreshAudioSourceBadge(){
+function refreshAudioSourceBadge() {
   const el = document.getElementById('audio-source');
   if (!el) return;
   el.textContent = 'Sorgente: ' + getActiveAudioSource();
 }
 
-function refreshWordsSavedCounter(){
+function refreshWordsSavedCounter() {
   const el = document.getElementById('words-saved');
   if (!el) return;
   el.textContent = 'Parole salvate: ' + Object.keys(wordMetaById).length;
 }
 
-function refreshOutlineButton(){
+function refreshOutlineButton() {
   const b = document.getElementById('btn-outline');
   if (!b) return;
   b.textContent = outlineMode ? 'Outline ON' : 'Outline OFF';
 }
 
-function toggleOutlineMode(){
+function toggleOutlineMode() {
   outlineMode = !outlineMode;
   refreshOutlineButton();
   renderWordOutlines();
 }
 
-function renderWordOutlines(){
+function renderWordOutlines() {
   const layer = document.getElementById('outline-layer');
   if (!layer) return;
   layer.innerHTML = '';
@@ -122,7 +122,7 @@ function renderWordOutlines(){
   });
 }
 
-function clearTrackingData(){
+function clearTrackingData() {
   wordAutoIncrementalId = 0;
   textUpdateId = 0;
   lastRenderedTokenRefs = [];
@@ -136,7 +136,7 @@ function clearTrackingData(){
   renderWordOutlines();
 }
 
-function exportTrackingDataJson(){
+function exportTrackingDataJson() {
   const payload = {
     exportedAt: new Date().toISOString(),
     source: getActiveAudioSource(),
@@ -155,26 +155,26 @@ function exportTrackingDataJson(){
   URL.revokeObjectURL(a.href);
 }
 
-function stopSessionAndExport(){
+function stopSessionAndExport() {
   if (hasActiveVideo()) {
     const video = getVideoEl();
     if (video) {
-      try { video.pause(); } catch {}
+      try { video.pause(); } catch { }
     }
   }
-  try { recognition.stop(); } catch {}
+  try { recognition.stop(); } catch { }
   isListening = false;
   updateMicBtn();
   setStatus('Fermo', false);
 }
 
-function allocateStableWordId(tokenRef, index){
+function allocateStableWordId(tokenRef, index) {
   const prev = lastRenderedTokenRefs[index];
   if (prev && prev.norm === tokenRef.norm && prev.image === tokenRef.image) return prev.id;
   return ++wordAutoIncrementalId;
 }
 
-function safeStart(){
+function safeStart() {
   if (!recognition || !isOn || isListening) return;
   const startRecognition = () => {
     if (videoAudioTrack) {
@@ -200,11 +200,11 @@ function safeStart(){
           startRecognition();
           setStatus('In ascolto (' + getActiveAudioSource() + ')...', true);
         }
-      } catch {}
+      } catch { }
     }, 500);
   }
 }
-async function toggleMic(){
+async function toggleMic() {
   if (!recognition) return;
   isOn = !isOn;
   const video = getVideoEl();
@@ -213,7 +213,7 @@ async function toggleMic(){
     sessionStartedAtMs = performance.now();
     clearTrackingData();
     if (hasActiveVideo() && video) {
-      try { await video.play(); } catch {}
+      try { await video.play(); } catch { }
     }
     safeStart();
   } else {
@@ -221,14 +221,14 @@ async function toggleMic(){
   }
   updateMicBtn();
 }
-function updateMicBtn(){ const b = document.getElementById('btn-mic'); b.className = isOn ? 'danger' : 'primary'; b.innerHTML = isOn ? '<span class="dot pulse"></span> FERMA' : '<span class="dot"></span> AVVIA'; }
-function setStatus(msg, on){ document.getElementById('stxt').textContent = msg; const d = document.getElementById('sdot'); d.className = 'dot' + (on ? ' pulse' : ''); d.style.color = on ? 'var(--accent2)' : 'var(--muted)'; }
-function clearCaption(){ finalText = ''; interimText = ''; render(); }
-function changeSize(d){ fontSize = Math.max(24, Math.min(128, fontSize + d)); document.documentElement.style.setProperty('--caption-size', fontSize + 'px'); document.getElementById('szlbl').textContent = fontSize + 'px'; }
-function setTheme(v){ document.body.setAttribute('data-theme', v); }
-function setMode(v){ mode = v; localStorage.setItem('caption_mode', mode); render(); }
+function updateMicBtn() { const b = document.getElementById('btn-mic'); b.className = isOn ? 'danger' : 'primary'; b.innerHTML = isOn ? '<span class="dot pulse"></span> FERMA' : '<span class="dot"></span> AVVIA'; }
+function setStatus(msg, on) { document.getElementById('stxt').textContent = msg; const d = document.getElementById('sdot'); d.className = 'dot' + (on ? ' pulse' : ''); d.style.color = on ? 'var(--accent2)' : 'var(--muted)'; }
+function clearCaption() { finalText = ''; interimText = ''; render(); }
+function changeSize(d) { fontSize = Math.max(24, Math.min(128, fontSize + d)); document.documentElement.style.setProperty('--caption-size', fontSize + 'px'); document.getElementById('szlbl').textContent = fontSize + 'px'; }
+function setTheme(v) { document.body.setAttribute('data-theme', v); }
+function setMode(v) { mode = v; localStorage.setItem('caption_mode', mode); render(); }
 
-function matchWordToken(token){
+function matchWordToken(token) {
   let original = String(token || '').trim();
   let suffix = '';
   const m = original.match(/([.,!?;:]+)$/);
@@ -237,10 +237,10 @@ function matchWordToken(token){
   const parts = normalized.split("'");
   const attempts = [normalized];
   if (parts.length > 1) attempts.push(parts[parts.length - 1]);
-  const prefixes = ['l','nell','dell','all','sull','coll','dall'];
+  const prefixes = ['l', 'nell', 'dell', 'all', 'sull', 'coll', 'dall'];
   for (const p of prefixes) if (normalized.startsWith(p) && normalized.length > p.length + 1) attempts.push(normalized.slice(p.length));
   const seen = new Set();
-  for (const a of attempts){
+  for (const a of attempts) {
     if (!a || seen.has(a)) continue; seen.add(a);
     const found = words.find(w => normalizeWord(w.word) === a);
     if (found) return { found, suffix };
@@ -248,17 +248,17 @@ function matchWordToken(token){
   return null;
 }
 
-function addRenderedToken(line, token, isInterim, forcedId){
+function addRenderedToken(line, token, isInterim, forcedId) {
   const match = mode === 'images' ? matchWordToken(token) : null;
   const wordId = forcedId || ++wordAutoIncrementalId;
-  const cleanWord = String(token || '').replace(/[.,!?;:]+$/,'');
-  if (match){
+  const cleanWord = String(token || '').replace(/[.,!?;:]+$/, '');
+  if (match) {
     const wrap = document.createElement('span'); wrap.className = 'word-img';
     wrap.dataset.wordId = String(wordId);
     wrap.innerHTML = '<img src="' + esc(match.found.src) + '" alt=""/><span class="wlbl">' + esc(match.found.word) + '</span>';
     line.appendChild(wrap);
     wordMetaById[wordId] = { word: cleanWord || match.found.word, image: true, interim: !!isInterim };
-    if (match.suffix){ const sx = document.createElement('span'); sx.textContent = match.suffix + ' '; line.appendChild(sx); }
+    if (match.suffix) { const sx = document.createElement('span'); sx.textContent = match.suffix + ' '; line.appendChild(sx); }
   } else {
     const node = document.createElement('span');
     node.dataset.wordId = String(wordId);
@@ -269,7 +269,7 @@ function addRenderedToken(line, token, isInterim, forcedId){
   }
 }
 
-function render(){
+function render() {
   const el = document.getElementById('caption'); const ph = document.getElementById('placeholder');
   const hasContent = (finalText.trim() || interimText.trim()); ph.style.display = hasContent ? 'none' : 'block'; el.innerHTML = '';
   if (!hasContent) return;
@@ -281,7 +281,7 @@ function render(){
   const currentRefs = [];
   tokens.forEach((item, idx) => {
     const match = mode === 'images' ? matchWordToken(item.token) : null;
-    const cleanWord = String(item.token || '').replace(/[.,!?;:]+$/,'');
+    const cleanWord = String(item.token || '').replace(/[.,!?;:]+$/, '');
     const norm = normalizeWord(cleanWord);
     const image = !!match;
     const id = allocateStableWordId({ norm, image }, idx);
@@ -294,14 +294,14 @@ function render(){
   trackRenderedWordLocations();
 }
 
-function getVideoTime(){
+function getVideoTime() {
   const v = getVideoEl();
   if (v && Number.isFinite(v.currentTime)) return v.currentTime;
   if (sessionStartedAtMs == null) return 0;
   return Math.max(0, (performance.now() - sessionStartedAtMs) / 1000);
 }
 
-function trackRenderedWordLocations(){
+function trackRenderedWordLocations() {
   const videoTime = getVideoTime();
   const videoTimeKey = videoTime.toFixed(3);
   const updateId = ++textUpdateId;
@@ -325,16 +325,16 @@ function trackRenderedWordLocations(){
   renderWordOutlines();
 }
 
-function toggleFS(){ if (!document.fullscreenElement) document.getElementById('stage').requestFullscreen(); else document.exitFullscreen(); }
-function togglePanel(name){ if (currentPanel === name){ closePanel(); return; } currentPanel = name; document.getElementById('panel').classList.add('open'); document.getElementById('panel-title').textContent = name === 'images' ? 'Immagini' : 'Log'; if (name === 'images') renderImagesPanel(); else renderLogPanel(); }
-function closePanel(){ currentPanel = null; document.getElementById('panel').classList.remove('open'); }
+function toggleFS() { if (!document.fullscreenElement) document.getElementById('stage').requestFullscreen(); else document.exitFullscreen(); }
+function togglePanel(name) { if (currentPanel === name) { closePanel(); return; } currentPanel = name; document.getElementById('panel').classList.add('open'); document.getElementById('panel-title').textContent = name === 'images' ? 'Immagini' : 'Log'; if (name === 'images') renderImagesPanel(); else renderLogPanel(); }
+function closePanel() { currentPanel = null; document.getElementById('panel').classList.remove('open'); }
 
-function pickVideo(){
+function pickVideo() {
   const input = document.getElementById('video-file');
   if (input) input.click();
 }
 
-async function bindVideoTrack(video){
+async function bindVideoTrack(video) {
   videoAudioTrack = null;
   try {
     if (video.captureStream) {
@@ -346,11 +346,11 @@ async function bindVideoTrack(video){
       const tracks = stream.getAudioTracks();
       if (tracks && tracks[0]) videoAudioTrack = tracks[0];
     }
-  } catch {}
+  } catch { }
   refreshAudioSourceBadge();
 }
 
-async function onVideoSelected(event){
+async function onVideoSelected(event) {
   const file = (event.target.files || [])[0];
   if (!file) return;
   const videoWrap = document.getElementById('video-wrap');
@@ -365,8 +365,8 @@ async function onVideoSelected(event){
   const onCanPlay = async () => {
     await bindVideoTrack(video);
     if (isOn) {
-      try { await video.play(); } catch {}
-      try { recognition.stop(); } catch {}
+      try { await video.play(); } catch { }
+      try { recognition.stop(); } catch { }
       isListening = false;
       setTimeout(safeStart, 100);
     } else {
@@ -383,7 +383,7 @@ async function onVideoSelected(event){
   video.load();
 }
 
-function clearVideo(){
+function clearVideo() {
   const videoWrap = document.getElementById('video-wrap');
   const video = document.getElementById('story-video');
   const input = document.getElementById('video-file');
@@ -402,7 +402,7 @@ function clearVideo(){
   if (input) input.value = '';
 
   if (isOn) {
-    try { recognition.stop(); } catch {}
+    try { recognition.stop(); } catch { }
     isListening = false;
     setTimeout(safeStart, 100);
   } else {
@@ -410,7 +410,7 @@ function clearVideo(){
   }
 }
 
-function renderImagesPanel(){
+function renderImagesPanel() {
   const b = document.getElementById('panel-body'); const f = document.getElementById('panel-footer'); b.innerHTML = '';
   if (!words.length) b.innerHTML = '<div class="empty">Nessuna parola configurata.</div>';
   else words.forEach((w, i) => {
@@ -426,17 +426,17 @@ function renderImagesPanel(){
     '<button class="primary" onclick="addWord()" style="width:100%">+ Aggiungi</button>';
 }
 
-function onFileChg(e){ const f = e.target.files[0]; if (f) readFile(f); }
-function readFile(f){ const r = new FileReader(); r.onload = (e) => { pendingImg = e.target.result; const p = document.getElementById('dprev'); const l = document.getElementById('dzlbl'); if (p){ p.src = pendingImg; p.style.display = 'block'; } if (l) l.style.display = 'none'; }; r.readAsDataURL(f); }
-function addWord(){ const word = ((document.getElementById('nw') || {}).value || '').trim(); const url = ((document.getElementById('nu') || {}).value || '').trim(); const src = url || pendingImg; if (!word){ alert('Inserisci la parola'); return; } if (!src){ alert('Carica un\'immagine o inserisci un URL'); return; } words.push({ word, src }); saveUserWords(); pendingImg = null; renderImagesPanel(); render(); }
-function removeWord(i){ words.splice(i,1); saveUserWords(); renderImagesPanel(); render(); }
+function onFileChg(e) { const f = e.target.files[0]; if (f) readFile(f); }
+function readFile(f) { const r = new FileReader(); r.onload = (e) => { pendingImg = e.target.result; const p = document.getElementById('dprev'); const l = document.getElementById('dzlbl'); if (p) { p.src = pendingImg; p.style.display = 'block'; } if (l) l.style.display = 'none'; }; r.readAsDataURL(f); }
+function addWord() { const word = ((document.getElementById('nw') || {}).value || '').trim(); const url = ((document.getElementById('nu') || {}).value || '').trim(); const src = url || pendingImg; if (!word) { alert('Inserisci la parola'); return; } if (!src) { alert('Carica un\'immagine o inserisci un URL'); return; } words.push({ word, src }); saveUserWords(); pendingImg = null; renderImagesPanel(); render(); }
+function removeWord(i) { words.splice(i, 1); saveUserWords(); renderImagesPanel(); render(); }
 
-function renderLogPanel(){ refreshLog(); document.getElementById('panel-footer').innerHTML = '<button onclick="copyLog()" style="width:100%">Copia testo</button>'; }
-function refreshLog(){ if (currentPanel !== 'log') return; const b = document.getElementById('panel-body'); b.innerHTML = ''; if (!logLines.length){ b.innerHTML = '<div class="empty">Nessuna trascrizione ancora.</div>'; return; } logLines.slice().reverse().forEach(l => { const d = document.createElement('div'); d.className = 'log-entry'; d.innerHTML = '<span class="ts">' + l.t.toTimeString().slice(0,8) + '</span>' + esc(l.txt); b.appendChild(d); }); }
-function copyLog(){ const txt = logLines.map(l => l.t.toTimeString().slice(0,8) + ' ' + l.txt).join('\n'); navigator.clipboard.writeText(txt); }
-function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function renderLogPanel() { refreshLog(); document.getElementById('panel-footer').innerHTML = '<button onclick="copyLog()" style="width:100%">Copia testo</button>'; }
+function refreshLog() { if (currentPanel !== 'log') return; const b = document.getElementById('panel-body'); b.innerHTML = ''; if (!logLines.length) { b.innerHTML = '<div class="empty">Nessuna trascrizione ancora.</div>'; return; } logLines.slice().reverse().forEach(l => { const d = document.createElement('div'); d.className = 'log-entry'; d.innerHTML = '<span class="ts">' + l.t.toTimeString().slice(0, 8) + '</span>' + esc(l.txt); b.appendChild(d); }); }
+function copyLog() { const txt = logLines.map(l => l.t.toTimeString().slice(0, 8) + ' ' + l.txt).join('\n'); navigator.clipboard.writeText(txt); }
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 
-(async function init(){
+(async function init() {
   document.getElementById('mode').value = mode;
   const builtins = await loadBuiltinWords();
   window.BUILTIN_WORDS = builtins;
