@@ -1,0 +1,227 @@
+﻿<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sottotitoli Live - Words & Images</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0a0a0a; --surface:#141414; --border:#2a2a2a; --accent:#f0e040; --accent2:#ff4060;
+    --text:#f0ede0; --muted:#666; --font-ui:'Space Mono', monospace; --font-caption:'DM Sans', sans-serif;
+    --caption-size:64px; --caption-color:#fff; --caption-bg:#000;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font-ui);overflow:hidden}
+  #app{display:flex;flex-direction:column;height:100vh}
+  #toolbar{display:flex;align-items:center;gap:6px;padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--border);flex-wrap:wrap}
+  .tb-group{display:flex;align-items:center;gap:4px}.sep{width:1px;height:22px;background:var(--border);margin:0 6px}
+  .label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+  button{font-family:var(--font-ui);font-size:11px;cursor:pointer;border:1px solid var(--border);border-radius:4px;background:transparent;color:var(--text);padding:5px 10px}
+  button:hover{background:#222;border-color:#444}.primary{background:var(--accent);color:#000;border-color:var(--accent);font-weight:700}
+  .danger{background:var(--accent2);color:#fff;border-color:var(--accent2);font-weight:700}
+  .dot{width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block}
+  .dot.pulse{animation:blink 1s infinite;color:var(--accent2)}@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+  select,input{font-family:var(--font-ui);font-size:11px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:4px;padding:5px 8px}
+  #statusbar{display:flex;align-items:center;gap:8px;padding:5px 16px;font-size:10px;color:var(--muted);border-bottom:1px solid var(--border)}
+  #statusbar .hi{color:var(--accent)}
+  #stage{flex:1;background:var(--caption-bg);display:flex;align-items:flex-end;padding:32px 40px;overflow-y:auto;position:relative}
+  #caption{font-family:var(--font-caption);font-size:var(--caption-size);line-height:1.3;color:var(--caption-color);width:100%;word-break:break-word}
+  .line{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+  .word-img{display:inline-flex;flex-direction:column;align-items:center;gap:8px;background:rgba(255,255,255,.13);border-radius:18px;padding:12px 16px}
+  .word-img img{height:calc(var(--caption-size) * 1.2);max-width:180px;width:auto;border-radius:10px;object-fit:cover}
+  .word-img .wlbl{font-size:calc(var(--caption-size) * .22);color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+  .interim{color:#fff}
+  #placeholder{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);opacity:.18;font-family:var(--font-caption);font-size:calc(var(--caption-size)*0.5)}
+  #panel{position:fixed;top:0;right:0;width:380px;height:100vh;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .25s ease;z-index:100}
+  #panel.open{transform:translateX(0)} .ph,.pf{padding:12px 16px;border-bottom:1px solid var(--border)} .pf{border-bottom:none;border-top:1px solid var(--border)}
+  .ph{display:flex;justify-content:space-between;align-items:center;font-size:12px;text-transform:uppercase}
+  .ph button{border:none;background:none;color:var(--muted);font-size:20px;padding:0 4px}
+  .pb{flex:1;overflow-y:auto;padding:12px 16px}
+  .witem{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--border);border-radius:6px;margin-bottom:6px;background:var(--bg)}
+  .witem img{width:48px;height:48px;object-fit:cover;border-radius:4px}.witem .wname{flex:1;font-size:13px}
+  .witem .wname small{display:block;font-size:10px;color:var(--muted)} .witem .del{border:none;background:none;color:var(--muted);font-size:18px;cursor:pointer}
+  .field{margin-bottom:10px}.field label{display:block;font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:5px}
+  .field input[type=text],.field input[type=url]{width:100%;padding:7px 10px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:4px;font-size:12px}
+  .drop-zone{border:1px dashed var(--border);border-radius:6px;padding:18px;text-align:center;font-size:11px;color:var(--muted);cursor:pointer;position:relative}
+  .drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer}.drop-zone .prev{width:64px;height:64px;object-fit:cover;border-radius:4px;display:none;margin:8px auto 0}
+  .empty{font-size:12px;color:var(--muted);text-align:center;padding:24px 0}
+  .log-entry{font-size:11px;color:var(--muted);padding:5px 0;border-bottom:1px solid var(--border)} .log-entry .ts{color:var(--accent);margin-right:6px}
+  #nosupport{display:none;background:#2a0000;border:1px solid var(--accent2);border-radius:6px;margin:8px 16px;padding:10px 14px;font-size:12px;color:#ff8090}
+  body[data-theme="white"] #stage{--caption-bg:#fff;--caption-color:#111} body[data-theme="yellow"] #stage{--caption-bg:#000;--caption-color:#ffe000}
+  body[data-theme="green"] #stage{--caption-bg:#000;--caption-color:#00ff80}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="toolbar">
+    <div class="tb-group">
+      <button class="primary" id="btn-mic" onclick="toggleMic()"><span class="dot"></span> AVVIA</button>
+      <button onclick="clearCaption()">Cancella</button>
+    </div>
+    <div class="sep"></div>
+    <div class="tb-group"><span class="label">Dim</span><button onclick="changeSize(-8)">A-</button><button onclick="changeSize(8)">A+</button></div>
+    <div class="sep"></div>
+    <div class="tb-group"><span class="label">Sfondo</span><select onchange="setTheme(this.value)"><option value="">Scuro</option><option value="white">Bianco</option><option value="yellow">Giallo</option><option value="green">Verde</option></select></div>
+    <div class="sep"></div>
+    <div class="tb-group"><span class="label">Modalita</span><select id="mode" onchange="setMode(this.value)"><option value="words">Solo parole</option><option value="images">Parole + immagini</option></select></div>
+    <div class="sep"></div>
+    <div class="tb-group"><button onclick="togglePanel('images')">Immagini</button><button onclick="togglePanel('log')">Log</button><button onclick="toggleFS()">Fullscreen</button></div>
+  </div>
+  <div id="nosupport">Web Speech API non supportata. Apri in Chrome o Edge.</div>
+  <div id="statusbar"><span class="dot" id="sdot" style="color:var(--muted)"></span><span id="stxt">Pronto</span><span style="margin-left:auto">it-IT - <span class="hi" id="szlbl">64px</span></span></div>
+  <div id="stage"><div id="placeholder">Parla per iniziare...</div><div id="caption"></div></div>
+</div>
+<div id="panel"><div class="ph"><span id="panel-title">Immagini</span><button onclick="closePanel()">x</button></div><div class="pb" id="panel-body"></div><div class="pf" id="panel-footer"></div></div>
+
+<script>
+let recognition = null, isOn = false, isListening = false, finalText = '', interimText = '';
+let words = [], pendingImg = null, logLines = [], fontSize = 64, currentPanel = null;
+let mode = localStorage.getItem('caption_mode') || 'words';
+const SPEECH_FIXES = { "fuochi":"foche", "fuoco":"foche", "carboni":"carponi", "carbone":"carponi" };
+
+function normalizeWord(s){
+  return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/['’]/g, "'").trim();
+}
+
+function fixRecognizedText(txt){
+  return String(txt || '').replace(/\b(fuochi|fuoco|carboni|carbone)\b/gi, m => {
+    const fixed = SPEECH_FIXES[m.toLowerCase()] || m;
+    return m[0] === m[0].toUpperCase() ? fixed[0].toUpperCase() + fixed.slice(1) : fixed;
+  });
+}
+
+async function loadBuiltinWords(){
+  try {
+    const res = await fetch('assets/word-images.json', { cache:'no-store' });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return Array.isArray(data) ? data.filter(x => x && x.word && x.src) : [];
+  } catch { return []; }
+}
+
+function loadUserWords(){
+  try { return JSON.parse(localStorage.getItem('sottotitoli_user_words') || '[]'); } catch { return []; }
+}
+
+function saveUserWords(){
+  const builtins = new Set((window.BUILTIN_WORDS || []).map(w => normalizeWord(w.word)));
+  const user = words.filter(w => !builtins.has(normalizeWord(w.word)));
+  localStorage.setItem('sottotitoli_user_words', JSON.stringify(user));
+}
+
+function initSpeech(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ document.getElementById('nosupport').style.display='block'; return; }
+  recognition = new SR(); recognition.continuous = true; recognition.interimResults = true; recognition.lang = 'it-IT';
+  recognition.onstart = () => { isListening = true; setStatus('In ascolto...', true); };
+  recognition.onend = () => { isListening = false; if (isOn) setTimeout(safeStart, 300); else setStatus('Fermo', false); };
+  recognition.onerror = (e) => {
+    isListening = false;
+    if (e.error === 'no-speech') { setStatus('Nessuna voce rilevata, riprovo...', true); return; }
+    if (e.error === 'not-allowed' || e.error === 'service-not-allowed') { isOn = false; updateMicBtn(); setStatus('Microfono non consentito', false); return; }
+    setStatus('Errore: ' + e.error, false); if (isOn) setTimeout(safeStart, 700);
+  };
+  recognition.onresult = (e) => {
+    let fin = '', intr = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) fin += e.results[i][0].transcript; else intr += e.results[i][0].transcript;
+    }
+    fin = fixRecognizedText(fin); intr = fixRecognizedText(intr);
+    if (fin) { finalText += fin + ' '; logLines.push({ t: new Date(), txt: fin.trim() }); refreshLog(); }
+    interimText = intr; render();
+  };
+}
+
+function safeStart(){ if (!recognition || !isOn || isListening) return; try { recognition.start(); } catch { setTimeout(() => { try { if (isOn && !isListening) recognition.start(); } catch {} }, 500); } }
+function toggleMic(){ if (!recognition) return; isOn = !isOn; if (isOn) safeStart(); else { try { recognition.stop(); } catch {} isListening = false; setStatus('Fermo', false); } updateMicBtn(); }
+function updateMicBtn(){ const b = document.getElementById('btn-mic'); b.className = isOn ? 'danger' : 'primary'; b.innerHTML = isOn ? '<span class="dot pulse"></span> FERMA' : '<span class="dot"></span> AVVIA'; }
+function setStatus(msg, on){ document.getElementById('stxt').textContent = msg; const d = document.getElementById('sdot'); d.className = 'dot' + (on ? ' pulse' : ''); d.style.color = on ? 'var(--accent2)' : 'var(--muted)'; }
+function clearCaption(){ finalText = ''; interimText = ''; render(); }
+function changeSize(d){ fontSize = Math.max(24, Math.min(128, fontSize + d)); document.documentElement.style.setProperty('--caption-size', fontSize + 'px'); document.getElementById('szlbl').textContent = fontSize + 'px'; }
+function setTheme(v){ document.body.setAttribute('data-theme', v); }
+function setMode(v){ mode = v; localStorage.setItem('caption_mode', mode); render(); }
+
+function matchWordToken(token){
+  let original = String(token || '').trim();
+  let suffix = '';
+  const m = original.match(/([.,!?;:]+)$/);
+  if (m) { suffix = m[1]; original = original.slice(0, -suffix.length); }
+  const normalized = normalizeWord(original);
+  const parts = normalized.split("'");
+  const attempts = [normalized];
+  if (parts.length > 1) attempts.push(parts[parts.length - 1]);
+  const prefixes = ['l','nell','dell','all','sull','coll','dall'];
+  for (const p of prefixes) if (normalized.startsWith(p) && normalized.length > p.length + 1) attempts.push(normalized.slice(p.length));
+  const seen = new Set();
+  for (const a of attempts){
+    if (!a || seen.has(a)) continue; seen.add(a);
+    const found = words.find(w => normalizeWord(w.word) === a);
+    if (found) return { found, suffix };
+  }
+  return null;
+}
+
+function addRenderedToken(line, token, isInterim){
+  const match = mode === 'images' ? matchWordToken(token) : null;
+  if (match && !isInterim){
+    const wrap = document.createElement('span'); wrap.className = 'word-img';
+    wrap.innerHTML = '<img src="' + esc(match.found.src) + '" alt=""/><span class="wlbl">' + esc(match.found.word) + '</span>';
+    line.appendChild(wrap);
+    if (match.suffix){ const sx = document.createElement('span'); sx.textContent = match.suffix + ' '; line.appendChild(sx); }
+  } else {
+    const node = document.createElement('span'); if (isInterim) node.className = 'interim'; node.textContent = token + ' '; line.appendChild(node);
+  }
+}
+
+function render(){
+  const el = document.getElementById('caption'); const ph = document.getElementById('placeholder');
+  const hasContent = (finalText.trim() || interimText.trim()); ph.style.display = hasContent ? 'none' : 'block'; el.innerHTML = '';
+  if (!hasContent) return;
+  const line = document.createElement('div'); line.className = 'line';
+  finalText.trim().split(/\s+/).filter(Boolean).forEach(w => addRenderedToken(line, w, false));
+  interimText.trim().split(/\s+/).filter(Boolean).forEach(w => addRenderedToken(line, w, true));
+  el.appendChild(line); document.getElementById('stage').scrollTop = 999999;
+}
+
+function toggleFS(){ if (!document.fullscreenElement) document.getElementById('stage').requestFullscreen(); else document.exitFullscreen(); }
+function togglePanel(name){ if (currentPanel === name){ closePanel(); return; } currentPanel = name; document.getElementById('panel').classList.add('open'); document.getElementById('panel-title').textContent = name === 'images' ? 'Immagini' : 'Log'; if (name === 'images') renderImagesPanel(); else renderLogPanel(); }
+function closePanel(){ currentPanel = null; document.getElementById('panel').classList.remove('open'); }
+
+function renderImagesPanel(){
+  const b = document.getElementById('panel-body'); const f = document.getElementById('panel-footer'); b.innerHTML = '';
+  if (!words.length) b.innerHTML = '<div class="empty">Nessuna parola configurata.</div>';
+  else words.forEach((w, i) => {
+    const d = document.createElement('div'); d.className = 'witem';
+    d.innerHTML = '<img src="' + esc(w.src) + '" alt="" onerror="this.style.display=\'none\'"/>' +
+      '<div class="wname"><strong>' + esc(w.word) + '</strong><small>' + esc(w.src.length > 46 ? w.src.slice(0, 46) + '...' : w.src) + '</small></div>' +
+      '<button class="del" onclick="removeWord(' + i + ')">x</button>';
+    b.appendChild(d);
+  });
+  f.innerHTML = '<div class="field"><label>Parola</label><input type="text" id="nw" placeholder="es. gatto"/></div>' +
+    '<div class="field"><label>Immagine file</label><label class="drop-zone" id="dz"><span id="dzlbl">Trascina file o clicca</span><img class="prev" id="dprev"/><input type="file" accept="image/*" onchange="onFileChg(event)"/></label></div>' +
+    '<div class="field"><label>Oppure URL</label><input type="url" id="nu" placeholder="https://..."/></div>' +
+    '<button class="primary" onclick="addWord()" style="width:100%">+ Aggiungi</button>';
+}
+
+function onFileChg(e){ const f = e.target.files[0]; if (f) readFile(f); }
+function readFile(f){ const r = new FileReader(); r.onload = (e) => { pendingImg = e.target.result; const p = document.getElementById('dprev'); const l = document.getElementById('dzlbl'); if (p){ p.src = pendingImg; p.style.display = 'block'; } if (l) l.style.display = 'none'; }; r.readAsDataURL(f); }
+function addWord(){ const word = ((document.getElementById('nw') || {}).value || '').trim(); const url = ((document.getElementById('nu') || {}).value || '').trim(); const src = url || pendingImg; if (!word){ alert('Inserisci la parola'); return; } if (!src){ alert('Carica un\'immagine o inserisci un URL'); return; } words.push({ word, src }); saveUserWords(); pendingImg = null; renderImagesPanel(); render(); }
+function removeWord(i){ words.splice(i,1); saveUserWords(); renderImagesPanel(); render(); }
+
+function renderLogPanel(){ refreshLog(); document.getElementById('panel-footer').innerHTML = '<button onclick="copyLog()" style="width:100%">Copia testo</button>'; }
+function refreshLog(){ if (currentPanel !== 'log') return; const b = document.getElementById('panel-body'); b.innerHTML = ''; if (!logLines.length){ b.innerHTML = '<div class="empty">Nessuna trascrizione ancora.</div>'; return; } logLines.slice().reverse().forEach(l => { const d = document.createElement('div'); d.className = 'log-entry'; d.innerHTML = '<span class="ts">' + l.t.toTimeString().slice(0,8) + '</span>' + esc(l.txt); b.appendChild(d); }); }
+function copyLog(){ const txt = logLines.map(l => l.t.toTimeString().slice(0,8) + ' ' + l.txt).join('\n'); navigator.clipboard.writeText(txt); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+(async function init(){
+  document.getElementById('mode').value = mode;
+  const builtins = await loadBuiltinWords();
+  window.BUILTIN_WORDS = builtins;
+  words = builtins.concat(loadUserWords());
+  initSpeech();
+  render();
+})();
+</script>
+</body>
+</html>
