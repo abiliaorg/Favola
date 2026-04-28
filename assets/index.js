@@ -210,7 +210,7 @@ function refreshWordsSavedCounter() {
 function refreshOutlineButton() {
   const b = document.getElementById('btn-outline');
   if (!b) return;
-  b.textContent = outlineMode ? 'Outline ON' : 'Outline OFF';
+  b.textContent = outlineMode ? '▣ Outline ON' : '▢ Outline OFF';
 }
 
 function toggleOutlineMode() {
@@ -369,7 +369,14 @@ async function toggleMic() {
 }
 function updateMicBtn() { const b = document.getElementById('btn-mic'); b.className = isOn ? 'danger' : 'primary'; b.innerHTML = isOn ? '<span class="dot pulse"></span> FERMA' : '<span class="dot"></span> AVVIA'; }
 function setStatus(msg, on) { document.getElementById('stxt').textContent = msg; const d = document.getElementById('sdot'); d.className = 'dot' + (on ? ' pulse' : ''); d.style.color = on ? 'var(--accent2)' : 'var(--muted)'; }
-function clearCaption() { finalText = ''; interimText = ''; render(); }
+function clearCaption() {
+  finalText = '';
+  interimText = '';
+  logLines = [];
+  clearTrackingData();
+  refreshLog();
+  render();
+}
 function changeSize(d) { fontSize = Math.max(24, Math.min(128, fontSize + d)); document.documentElement.style.setProperty('--caption-size', fontSize + 'px'); document.getElementById('szlbl').textContent = fontSize + 'px'; }
 function setTheme(v) { document.body.setAttribute('data-theme', v); }
 function setMode(v) { mode = v; localStorage.setItem('caption_mode', mode); render(); }
