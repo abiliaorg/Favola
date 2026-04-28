@@ -10,7 +10,19 @@ let outlineMode = false;
 const wordLocationsByIdAndTime = {};
 const wordMetaById = {};
 const textUpdateSnapshots = [];
+const faceTrackingSnapshots = [];
+let faceMeshModel = null;
+let faceModelReady = false;
+let faceTrackingTimer = null;
+let faceProcessing = false;
+let lastFaceBoxes = null;
 const SPEECH_FIXES = { "fuochi": "foche", "fuoco": "foche", "carboni": "carponi", "carbone": "carponi" };
+const FACE_PARTS = {
+  mouth: [61, 291, 0, 17, 13, 14, 78, 308, 82, 312],
+  nose: [1, 2, 4, 98, 327, 168, 197, 195],
+  eyeLeft: [33, 133, 159, 145, 160, 144, 158, 153, 157, 154, 173],
+  eyeRight: [362, 263, 386, 374, 387, 373, 385, 380, 384, 381, 398]
+};
 
 function getVideoEl() {
   return document.getElementById('story-video');
@@ -19,6 +31,111 @@ function getVideoEl() {
 function hasActiveVideo() {
   const v = getVideoEl();
   return !!(v && v.src);
+}
+
+function clamp01(n) {
+  return Math.max(0, Math.min(1, n));
+}
+
+function createBBoxFromLandmarks(landmarks, indices, rect) {
+  const pts = indices ? indices.map(i => landmarks[i]).filter(Boolean) : landmarks;
+  if (!pts || !pts.length) return null;
+  let minX = 1, minY = 1, maxX = 0, maxY = 0;
+  for (const p of pts) {
+    const x = clamp01(p.x);
+    const y = clamp01(p.y);
+    if (x < minX) minX = x;
+    if (y < minY) minY = y;
+    if (x > maxX) maxX = x;
+    if (y > maxY) maxY = y;
+  }
+  const x = rect.left + minX * rect.width;
+  const y = rect.top + minY * rect.height;
+  const w = Math.max(0, (maxX - minX) * rect.width);
+  const h = Math.max(0, (maxY - minY) * rect.height);
+  return { x, y, w, h };
+}
+
+function getVideoContentRect(video) {
+  const r = video.getBoundingClientRect();
+  const vw = video.videoWidth || 0;
+  const vh = video.videoHeight || 0;
+  if (!vw || !vh || !r.width || !r.height) return r;
+  const contentAspect = vw / vh;
+  const boxAspect = r.width / r.height;
+  let width = r.width;
+  let height = r.height;
+  let left = r.left;
+  let top = r.top;
+  if (boxAspect > contentAspect) {
+    height = r.height;
+    width = height * contentAspect;
+    left = r.left + (r.width - width) / 2;
+  } else {
+    width = r.width;
+    height = width / contentAspect;
+    top = r.top + (r.height - height) / 2;
+  }
+  return { left, top, width, height };
+}
+
+async function initFaceModelIfNeeded() {
+  if (faceModelReady || typeof FaceMesh === 'undefined') return;
+  faceMeshModel = new FaceMesh({
+    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
+  });
+  faceMeshModel.setOptions({
+    maxNumFaces: 1,
+    refineLandmarks: true,
+    minDetectionConfidence: 0.5,
+    minTrackingConfidence: 0.5
+  });
+  faceMeshModel.onResults((results) => {
+    const video = getVideoEl();
+    if (!video) return;
+    const rect = getVideoContentRect(video);
+    const lm = results && results.multiFaceLandmarks && results.multiFaceLandmarks[0];
+    if (!lm || !lm.length) {
+      lastFaceBoxes = null;
+      return;
+    }
+    const face = createBBoxFromLandmarks(lm, null, rect);
+    const mouth = createBBoxFromLandmarks(lm, FACE_PARTS.mouth, rect);
+    const nose = createBBoxFromLandmarks(lm, FACE_PARTS.nose, rect);
+    const eyeLeft = createBBoxFromLandmarks(lm, FACE_PARTS.eyeLeft, rect);
+    const eyeRight = createBBoxFromLandmarks(lm, FACE_PARTS.eyeRight, rect);
+    lastFaceBoxes = { face, mouth, nose, eyeLeft, eyeRight };
+  });
+  faceModelReady = true;
+}
+
+async function runFaceTrackingStep() {
+  if (!isOn || !hasActiveVideo() || !faceModelReady || !faceMeshModel || faceProcessing) return;
+  const video = getVideoEl();
+  if (!video || video.paused || video.ended || video.readyState < 2) return;
+  faceProcessing = true;
+  try {
+    await faceMeshModel.send({ image: video });
+    const videoTime = getVideoTime();
+    const boxes = lastFaceBoxes ? JSON.parse(JSON.stringify(lastFaceBoxes)) : null;
+    faceTrackingSnapshots.push({ videoTime, boxes });
+    window.faceTrackingSnapshots = faceTrackingSnapshots;
+    renderWordOutlines();
+  } catch { }
+  faceProcessing = false;
+}
+
+async function startFaceTrackingLoop() {
+  await initFaceModelIfNeeded();
+  stopFaceTrackingLoop();
+  faceTrackingTimer = setInterval(() => { runFaceTrackingStep(); }, 100);
+}
+
+function stopFaceTrackingLoop() {
+  if (faceTrackingTimer) {
+    clearInterval(faceTrackingTimer);
+    faceTrackingTimer = null;
+  }
 }
 
 function normalizeWord(s) {
@@ -103,9 +220,11 @@ function toggleOutlineMode() {
 }
 
 function renderWordOutlines() {
-  const layer = document.getElementById('outline-layer');
-  if (!layer) return;
-  layer.innerHTML = '';
+  const wordLayer = document.getElementById('word-outline-layer');
+  const faceLayer = document.getElementById('face-outline-layer');
+  if (!wordLayer || !faceLayer) return;
+  wordLayer.innerHTML = '';
+  faceLayer.innerHTML = '';
   if (!outlineMode) return;
   const snap = textUpdateSnapshots[textUpdateSnapshots.length - 1];
   if (!snap || !Array.isArray(snap.entries)) return;
@@ -118,7 +237,27 @@ function renderWordOutlines() {
     r.style.top = loc.y + 'px';
     r.style.width = loc.w + 'px';
     r.style.height = loc.h + 'px';
-    layer.appendChild(r);
+    wordLayer.appendChild(r);
+  });
+  const faceSnap = faceTrackingSnapshots.length ? faceTrackingSnapshots[faceTrackingSnapshots.length - 1] : null;
+  const boxes = faceSnap && faceSnap.boxes;
+  if (!boxes) return;
+  const faceEntries = [
+    ['face', boxes.face],
+    ['mouth', boxes.mouth],
+    ['nose', boxes.nose],
+    ['eye-left', boxes.eyeLeft],
+    ['eye-right', boxes.eyeRight]
+  ];
+  faceEntries.forEach(([cls, b]) => {
+    if (!b || ![b.x, b.y, b.w, b.h].every(v => typeof v === 'number')) return;
+    const el = document.createElement('div');
+    el.className = 'face-outline ' + cls;
+    el.style.left = b.x + 'px';
+    el.style.top = b.y + 'px';
+    el.style.width = b.w + 'px';
+    el.style.height = b.h + 'px';
+    faceLayer.appendChild(el);
   });
 }
 
@@ -129,9 +268,12 @@ function clearTrackingData() {
   for (const k of Object.keys(wordLocationsByIdAndTime)) delete wordLocationsByIdAndTime[k];
   for (const k of Object.keys(wordMetaById)) delete wordMetaById[k];
   textUpdateSnapshots.length = 0;
+  faceTrackingSnapshots.length = 0;
+  lastFaceBoxes = null;
   window.wordLocationsByIdAndTime = wordLocationsByIdAndTime;
   window.wordMetaById = wordMetaById;
   window.textUpdateSnapshots = textUpdateSnapshots;
+  window.faceTrackingSnapshots = faceTrackingSnapshots;
   refreshWordsSavedCounter();
   renderWordOutlines();
 }
@@ -143,7 +285,8 @@ function exportTrackingDataJson() {
     wordsSaved: Object.keys(wordMetaById).length,
     wordMetaById,
     wordLocationsByIdAndTime,
-    textUpdateSnapshots
+    textUpdateSnapshots,
+    faceTrackingSnapshots
   };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
@@ -156,6 +299,7 @@ function exportTrackingDataJson() {
 }
 
 function stopSessionAndExport() {
+  stopFaceTrackingLoop();
   if (hasActiveVideo()) {
     const video = getVideoEl();
     if (video) {
@@ -214,9 +358,11 @@ async function toggleMic() {
     clearTrackingData();
     if (hasActiveVideo() && video) {
       try { await video.play(); } catch { }
+      startFaceTrackingLoop();
     }
     safeStart();
   } else {
+    stopFaceTrackingLoop();
     stopSessionAndExport();
   }
   updateMicBtn();
@@ -364,8 +510,10 @@ async function onVideoSelected(event) {
 
   const onCanPlay = async () => {
     await bindVideoTrack(video);
+    await initFaceModelIfNeeded();
     if (isOn) {
       try { await video.play(); } catch { }
+      startFaceTrackingLoop();
       try { recognition.stop(); } catch { }
       isListening = false;
       setTimeout(safeStart, 100);
@@ -390,6 +538,7 @@ function clearVideo() {
   if (!video || !videoWrap) return;
 
   video.pause();
+  stopFaceTrackingLoop();
   video.removeAttribute('src');
   video.load();
   videoWrap.classList.add('hidden');
@@ -441,6 +590,7 @@ function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').
   const builtins = await loadBuiltinWords();
   window.BUILTIN_WORDS = builtins;
   words = builtins.concat(loadUserWords());
+  window.faceTrackingSnapshots = faceTrackingSnapshots;
   refreshAudioSourceBadge();
   refreshWordsSavedCounter();
   refreshOutlineButton();

@@ -172,7 +172,10 @@
     max-height: 40vh;
     z-index: 5;
     background: #000;
-    overflow: hidden
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start
   }
 
   #video-wrap.hidden {
@@ -181,8 +184,9 @@
 
   #story-video {
     display: block;
-    width: 100%;
+    width: auto;
     height: auto;
+    max-width: 100%;
     max-height: 40vh;
     object-fit: contain;
     background: #000
@@ -426,11 +430,17 @@
     --caption-color: #00ff80
   }
 
-  #outline-layer {
+  #word-outline-layer {
     position: fixed;
     inset: 0;
     pointer-events: none;
     z-index: 4
+  }
+  #face-outline-layer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 6
   }
 
   .word-outline {
@@ -439,3 +449,13 @@
     background: transparent;
     border-radius: 4px
   }
+  .face-outline {
+    position: fixed;
+    background: transparent;
+    border-radius: 4px
+  }
+  .face-outline.face { border: 2px solid #ffbf00 }
+  .face-outline.mouth { border: 2px solid #ff4d6d }
+  .face-outline.nose { border: 2px solid #8ac926 }
+  .face-outline.eye-left { border: 2px solid #3a86ff }
+  .face-outline.eye-right { border: 2px solid #8338ec }
