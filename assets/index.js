@@ -2,6 +2,14 @@ let recognition = null, isOn = false, isListening = false, finalText = '', inter
 let words = [], pendingImg = null, logLines = [], fontSize = 64, currentPanel = null;
 let mode = localStorage.getItem('caption_mode') || 'words';
 let videoAudioTrack = null, videoUrl = null;
+let wordAutoIncrementalId = 0;
+let textUpdateId = 0;
+let sessionStartedAtMs = null;
+let lastRenderedTokenRefs = [];
+let outlineMode = false;
+const wordLocationsByIdAndTime = {};
+const wordMetaById = {};
+const textUpdateSnapshots = [];
 const SPEECH_FIXES = { "fuochi":"foche", "fuoco":"foche", "carboni":"carponi", "carbone":"carponi" };
 
 function getVideoEl(){
@@ -76,6 +84,96 @@ function refreshAudioSourceBadge(){
   el.textContent = 'Sorgente: ' + getActiveAudioSource();
 }
 
+function refreshWordsSavedCounter(){
+  const el = document.getElementById('words-saved');
+  if (!el) return;
+  el.textContent = 'Parole salvate: ' + Object.keys(wordMetaById).length;
+}
+
+function refreshOutlineButton(){
+  const b = document.getElementById('btn-outline');
+  if (!b) return;
+  b.textContent = outlineMode ? 'Outline ON' : 'Outline OFF';
+}
+
+function toggleOutlineMode(){
+  outlineMode = !outlineMode;
+  refreshOutlineButton();
+  renderWordOutlines();
+}
+
+function renderWordOutlines(){
+  const layer = document.getElementById('outline-layer');
+  if (!layer) return;
+  layer.innerHTML = '';
+  if (!outlineMode) return;
+  const snap = textUpdateSnapshots[textUpdateSnapshots.length - 1];
+  if (!snap || !Array.isArray(snap.entries)) return;
+  snap.entries.forEach((e) => {
+    const loc = e.location || {};
+    if (![loc.x, loc.y, loc.w, loc.h].every(v => typeof v === 'number')) return;
+    const r = document.createElement('div');
+    r.className = 'word-outline';
+    r.style.left = loc.x + 'px';
+    r.style.top = loc.y + 'px';
+    r.style.width = loc.w + 'px';
+    r.style.height = loc.h + 'px';
+    layer.appendChild(r);
+  });
+}
+
+function clearTrackingData(){
+  wordAutoIncrementalId = 0;
+  textUpdateId = 0;
+  lastRenderedTokenRefs = [];
+  for (const k of Object.keys(wordLocationsByIdAndTime)) delete wordLocationsByIdAndTime[k];
+  for (const k of Object.keys(wordMetaById)) delete wordMetaById[k];
+  textUpdateSnapshots.length = 0;
+  window.wordLocationsByIdAndTime = wordLocationsByIdAndTime;
+  window.wordMetaById = wordMetaById;
+  window.textUpdateSnapshots = textUpdateSnapshots;
+  refreshWordsSavedCounter();
+  renderWordOutlines();
+}
+
+function exportTrackingDataJson(){
+  const payload = {
+    exportedAt: new Date().toISOString(),
+    source: getActiveAudioSource(),
+    wordsSaved: Object.keys(wordMetaById).length,
+    wordMetaById,
+    wordLocationsByIdAndTime,
+    textUpdateSnapshots
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'tracking-' + new Date().toISOString().replace(/[:.]/g, '-') + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+}
+
+function stopSessionAndExport(){
+  if (hasActiveVideo()) {
+    const video = getVideoEl();
+    if (video) {
+      try { video.pause(); } catch {}
+    }
+  }
+  try { recognition.stop(); } catch {}
+  isListening = false;
+  updateMicBtn();
+  setStatus('Fermo', false);
+}
+
+function allocateStableWordId(tokenRef, index){
+  const prev = lastRenderedTokenRefs[index];
+  if (prev && prev.norm === tokenRef.norm && prev.image === tokenRef.image) return prev.id;
+  return ++wordAutoIncrementalId;
+}
+
 function safeStart(){
   if (!recognition || !isOn || isListening) return;
   const startRecognition = () => {
@@ -112,17 +210,14 @@ async function toggleMic(){
   const video = getVideoEl();
 
   if (isOn) {
+    sessionStartedAtMs = performance.now();
+    clearTrackingData();
     if (hasActiveVideo() && video) {
       try { await video.play(); } catch {}
     }
     safeStart();
   } else {
-    if (hasActiveVideo() && video) {
-      try { video.pause(); } catch {}
-    }
-    try { recognition.stop(); } catch {}
-    isListening = false;
-    setStatus('Fermo', false);
+    stopSessionAndExport();
   }
   updateMicBtn();
 }
@@ -153,15 +248,24 @@ function matchWordToken(token){
   return null;
 }
 
-function addRenderedToken(line, token, isInterim){
+function addRenderedToken(line, token, isInterim, forcedId){
   const match = mode === 'images' ? matchWordToken(token) : null;
+  const wordId = forcedId || ++wordAutoIncrementalId;
+  const cleanWord = String(token || '').replace(/[.,!?;:]+$/,'');
   if (match){
     const wrap = document.createElement('span'); wrap.className = 'word-img';
+    wrap.dataset.wordId = String(wordId);
     wrap.innerHTML = '<img src="' + esc(match.found.src) + '" alt=""/><span class="wlbl">' + esc(match.found.word) + '</span>';
     line.appendChild(wrap);
+    wordMetaById[wordId] = { word: cleanWord || match.found.word, image: true, interim: !!isInterim };
     if (match.suffix){ const sx = document.createElement('span'); sx.textContent = match.suffix + ' '; line.appendChild(sx); }
   } else {
-    const node = document.createElement('span'); if (isInterim) node.className = 'interim'; node.textContent = token + ' '; line.appendChild(node);
+    const node = document.createElement('span');
+    node.dataset.wordId = String(wordId);
+    if (isInterim) node.className = 'interim';
+    node.textContent = token + ' ';
+    line.appendChild(node);
+    wordMetaById[wordId] = { word: cleanWord || String(token || ''), image: false, interim: !!isInterim };
   }
 }
 
@@ -170,9 +274,55 @@ function render(){
   const hasContent = (finalText.trim() || interimText.trim()); ph.style.display = hasContent ? 'none' : 'block'; el.innerHTML = '';
   if (!hasContent) return;
   const line = document.createElement('div'); line.className = 'line';
-  finalText.trim().split(/\s+/).filter(Boolean).forEach(w => addRenderedToken(line, w, false));
-  interimText.trim().split(/\s+/).filter(Boolean).forEach(w => addRenderedToken(line, w, true));
+  const tokens = [];
+  finalText.trim().split(/\s+/).filter(Boolean).forEach(w => tokens.push({ token: w, isInterim: false }));
+  interimText.trim().split(/\s+/).filter(Boolean).forEach(w => tokens.push({ token: w, isInterim: true }));
+
+  const currentRefs = [];
+  tokens.forEach((item, idx) => {
+    const match = mode === 'images' ? matchWordToken(item.token) : null;
+    const cleanWord = String(item.token || '').replace(/[.,!?;:]+$/,'');
+    const norm = normalizeWord(cleanWord);
+    const image = !!match;
+    const id = allocateStableWordId({ norm, image }, idx);
+    currentRefs.push({ id, norm, image });
+    addRenderedToken(line, item.token, item.isInterim, id);
+  });
+
+  lastRenderedTokenRefs = currentRefs;
   el.appendChild(line); document.getElementById('stage').scrollTop = 999999;
+  trackRenderedWordLocations();
+}
+
+function getVideoTime(){
+  const v = getVideoEl();
+  if (v && Number.isFinite(v.currentTime)) return v.currentTime;
+  if (sessionStartedAtMs == null) return 0;
+  return Math.max(0, (performance.now() - sessionStartedAtMs) / 1000);
+}
+
+function trackRenderedWordLocations(){
+  const videoTime = getVideoTime();
+  const videoTimeKey = videoTime.toFixed(3);
+  const updateId = ++textUpdateId;
+  const entries = [];
+  const trackedNodes = document.querySelectorAll('#caption [data-word-id]');
+  trackedNodes.forEach((node) => {
+    const id = Number(node.getAttribute('data-word-id'));
+    if (!id) return;
+    const r = node.getBoundingClientRect();
+    const meta = wordMetaById[id] || {};
+    const loc = { x: r.left, y: r.top, w: r.width, h: r.height, interim: !!meta.interim };
+    if (!wordLocationsByIdAndTime[id]) wordLocationsByIdAndTime[id] = {};
+    wordLocationsByIdAndTime[id][videoTimeKey] = loc;
+    entries.push({ wordAutoIncrementalId: id, videoTime, location: loc });
+  });
+  textUpdateSnapshots.push({ updateId, videoTime, entries });
+  window.wordLocationsByIdAndTime = wordLocationsByIdAndTime;
+  window.wordMetaById = wordMetaById;
+  window.textUpdateSnapshots = textUpdateSnapshots;
+  refreshWordsSavedCounter();
+  renderWordOutlines();
 }
 
 function toggleFS(){ if (!document.fullscreenElement) document.getElementById('stage').requestFullscreen(); else document.exitFullscreen(); }
@@ -228,10 +378,7 @@ async function onVideoSelected(event){
   video.onended = () => {
     if (!isOn) return;
     isOn = false;
-    try { recognition.stop(); } catch {}
-    isListening = false;
-    updateMicBtn();
-    setStatus('Fermo', false);
+    stopSessionAndExport();
   };
   video.load();
 }
@@ -295,6 +442,8 @@ function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
   window.BUILTIN_WORDS = builtins;
   words = builtins.concat(loadUserWords());
   refreshAudioSourceBadge();
+  refreshWordsSavedCounter();
+  refreshOutlineButton();
   initSpeech();
   render();
 })();

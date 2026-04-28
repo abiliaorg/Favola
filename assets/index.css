@@ -46,3 +46,5 @@
   #nosupport{display:none;background:#2a0000;border:1px solid var(--accent2);border-radius:6px;margin:8px 16px;padding:10px 14px;font-size:12px;color:#ff8090}
   body[data-theme="white"] #stage{--caption-bg:#fff;--caption-color:#111} body[data-theme="yellow"] #stage{--caption-bg:#000;--caption-color:#ffe000}
   body[data-theme="green"] #stage{--caption-bg:#000;--caption-color:#00ff80}
+  #outline-layer{position:fixed;inset:0;pointer-events:none;z-index:90}
+  .word-outline{position:fixed;border:2px solid #00e5ff;background:transparent;border-radius:4px}
