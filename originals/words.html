@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sottotitoli Live</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #141414;
+    --border: #2a2a2a;
+    --accent: #f0e040;
+    --accent2: #ff4060;
+    --text: #f0ede0;
+    --muted: #666;
+    --font-ui: 'Space Mono', monospace;
+    --font-caption: 'DM Sans', sans-serif;
+    --caption-size: 64px;
+    --caption-color: #ffffff;
+    --caption-bg: #000000;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--font-ui); overflow: hidden; }
+
+  /* ─── LAYOUT ─── */
+  #app { display: flex; flex-direction: column; height: 100vh; }
+
+  /* ─── TOOLBAR ─── */
+  #toolbar {
+    display: flex; align-items: center; gap: 6px; padding: 10px 16px;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    flex-wrap: wrap; flex-shrink: 0;
+  }
+  .tb-group { display: flex; align-items: center; gap: 4px; }
+  .sep { width: 1px; height: 22px; background: var(--border); margin: 0 6px; }
+  .label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-right: 2px; }
+
+  button {
+    font-family: var(--font-ui); font-size: 11px; cursor: pointer;
+    border: 1px solid var(--border); border-radius: 4px;
+    background: transparent; color: var(--text); padding: 5px 10px;
+    transition: all .15s; display: inline-flex; align-items: center; gap: 5px;
+  }
+  button:hover { background: #222; border-color: #444; }
+  button:active { transform: scale(.97); }
+  button.primary { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 700; }
+  button.primary:hover { background: #ffe800; }
+  button.danger { background: var(--accent2); color: #fff; border-color: var(--accent2); font-weight: 700; }
+  button.danger:hover { background: #ff2040; }
+  button:disabled { opacity: .35; cursor: not-allowed; }
+
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; display: inline-block; }
+  .dot.pulse { animation: blink 1s infinite; color: var(--accent2); }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+  select {
+    font-family: var(--font-ui); font-size: 11px; background: var(--surface);
+    color: var(--text); border: 1px solid var(--border); border-radius: 4px;
+    padding: 5px 8px; cursor: pointer;
+  }
+
+  /* ─── STATUS ─── */
+  #statusbar {
+    display: flex; align-items: center; gap: 8px; padding: 5px 16px;
+    font-size: 10px; color: var(--muted); background: var(--bg);
+    border-bottom: 1px solid var(--border); flex-shrink: 0; letter-spacing: .04em;
+  }
+  #statusbar span.hi { color: var(--accent); }
+
+  /* ─── CAPTION STAGE ─── */
+  #stage {
+    flex: 1; background: var(--caption-bg); display: flex;
+    align-items: flex-end; padding: 32px 40px; overflow-y: auto; position: relative;
+  }
+  #caption {
+    font-family: var(--font-caption); font-size: var(--caption-size);
+    font-weight: 400; line-height: 1.3; color: var(--caption-color);
+    width: 100%; word-break: break-word;
+  }
+  .line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+  .word-img { display: inline-flex; flex-direction: column; align-items: center; gap: 8px; vertical-align: middle; background: rgba(255,255,255,0.13); border-radius: 18px; padding: 12px 16px; color: #fff !important; }
+  .word-img.gray-bg { background: #c8c8c8 !important; border: 3px solid rgba(255,255,255,.96); box-shadow: 0 0 0 2px rgba(0,0,0,.42) inset; padding: 18px 20px; }
+  .word-img.gray-bg img { background: #c8c8c8 !important; padding: 10px; border-radius: 12px; box-sizing: border-box; object-fit: contain; }
+  .word-img.black-bg { background: #000 !important; border: 3px solid rgba(255,255,255,.96); box-shadow: 0 0 0 2px rgba(255,255,255,.08) inset; padding: 18px 20px; }
+  .word-img.black-bg img { background: #000 !important; padding: 10px; border-radius: 12px; box-sizing: border-box; object-fit: contain; }
+  .word-img.white-img-box img { background: #fff !important; padding: 10px; border-radius: 8px; box-sizing: border-box; object-fit: contain; border: 2px solid #fff; }
+  .word-img img { height: calc(var(--caption-size) * 1.2); width: auto; max-width: 180px; border-radius: 10px; object-fit: cover; }
+  .word-img .wlbl { font-size: calc(var(--caption-size) * .22); opacity: 1; font-weight: 500; color: #fff !important; text-shadow: 0 1px 3px rgba(0,0,0,.8); }
+  body[data-theme="white"] .word-img { background: rgba(0,0,0,0.07); }
+  body[data-theme="yellow"] .word-img { background: rgba(255,224,0,0.15); }
+  body[data-theme="green"] .word-img { background: rgba(0,255,128,0.12); }
+  .interim { opacity: 1 !important; color: #fff !important; }
+  #caption, #caption * { color: #fff !important; }
+  #placeholder { font-size: calc(var(--caption-size) * .4); font-weight: 300; opacity: .18; letter-spacing: .04em; }
+
+  /* ─── PANEL ─── */
+  #panel {
+    position: fixed; top: 0; right: 0; width: 360px; height: 100vh;
+    background: var(--surface); border-left: 1px solid var(--border);
+    display: flex; flex-direction: column; transform: translateX(100%);
+    transition: transform .25s ease; z-index: 100;
+  }
+  #panel.open { transform: translateX(0); }
+  .ph { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
+  .ph button { border: none; background: none; font-size: 20px; color: var(--muted); padding: 0 4px; }
+  .pb { flex: 1; overflow-y: auto; padding: 12px 16px; }
+  .pf { padding: 12px 16px; border-top: 1px solid var(--border); }
+
+  /* word list */
+  .witem {
+    display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+    border: 1px solid var(--border); border-radius: 6px; margin-bottom: 6px;
+    background: var(--bg);
+  }
+  .witem img { width: 48px; height: 48px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
+  .witem .wname { flex: 1; font-size: 13px; }
+  .witem .wname small { display: block; font-size: 10px; color: var(--muted); margin-top: 2px; }
+  .witem .del { border: none; background: none; color: var(--muted); font-size: 18px; cursor: pointer; padding: 0 4px; }
+  .witem .del:hover { color: var(--accent2); }
+  .empty { font-size: 12px; color: var(--muted); text-align: center; padding: 24px 0; }
+
+  /* add form */
+  .field { margin-bottom: 10px; }
+  .field label { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 5px; }
+  .field input[type=text], .field input[type=url] {
+    width: 100%; padding: 7px 10px; background: var(--bg); color: var(--text);
+    border: 1px solid var(--border); border-radius: 4px; font-family: var(--font-ui); font-size: 12px;
+  }
+  .field input:focus { outline: none; border-color: var(--accent); }
+  .drop-zone {
+    border: 1px dashed var(--border); border-radius: 6px; padding: 18px;
+    text-align: center; font-size: 11px; color: var(--muted); cursor: pointer; transition: all .15s;
+    position: relative;
+  }
+  .drop-zone:hover, .drop-zone.over { border-color: var(--accent); color: var(--text); background: #1a1a00; }
+  .drop-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .drop-zone .prev { width: 64px; height: 64px; object-fit: cover; border-radius: 4px; display: none; margin: 8px auto 0; }
+
+  /* log */
+  .log-entry { font-size: 11px; color: var(--muted); padding: 5px 0; border-bottom: 1px solid var(--border); line-height: 1.5; }
+  .log-entry .ts { color: var(--accent); margin-right: 6px; }
+
+  /* ─── THEMES ─── */
+  body[data-theme="white"] #stage { --caption-bg:#fff; --caption-color:#111; }
+  body[data-theme="yellow"] #stage { --caption-bg:#000; --caption-color:#ffe000; }
+  body[data-theme="green"] #stage { --caption-bg:#000; --caption-color:#00ff80; }
+
+  /* ─── NO SUPPORT ─── */
+  #nosupport { display:none; background:#2a0000; border:1px solid var(--accent2); border-radius:6px; margin:8px 16px; padding:10px 14px; font-size:12px; color:#ff8090; }
+
+  /* fullscreen btn glow when active */
+  #btn-fs.fs-on { border-color: var(--accent); color: var(--accent); }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: var(--bg); } ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div id="toolbar">
+    <div class="tb-group">
+      <button class="primary" id="btn-mic" onclick="toggleMic()"><span class="dot" id="dot"></span> AVVIA</button>
+      <button onclick="clearCaption()">✕ Cancella</button>
+    </div>
+    <div class="sep"></div>
+    <div class="tb-group">
+      <span class="label">Dim</span>
+      <button onclick="changeSize(-8)">A−</button>
+      <button onclick="changeSize(8)">A+</button>
+    </div>
+    <div class="sep"></div>
+    <div class="tb-group">
+      <span class="label">Sfondo</span>
+      <select onchange="setTheme(this.value)">
+        <option value="">Scuro</option>
+        <option value="white">Bianco</option>
+        <option value="yellow">Giallo</option>
+        <option value="green">Verde</option>
+      </select>
+    </div>
+    <div class="sep"></div>
+    <div class="tb-group">
+      <button onclick="togglePanel('images')">🖼 Trascrizione</button>
+      <button onclick="togglePanel('log')">📋 Log</button>
+      <button id="btn-fs" onclick="toggleFS()">⛶ Fullscreen</button>
+    </div>
+  </div>
+
+  <div id="nosupport">⚠ Web Speech API non supportata. Apri in <strong>Chrome</strong> o <strong>Edge</strong>.</div>
+
+  <div id="statusbar">
+    <span class="dot" id="sdot" style="color:var(--muted)"></span>
+    <span id="stxt">Pronto</span>
+    <span style="margin-left:auto">it-IT &nbsp;·&nbsp; <span class="hi" id="szlbl">64px</span></span>
+  </div>
+
+  <div id="stage">
+    <div id="placeholder" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);opacity:.18;font-family:var(--font-caption);font-size:calc(var(--caption-size)*0.5);font-weight:300;color:var(--caption-color);letter-spacing:.04em;pointer-events:none">Parla per iniziare…</div>
+    <div id="caption"></div>
+  </div>
+</div>
+
+<!-- PANEL -->
+<div id="panel">
+  <div class="ph">
+    <span id="panel-title">Trascrizione</span>
+    <button onclick="closePanel()">×</button>
+  </div>
+  <div class="pb" id="panel-body"></div>
+  <div class="pf" id="panel-footer"></div>
+</div>
+
+<script>
+var BUILTIN_WORDS = [];
+var recognition=null, isOn=false, isListening=false, finalText='', interimText='';
+var words=[], pendingImg=null, logLines=[], fontSize=64, currentPanel=null;
+var GRAY_BG_WORDS = ['lontano','fuori'];
+var BLACK_BG_WORDS = ['nuotavo','nuotando','cantavo','cantando'];
+var WHITE_IMG_BOX_WORDS = ['nero','capriole','caprioli','meno','punto'];
+function needsGrayBg(word){ return GRAY_BG_WORDS.indexOf(String(word||'').toLowerCase()) !== -1; }
+function needsBlackBg(word){ return BLACK_BG_WORDS.indexOf(String(word||'').toLowerCase()) !== -1; }
+function needsWhiteImgBox(word){ return WHITE_IMG_BOX_WORDS.indexOf(String(word||'').toLowerCase()) !== -1; }
+
+var SPEECH_FIXES = {
+  "fuochi": "foche",
+  "fuoco": "foche",
+  "carboni": "carponi",
+  "carbone": "carponi"
+};
+
+function fixRecognizedText(txt){
+  return String(txt||'').replace(/\b(fuochi|fuoco|carboni|carbone)\b/gi, function(match){
+    var fixed = SPEECH_FIXES[match.toLowerCase()] || match;
+    if(match.charAt(0) === match.charAt(0).toUpperCase()){
+      return fixed.charAt(0).toUpperCase() + fixed.slice(1);
+    }
+    return fixed;
+  });
+}
+
+function init(){
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){document.getElementById('nosupport').style.display='block';return;}
+  recognition=new SR();
+  recognition.continuous=true; recognition.interimResults=true; recognition.lang='it-IT';
+  recognition.onstart=function(){
+    isListening=true;
+    setStatus('In ascolto…',true);
+  };
+  recognition.onend=function(){
+    isListening=false;
+    if(isOn){
+      setTimeout(function(){safeStart();},300);
+    } else {
+      setStatus('Fermo',false);
+    }
+  };
+  recognition.onerror=function(e){
+    isListening=false;
+
+    if(e.error==='no-speech'){
+      setStatus('Nessuna voce rilevata, riprovo…',true);
+      return;
+    }
+
+    if(e.error==='not-allowed'||e.error==='service-not-allowed'){
+      setStatus('Microfono non consentito',false);
+      isOn=false;
+      updateMicBtn();
+      return;
+    }
+
+    setStatus('Errore: '+e.error,false);
+
+    if(isOn){
+      setTimeout(function(){safeStart();},700);
+    }
+  };
+  recognition.onresult=function(e){
+    var fin='',intr='';
+    for(var i=e.resultIndex;i<e.results.length;i++){
+      if(e.results[i].isFinal) fin+=e.results[i][0].transcript;
+      else intr+=e.results[i][0].transcript;
+    }
+    fin=fixRecognizedText(fin);
+    intr=fixRecognizedText(intr);
+    if(fin){finalText+=fin+' '; logLines.push({t:new Date(),txt:fin.trim()}); refreshLog();}
+    interimText=intr;
+    render();
+  };
+  loadWords();
+}
+
+
+function safeStart(){
+  if(!recognition || !isOn || isListening) return;
+
+  try {
+    recognition.start();
+  } catch(err) {
+    setTimeout(function(){
+      if(isOn && !isListening){
+        try {
+          recognition.start();
+        } catch(e) {
+          setStatus('Microfono in pausa: premi FERMA e poi AVVIA',false);
+        }
+      }
+    },500);
+  }
+}
+
+function toggleMic(){
+  if(!recognition) return;
+
+  isOn=!isOn;
+
+  if(isOn){
+    safeStart();
+  } else {
+    try {
+      recognition.stop();
+    } catch(e) {
+      try { recognition.abort(); } catch(err) {}
+    }
+    isListening=false;
+    setStatus('Fermo',false);
+  }
+
+  updateMicBtn();
+}
+function updateMicBtn(){
+  var b=document.getElementById('btn-mic'), d=document.getElementById('dot');
+  if(isOn){b.className='danger';b.innerHTML='<span class="dot pulse" id="dot"></span> FERMA';}
+  else{b.className='primary';b.innerHTML='<span class="dot" id="dot"></span> AVVIA';}
+}
+function setStatus(msg,on){
+  document.getElementById('stxt').textContent=msg;
+  document.getElementById('sdot').className='dot'+(on?' pulse':'');
+  document.getElementById('sdot').style.color=on?'var(--accent2)':'var(--muted)';
+}
+
+function clearCaption(){finalText='';interimText='';render();}
+
+/* ─── RENDER ─── */
+function render(){
+  var el=document.getElementById('caption');
+  var ph=document.getElementById('placeholder');
+  var hasContent=(finalText.trim()||interimText.trim());
+  ph.style.display=hasContent?'none':'block';
+  el.innerHTML='';
+  if(!hasContent) return;
+
+  var line=document.createElement('div');
+  line.className='line';
+
+  function addText(txt, interim){
+    if(!txt || !txt.trim()) return;
+    txt.trim().split(/\s+/).forEach(function(w){
+      var node=document.createElement('span');
+      if(interim) node.className='interim';
+      node.textContent=w+' ';
+      line.appendChild(node);
+    });
+  }
+
+  addText(finalText, false);
+  addText(interimText, true);
+
+  el.appendChild(line);
+  document.getElementById('stage').scrollTop=999999;
+}
+
+function matchWord(w){
+  var original=String(w||'').trim();
+
+  // 1. Tolgo solo la punteggiatura finale, ma la conservo per mostrarla dopo l'immagine.
+  var suffix='';
+  var m=original.match(/([.,!?;:]+)$/);
+  if(m){
+    suffix=m[1];
+    original=original.slice(0,-suffix.length);
+  }
+
+  // Normalizzo l'apostrofo tipografico.
+  original=original.replace(/’/g, "'");
+
+  // 2. Costruisco vari tentativi di match.
+  //    Questo serve sia per "nell'oceano" sia per "l'oceano"
+  //    e, in caso di trascrizione imperfetta, anche per forme tipo "loceano".
+  var attempts=[];
+  var seen={};
+  function addAttempt(clean,prefix){
+    clean=String(clean||'').trim();
+    prefix=String(prefix||'');
+    if(!clean) return;
+    var id=prefix+'|'+clean.toLowerCase();
+    if(seen[id]) return;
+    seen[id]=true;
+    attempts.push({clean:clean,prefix:prefix});
+  }
+
+  addAttempt(original,'');
+
+  var apos=Math.max(original.lastIndexOf("'"), original.lastIndexOf("’"));
+  if(apos>=0){
+    addAttempt(original.slice(apos+1), original.slice(0,apos+1));
+  }
+
+  // Gestisce anche elisioni trascritte senza apostrofo: es. "loceano".
+  var lowerOriginal=original.toLowerCase();
+  var barePrefixes=['l','nell','dell','all','sull','coll','dall'];
+  for(var p=0;p<barePrefixes.length;p++){
+    var bp=barePrefixes[p];
+    if(lowerOriginal.startsWith(bp) && lowerOriginal.length>bp.length+1){
+      addAttempt(original.slice(bp.length), original.slice(0,bp.length)+"'");
+    }
+  }
+
+  // 3. Confronto i tentativi con le parole salvate nel pannello immagini.
+  for(var a=0;a<attempts.length;a++){
+    var key=attempts[a].clean.toLowerCase();
+    for(var i=0;i<words.length;i++){
+      if(words[i].word.toLowerCase()===key){
+        return {src:words[i].src, prefix:attempts[a].prefix, suffix:suffix, label:attempts[a].clean, word:words[i].word};
+      }
+    }
+  }
+  return null;
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+/* ─── SIZE / THEME ─── */
+function changeSize(d){
+  fontSize=Math.max(24,Math.min(128,fontSize+d));
+  document.documentElement.style.setProperty('--caption-size',fontSize+'px');
+  document.getElementById('szlbl').textContent=fontSize+'px';
+}
+function setTheme(v){ document.body.setAttribute('data-theme',v); }
+
+/* ─── FULLSCREEN ─── */
+function toggleFS(){
+  var b=document.getElementById('btn-fs');
+  if(!document.fullscreenElement){
+    document.getElementById('stage').requestFullscreen().then(function(){b.className='tb fs-on';b.textContent='⛶ Esci';});
+  } else {
+    document.exitFullscreen().then(function(){b.className='tb';b.textContent='⛶ Fullscreen';});
+  }
+}
+
+/* ─── PANEL ─── */
+function togglePanel(name){
+  var p=document.getElementById('panel');
+  if(currentPanel===name){closePanel();return;}
+  currentPanel=name;
+  p.classList.add('open');
+  document.getElementById('panel-title').textContent=name==='images'?'Trascrizione':'Trascrizione';
+  if(name==='images') renderImagesPanel();
+  else renderLogPanel();
+}
+function closePanel(){currentPanel=null;document.getElementById('panel').classList.remove('open');}
+
+/* ─── IMAGES PANEL ─── */
+function renderImagesPanel(){
+  var b=document.getElementById('panel-body'), f=document.getElementById('panel-footer');
+  b.innerHTML='';
+  if(!words.length){b.innerHTML='<div class="empty">Nessuna parola configurata.<br>Aggiungi qui sotto.</div>';}
+  else {
+    words.forEach(function(w,i){
+      var d=document.createElement('div');d.className='witem';
+      d.innerHTML='<img src="'+esc(w.src)+'" alt="" onerror="this.style.display=\'none\'"/>'
+        +'<div class="wname"><strong>'+esc(w.word)+'</strong><small>'+esc(w.src.length>40?w.src.slice(0,40)+'…':w.src)+'</small></div>'
+        +'<button class="del" onclick="removeWord('+i+')">×</button>';
+      b.appendChild(d);
+    });
+  }
+  f.innerHTML='<div class="field"><label>Parola da sostituire</label>'
+    +'<input type="text" id="nw" placeholder="es. gatto" /></div>'
+    +'<div class="field"><label>Immagine (trascina o clicca)</label>'
+    +'<label class="drop-zone" id="dz">'
+    +'<span id="dzlbl">Trascina file o clicca qui</span>'
+    +'<img class="prev" id="dprev" />'
+    +'<input type="file" accept="image/*" onchange="onFileChg(event)" /></label></div>'
+    +'<div class="field"><label>Oppure URL immagine</label>'
+    +'<input type="url" id="nu" placeholder="https://…" /></div>'
+    +'<button class="primary" onclick="addWord()" style="width:100%;justify-content:center">+ Aggiungi</button>';
+
+  var dz=document.getElementById('dz');
+  dz.addEventListener('dragover',function(e){e.preventDefault();dz.classList.add('over');});
+  dz.addEventListener('dragleave',function(){dz.classList.remove('over');});
+  dz.addEventListener('drop',function(e){
+    e.preventDefault();dz.classList.remove('over');
+    var f=e.dataTransfer.files[0];
+    if(f&&f.type.startsWith('image/')) readFile(f);
+  });
+}
+
+function onFileChg(e){var f=e.target.files[0];if(f)readFile(f);}
+function readFile(f){
+  var r=new FileReader();
+  r.onload=function(e){
+    pendingImg=e.target.result;
+    var p=document.getElementById('dprev');
+    if(p){p.src=pendingImg;p.style.display='block';}
+    var l=document.getElementById('dzlbl');
+    if(l)l.style.display='none';
+  };
+  r.readAsDataURL(f);
+}
+function addWord(){
+  var word=(document.getElementById('nw')||{}).value||''; word=word.trim();
+  var url=(document.getElementById('nu')||{}).value||''; url=url.trim();
+  var src=url||pendingImg;
+  if(!word){alert('Inserisci la parola');return;}
+  if(!src){alert('Carica un\'immagine o inserisci un URL');return;}
+  words.push({word:word,src:src});
+  saveWords(); pendingImg=null;
+  renderImagesPanel(); render();
+}
+function removeWord(i){words.splice(i,1);saveWords();renderImagesPanel();render();}
+
+/* ─── LOG PANEL ─── */
+function renderLogPanel(){
+  var b=document.getElementById('panel-body'),f=document.getElementById('panel-footer');
+  refreshLog();
+  f.innerHTML='<button onclick="copyLog()" style="width:100%;justify-content:center">Copia testo</button>';
+}
+function refreshLog(){
+  if(currentPanel!=='log') return;
+  var b=document.getElementById('panel-body');
+  if(!b) return;
+  b.innerHTML='';
+  if(!logLines.length){b.innerHTML='<div class="empty">Nessuna trascrizione ancora.</div>';return;}
+  logLines.slice().reverse().forEach(function(l){
+    var d=document.createElement('div');d.className='log-entry';
+    var ts=l.t.toTimeString().slice(0,8);
+    d.innerHTML='<span class="ts">'+ts+'</span>'+esc(l.txt);
+    b.appendChild(d);
+  });
+}
+function copyLog(){
+  var txt=logLines.map(function(l){return l.t.toTimeString().slice(0,8)+' '+l.txt;}).join('\n');
+  navigator.clipboard.writeText(txt).then(function(){
+    var bs=document.getElementById('panel-footer').querySelector('button');
+    if(bs){bs.textContent='✓ Copiato!';setTimeout(function(){bs.textContent='Copia testo';},1800);}
+  });
+}
+
+/* ─── PERSIST ─── */
+
+function loadWords(){
+  words = [];
+  localStorage.removeItem('cc_extra_words');
+  renderWordList();
+}
+function saveWords(){
+  try{var extra=words.filter(function(w){return !BUILTIN_WORDS.find(function(b){return b.word===w.word;});});localStorage.setItem('sottotitoli_words',JSON.stringify(extra));}catch(e){}
+}
+
+init();
+</script>
+</body>
+</html>
