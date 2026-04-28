@@ -7,16 +7,24 @@ let textUpdateId = 0;
 let sessionStartedAtMs = null;
 let lastRenderedTokenRefs = [];
 let outlineMode = false;
+// Word-level tracking stores: per-time bboxes + stable metadata map.
 const wordLocationsByIdAndTime = {};
 const wordMetaById = {};
 const textUpdateSnapshots = [];
+// Face tracking snapshots sampled every 100ms from MediaPipe.
 const faceTrackingSnapshots = [];
 let faceMeshModel = null;
 let faceModelReady = false;
 let faceTrackingTimer = null;
 let faceProcessing = false;
 let lastFaceBoxes = null;
-const SPEECH_FIXES = { "fuochi": "foche", "fuoco": "foche", "carboni": "carponi", "carbone": "carponi" };
+const SPEECH_FIXES = {
+  "fuochi": "foche",
+  "fuoco": "foche",
+  "carboni": "carponi",
+  "carbone": "carponi"
+};
+
 const FACE_PARTS = {
   mouth: [61, 291, 0, 17, 13, 14, 78, 308, 82, 312],
   nose: [1, 2, 4, 98, 327, 168, 197, 195],
@@ -80,6 +88,7 @@ function getVideoContentRect(video) {
 }
 
 async function initFaceModelIfNeeded() {
+  // Lazy init to avoid loading MediaPipe until video analysis is needed.
   if (faceModelReady || typeof FaceMesh === 'undefined') return;
   faceMeshModel = new FaceMesh({
     locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
@@ -110,6 +119,7 @@ async function initFaceModelIfNeeded() {
 }
 
 async function runFaceTrackingStep() {
+  // Single-step face analysis; called by a 100ms timer while session is running.
   if (!isOn || !hasActiveVideo() || !faceModelReady || !faceMeshModel || faceProcessing) return;
   const video = getVideoEl();
   if (!video || video.paused || video.ended || video.readyState < 2) return;
@@ -262,6 +272,7 @@ function renderWordOutlines() {
 }
 
 function clearTrackingData() {
+  // Full reset of current-session tracking buffers.
   wordAutoIncrementalId = 0;
   textUpdateId = 0;
   lastRenderedTokenRefs = [];
@@ -279,6 +290,7 @@ function clearTrackingData() {
 }
 
 function exportTrackingDataJson() {
+  // Manual export triggered from toolbar button.
   const payload = {
     exportedAt: new Date().toISOString(),
     source: getActiveAudioSource(),
@@ -313,6 +325,7 @@ function stopSessionAndExport() {
 }
 
 function allocateStableWordId(tokenRef, index) {
+  // Reuse ID when same token (normalized + image flag) stays in same logical position.
   const prev = lastRenderedTokenRefs[index];
   if (prev && prev.norm === tokenRef.norm && prev.image === tokenRef.image) return prev.id;
   return ++wordAutoIncrementalId;
@@ -323,8 +336,10 @@ function safeStart() {
   const startRecognition = () => {
     if (videoAudioTrack) {
       try {
+        // Prefer video audio when available.
         recognition.start(videoAudioTrack);
       } catch {
+        // Graceful fallback when start(audioTrack) is unsupported.
         recognition.start();
         setStatus('In ascolto (microfono). Audio video non supportato dal browser.', true);
         videoAudioTrack = null;
@@ -455,6 +470,7 @@ function getVideoTime() {
 }
 
 function trackRenderedWordLocations() {
+  // Save DOM bbox for each rendered token at current session/video timestamp.
   const videoTime = getVideoTime();
   const videoTimeKey = videoTime.toFixed(3);
   const updateId = ++textUpdateId;
