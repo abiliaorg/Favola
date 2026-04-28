@@ -155,7 +155,7 @@ function matchWordToken(token){
 
 function addRenderedToken(line, token, isInterim){
   const match = mode === 'images' ? matchWordToken(token) : null;
-  if (match && !isInterim){
+  if (match){
     const wrap = document.createElement('span'); wrap.className = 'word-img';
     wrap.innerHTML = '<img src="' + esc(match.found.src) + '" alt=""/><span class="wlbl">' + esc(match.found.word) + '</span>';
     line.appendChild(wrap);
