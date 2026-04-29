@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session Player</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <div id="toolbar">
+    <div class="tb-group" id="tb-session-controls">
+      <button id="btn-start">AVVIA</button>
+      <button id="btn-pause">FERMA</button>
+    </div>
+    <div class="sep"></div>
+
+    <div class="tb-group">
+      <span class="label">Video</span>
+      <input id="videoFile" type="file" accept="video/*" />
+    </div>
+    <div class="sep"></div>
+
+    <div class="tb-group">
+      <span class="label">Json</span>
+      <input id="jsonFile" type="file" accept=".json,application/json" />
+    </div>
+    <div class="sep"></div>
+
+    <div class="tb-group">
+      <span class="label">Partecipante</span>
+      <select id="participant"></select>
+    </div>
+    <div class="tb-group">
+      <span class="label">Storia</span>
+      <select id="story"><option value="tappeto">tappeto</option><option value="volpe">volpe</option></select>
+    </div>
+    <div class="tb-group">
+      <span class="label">Tipologia</span>
+      <select id="typology"><option value="solo_testo">solo testo</option><option value="testo_immagini">testo + immagini</option></select>
+    </div>
+    <div class="tb-group">
+      <span class="label">Outline</span>
+      <select id="outlineToggle" disabled><option value="off">OFF</option><option value="on">ON</option></select>
+    </div>
+    <div class="tb-group">
+      <span class="label">Step occhi</span>
+      <input id="gazeStep" type="number" value="20" min="1" max="120" style="width:80px"/>
+    </div>
+    <div class="tb-group">
+      <button id="btn-save">💾 Salva JSON</button>
+    </div>
+  </div>
+
+  <div id="floating-controls">
+    <button id="btn-mini-stop">■ FERMA</button>
+    <button id="btn-tools-toggle">+ STRUMENTI</button>
+  </div>
+
+  <div id="stage">
+    <div id="videoWrap">
+      <video id="video"></video>
+      <div id="overlay"><div id="gazeDot"></div></div>
+    </div>
+  </div>
+
+  <div id="status">Carica un video per iniziare.</div>
+
+  <script src="index.js"></script>
+</body>
+</html>
