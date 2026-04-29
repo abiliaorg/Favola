@@ -1,6 +1,6 @@
 let recognition = null, isOn = false, isListening = false, finalText = '', interimText = '';
 let words = [], pendingImg = null, logLines = [], fontSize = 64, currentPanel = null;
-let mode = localStorage.getItem('caption_mode') || 'words';
+let mode = localStorage.getItem('caption_mode') || 'images';
 let videoAudioTrack = null, videoUrl = null;
 let wordAutoIncrementalId = 0;
 let textUpdateId = 0;
@@ -246,13 +246,22 @@ async function startScreenRecordingIfEnabled() {
   try {
     screenStream = await navigator.mediaDevices.getDisplayMedia({
       video: true,
-      audio: true
+      audio: true,
+      preferCurrentTab: true,
+      selfBrowserSurface: 'include',
+      surfaceSwitching: 'include'
     });
     screenChunks = [];
-    const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')
-      ? 'video/webm;codecs=vp9,opus'
-      : 'video/webm';
-    screenRecorder = new MediaRecorder(screenStream, { mimeType });
+    // Prefer VP8 first: on some Chrome/GPU combinations VP9 recordings can appear green.
+    const mimeCandidates = [
+      'video/webm;codecs=vp8,opus',
+      'video/webm;codecs=vp9,opus',
+      'video/webm'
+    ];
+    const mimeType = mimeCandidates.find(m => MediaRecorder.isTypeSupported(m)) || '';
+    screenRecorder = mimeType
+      ? new MediaRecorder(screenStream, { mimeType, videoBitsPerSecond: 6_000_000 })
+      : new MediaRecorder(screenStream);
     screenRecorder.ondataavailable = (e) => {
       if (e.data && e.data.size > 0) screenChunks.push(e.data);
     };
