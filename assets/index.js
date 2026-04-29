@@ -311,6 +311,38 @@ function refreshOutlineButton() {
   b.textContent = outlineMode ? '▣ Outline ON' : '▢ Outline OFF';
 }
 
+function setFocusMode(active) {
+  document.body.classList.toggle('running-collapsed', !!active);
+  if (!active) document.body.classList.remove('header-expanded');
+  const t = document.getElementById('btn-header-toggle');
+  if (t) t.textContent = '+ STRUMENTI';
+  syncFloatingButtonSizes();
+}
+
+function toggleHeaderPanel() {
+  if (!document.body.classList.contains('running-collapsed')) return;
+  const expanded = document.body.classList.toggle('header-expanded');
+  const t = document.getElementById('btn-header-toggle');
+  if (t) t.textContent = expanded ? '- STRUMENTI' : '+ STRUMENTI';
+  syncFloatingButtonSizes();
+}
+
+function miniStop() {
+  if (isOn) toggleMic();
+}
+
+function syncFloatingButtonSizes() {
+  const btnAvvia = document.getElementById('btn-mic');
+  const btnCancella = document.getElementById('btn-clear');
+  const btnFerma = document.getElementById('btn-mini-stop');
+  const btnStrumenti = document.getElementById('btn-header-toggle');
+  if (!btnAvvia || !btnCancella || !btnFerma || !btnStrumenti) return;
+  btnFerma.style.width = '';
+  btnStrumenti.style.width = '';
+  btnFerma.style.minWidth = btnAvvia.offsetWidth + 'px';
+  btnStrumenti.style.minWidth = btnCancella.offsetWidth + 'px';
+}
+
 function toggleOutlineMode() {
   outlineMode = !outlineMode;
   refreshOutlineButton();
@@ -399,6 +431,7 @@ function exportTrackingDataJson() {
 }
 
 function stopSessionAndExport() {
+  setFocusMode(false);
   stopScreenRecording();
   stopFaceTrackingLoop();
   if (hasActiveVideo()) {
@@ -458,9 +491,11 @@ async function toggleMic() {
   const video = getVideoEl();
 
   if (isOn) {
+    setFocusMode(true);
     const recOk = await startScreenRecordingIfEnabled();
     if (!recOk) {
       isOn = false;
+      setFocusMode(false);
       updateMicBtn();
       return;
     }
@@ -472,6 +507,7 @@ async function toggleMic() {
     }
     safeStart();
   } else {
+    setFocusMode(false);
     stopFaceTrackingLoop();
     stopSessionAndExport();
   }
@@ -716,6 +752,8 @@ function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').
   refreshVideoButtons();
   refreshScreenRecButton();
   refreshOutlineButton();
+  syncFloatingButtonSizes();
+  window.addEventListener('resize', syncFloatingButtonSizes);
   initSpeech();
   render();
 })();

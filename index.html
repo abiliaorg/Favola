@@ -14,9 +14,9 @@
 <body>
   <div id="app">
     <div id="toolbar">
-      <div class="tb-group">
+      <div class="tb-group" id="tb-session-controls">
         <button class="primary" id="btn-mic" onclick="toggleMic()"><span class="dot"></span> AVVIA</button>
-        <button onclick="clearCaption()">🧹 Cancella</button>
+        <button id="btn-clear" onclick="clearCaption()">🧹 Cancella</button>
       </div>
       <div class="sep"></div>
       <div class="tb-group"><span class="label">Dim</span>
@@ -73,6 +73,10 @@
       <div id="placeholder">Parla per iniziare...</div>
       <div id="caption"></div>
     </div>
+  </div>
+  <div id="floating-controls">
+    <button id="btn-mini-stop" onclick="miniStop()">■ FERMA</button>
+    <button id="btn-header-toggle" onclick="toggleHeaderPanel()">+ STRUMENTI</button>
   </div>
   <div id="panel">
     <div class="ph"><span id="panel-title">Immagini</span>

@@ -183,6 +183,61 @@
     align-items: flex-start
   }
 
+  #floating-controls {
+    position: fixed;
+    top: 10px;
+    left: 16px;
+    z-index: 200;
+    display: none;
+    gap: 6px;
+    align-items: center;
+  }
+  #floating-controls button {
+    font-family: var(--font-ui);
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    opacity: .5;
+    transition: opacity .15s ease;
+  }
+  #floating-controls button:hover,
+  #floating-controls button:focus-visible { opacity: 1; }
+  #btn-mini-stop {
+    background: var(--accent2);
+    border-color: var(--accent2);
+    color: #fff;
+    font-weight: 700;
+  }
+
+  body.running-collapsed #floating-controls { display: inline-flex; }
+  body.running-collapsed #toolbar,
+  body.running-collapsed #nosupport,
+  body.running-collapsed #statusbar { display: none; }
+
+  body.running-collapsed.header-expanded #toolbar {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 180;
+  }
+  body.running-collapsed.header-expanded #tb-session-controls {
+    opacity: 0;
+    pointer-events: none;
+  }
+  body.running-collapsed.header-expanded #statusbar {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 52px;
+    z-index: 180;
+  }
+
   #video-wrap.hidden {
     display: none
   }
