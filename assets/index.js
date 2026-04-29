@@ -536,6 +536,15 @@ function setMaxLines(v) {
   if (sel && sel.value !== String(n)) sel.value = String(n);
   render();
 }
+function setMaxLines(v) {
+  const n = Math.max(1, Math.min(6, parseInt(v, 10) || 2));
+  maxLines = n;
+  localStorage.setItem('caption_max_lines', String(n));
+  document.documentElement.style.setProperty('--max-lines', String(n));
+  const sel = document.getElementById('max-lines');
+  if (sel && sel.value !== String(n)) sel.value = String(n);
+  render();
+}
 
 function matchWordToken(token) {
   let original = String(token || '').trim();
