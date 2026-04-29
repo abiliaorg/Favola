@@ -42,8 +42,12 @@
       </div>
       <div class="sep"></div>
       <div class="tb-group">
-        <button onclick="pickVideo()">🎬 Video</button>
-        <button onclick="clearVideo()">🗑️ Rimuovi Video</button>
+        <button id="btn-screen-rec" onclick="toggleScreenRecMode()">⏺ REC SCHERMO OFF</button>
+      </div>
+      <div class="sep"></div>
+      <div class="tb-group">
+        <button id="btn-video-add" onclick="pickVideo()">🎬 + Video</button>
+        <button id="btn-video-remove" onclick="clearVideo()">🎬 - Video</button>
         <button onclick="exportTrackingDataJson()">💾 Esporta JSON</button>
         <input id="video-file" type="file" accept="video/*" onchange="onVideoSelected(event)" hidden>
       </div>

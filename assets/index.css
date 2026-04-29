@@ -86,6 +86,11 @@
     border-color: var(--accent);
     font-weight: 700
   }
+  #btn-mic.primary {
+    background: #22c55e;
+    border-color: #22c55e;
+    color: #052e16;
+  }
 
   .danger {
     background: var(--accent2);

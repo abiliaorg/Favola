@@ -18,6 +18,10 @@ let faceModelReady = false;
 let faceTrackingTimer = null;
 let faceProcessing = false;
 let lastFaceBoxes = null;
+let screenRecEnabled = false;
+let screenStream = null;
+let screenRecorder = null;
+let screenChunks = [];
 const SPEECH_FIXES = {
   "fuochi": "foche",
   "fuoco": "foche",
@@ -39,6 +43,15 @@ function getVideoEl() {
 function hasActiveVideo() {
   const v = getVideoEl();
   return !!(v && v.src);
+}
+
+function refreshVideoButtons() {
+  const addBtn = document.getElementById('btn-video-add');
+  const removeBtn = document.getElementById('btn-video-remove');
+  if (!addBtn || !removeBtn) return;
+  const hasVideo = hasActiveVideo();
+  addBtn.style.display = hasVideo ? 'none' : '';
+  removeBtn.style.display = hasVideo ? '' : 'none';
 }
 
 function clamp01(n) {
@@ -217,6 +230,72 @@ function refreshWordsSavedCounter() {
   el.textContent = 'Parole salvate: ' + Object.keys(wordMetaById).length;
 }
 
+function refreshScreenRecButton() {
+  const b = document.getElementById('btn-screen-rec');
+  if (!b) return;
+  b.textContent = screenRecEnabled ? '⏺ REC SCHERMO ON' : '⏺ REC SCHERMO OFF';
+}
+
+function toggleScreenRecMode() {
+  screenRecEnabled = !screenRecEnabled;
+  refreshScreenRecButton();
+}
+
+async function startScreenRecordingIfEnabled() {
+  if (!screenRecEnabled) return true;
+  try {
+    screenStream = await navigator.mediaDevices.getDisplayMedia({
+      video: true,
+      audio: true
+    });
+    screenChunks = [];
+    const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')
+      ? 'video/webm;codecs=vp9,opus'
+      : 'video/webm';
+    screenRecorder = new MediaRecorder(screenStream, { mimeType });
+    screenRecorder.ondataavailable = (e) => {
+      if (e.data && e.data.size > 0) screenChunks.push(e.data);
+    };
+    screenRecorder.onstop = () => {
+      const blob = new Blob(screenChunks, { type: 'video/webm' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'screen-recording-' + new Date().toISOString().replace(/[:.]/g, '-') + '.webm';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+      screenChunks = [];
+    };
+    const vTrack = screenStream.getVideoTracks()[0];
+    if (vTrack) {
+      vTrack.onended = () => {
+        if (!isOn) return;
+        isOn = false;
+        stopSessionAndExport();
+      };
+    }
+    screenRecorder.start();
+    return true;
+  } catch {
+    setStatus('Registrazione schermo annullata o non consentita', false);
+    return false;
+  }
+}
+
+function stopScreenRecording() {
+  if (screenRecorder && screenRecorder.state !== 'inactive') {
+    try { screenRecorder.stop(); } catch { }
+  }
+  if (screenStream) {
+    screenStream.getTracks().forEach(t => {
+      try { t.stop(); } catch { }
+    });
+  }
+  screenRecorder = null;
+  screenStream = null;
+}
+
 function refreshOutlineButton() {
   const b = document.getElementById('btn-outline');
   if (!b) return;
@@ -311,6 +390,7 @@ function exportTrackingDataJson() {
 }
 
 function stopSessionAndExport() {
+  stopScreenRecording();
   stopFaceTrackingLoop();
   if (hasActiveVideo()) {
     const video = getVideoEl();
@@ -369,6 +449,12 @@ async function toggleMic() {
   const video = getVideoEl();
 
   if (isOn) {
+    const recOk = await startScreenRecordingIfEnabled();
+    if (!recOk) {
+      isOn = false;
+      updateMicBtn();
+      return;
+    }
     sessionStartedAtMs = performance.now();
     clearTrackingData();
     if (hasActiveVideo() && video) {
@@ -530,6 +616,7 @@ async function onVideoSelected(event) {
   videoUrl = URL.createObjectURL(file);
   video.src = videoUrl;
   videoWrap.classList.remove('hidden');
+  refreshVideoButtons();
 
   const onCanPlay = async () => {
     await bindVideoTrack(video);
@@ -572,6 +659,7 @@ function clearVideo() {
     videoUrl = null;
   }
   if (input) input.value = '';
+  refreshVideoButtons();
 
   if (isOn) {
     try { recognition.stop(); } catch { }
@@ -616,6 +704,8 @@ function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').
   window.faceTrackingSnapshots = faceTrackingSnapshots;
   refreshAudioSourceBadge();
   refreshWordsSavedCounter();
+  refreshVideoButtons();
+  refreshScreenRecButton();
   refreshOutlineButton();
   initSpeech();
   render();
