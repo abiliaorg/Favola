@@ -9,6 +9,7 @@
     --font-ui: 'Space Mono', monospace;
     --font-caption: 'DM Sans', sans-serif;
     --caption-size: 64px;
+    --max-lines: 2;
     --caption-color: #fff;
     --caption-bg: #000;
   }
@@ -258,7 +259,7 @@
     line-height: 1.3;
     color: var(--caption-color);
     width: 100%;
-    word-break: break-word
+    word-break: break-word;
   }
 
   .line {

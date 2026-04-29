@@ -1,6 +1,7 @@
 let recognition = null, isOn = false, isListening = false, finalText = '', interimText = '';
 let words = [], pendingImg = null, logLines = [], fontSize = 64, currentPanel = null;
 let mode = localStorage.getItem('caption_mode') || 'images';
+let maxLines = parseInt(localStorage.getItem('caption_max_lines') || '2', 10);
 let videoAudioTrack = null, videoUrl = null;
 let wordAutoIncrementalId = 0;
 let textUpdateId = 0;
@@ -526,6 +527,15 @@ function clearCaption() {
 function changeSize(d) { fontSize = Math.max(24, Math.min(128, fontSize + d)); document.documentElement.style.setProperty('--caption-size', fontSize + 'px'); document.getElementById('szlbl').textContent = fontSize + 'px'; }
 function setTheme(v) { document.body.setAttribute('data-theme', v); }
 function setMode(v) { mode = v; localStorage.setItem('caption_mode', mode); render(); }
+function setMaxLines(v) {
+  const n = Math.max(1, Math.min(6, parseInt(v, 10) || 2));
+  maxLines = n;
+  localStorage.setItem('caption_max_lines', String(n));
+  document.documentElement.style.setProperty('--max-lines', String(n));
+  const sel = document.getElementById('max-lines');
+  if (sel && sel.value !== String(n)) sel.value = String(n);
+  render();
+}
 
 function matchWordToken(token) {
   let original = String(token || '').trim();
@@ -589,8 +599,48 @@ function render() {
   });
 
   lastRenderedTokenRefs = currentRefs;
-  el.appendChild(line); document.getElementById('stage').scrollTop = 999999;
+  el.appendChild(line);
+  applyRowOpacity(line);
+  document.getElementById('stage').scrollTop = 999999;
+  el.scrollTop = 999999;
   trackRenderedWordLocations();
+}
+
+function applyRowOpacity(lineEl) {
+  if (!lineEl) return;
+  const children = Array.from(lineEl.children);
+  if (!children.length) return;
+
+  // Group rendered tokens by visual row using vertical centers.
+  // This is robust when row items have different heights (text vs image cards).
+  const points = children.map((n) => {
+    const r = n.getBoundingClientRect();
+    return { node: n, centerY: (r.top + r.bottom) / 2 };
+  }).sort((a, b) => a.centerY - b.centerY);
+
+  const fontPx = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--caption-size')) || 64;
+  const rowThreshold = Math.max(8, fontPx * 0.45);
+  const rows = [];
+  for (const p of points) {
+    const last = rows[rows.length - 1];
+    if (!last || Math.abs(p.centerY - last.centerY) > rowThreshold) {
+      rows.push({ centerY: p.centerY, items: [p] });
+    } else {
+      last.items.push(p);
+      // running average center for more stable clustering
+      last.centerY = (last.centerY * (last.items.length - 1) + p.centerY) / last.items.length;
+    }
+  }
+
+  const keep = Math.max(1, maxLines || 2);
+  const visibleRows = new Set(rows.slice(-keep));
+
+  rows.forEach((row) => {
+    const visible = visibleRows.has(row);
+    row.items.forEach((p) => {
+      p.node.style.opacity = visible ? '1' : '0.10';
+    });
+  });
 }
 
 function getVideoTime() {
@@ -743,6 +793,7 @@ function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').
 
 (async function init() {
   document.getElementById('mode').value = mode;
+  setMaxLines(maxLines);
   const builtins = await loadBuiltinWords();
   window.BUILTIN_WORDS = builtins;
   words = builtins.concat(loadUserWords());
