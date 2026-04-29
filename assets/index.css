@@ -42,7 +42,12 @@
     padding: 10px 16px;
     background: var(--surface);
     border-bottom: 1px solid var(--border);
-    flex-wrap: wrap
+    flex-wrap: wrap;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 180
   }
 
   .tb-group {
@@ -143,7 +148,13 @@
     padding: 5px 16px;
     font-size: 10px;
     color: var(--muted);
-    border-bottom: 1px solid var(--border)
+    border-bottom: 1px solid var(--border);
+    position: fixed;
+    top: 52px;
+    left: 0;
+    right: 0;
+    z-index: 170;
+    background: var(--bg);
   }
 
   #statusbar .hi {
