@@ -1,3 +1,18 @@
+const __DBG_KEY = 'favola_debug_log_v1';
+let __debugLog = [];
+try {
+  const stored = sessionStorage.getItem(__DBG_KEY);
+  if (stored) __debugLog = JSON.parse(stored);
+} catch { __debugLog = []; }
+function __dbg(tag, data) {
+  const entry = { t: new Date().toISOString(), tag, ...data };
+  __debugLog.push(entry);
+  try { sessionStorage.setItem(__DBG_KEY, JSON.stringify(__debugLog)); } catch { }
+  console.log('[DEBUG]', tag, data);
+}
+window.__debugLog = __debugLog;
+window.__debugClear = () => { __debugLog.length = 0; try { sessionStorage.removeItem(__DBG_KEY); } catch { } console.log('[DEBUG] cleared'); };
+__dbg('boot', { url: location.href, ua: navigator.userAgent.slice(0, 80) });
 let recognition = null, isOn = false, isListening = false, finalText = '', interimText = '';
 let words = [], pendingImg = null, logLines = [], fontSize = 64, currentPanel = null;
 let mode = localStorage.getItem('caption_mode') || 'images';
@@ -134,7 +149,13 @@ async function initFaceModelIfNeeded() {
 
 async function runFaceTrackingStep() {
   // Single-step face analysis; called by a 100ms timer while session is running.
-  if (!isOn || !hasActiveVideo() || !faceModelReady || !faceMeshModel || faceProcessing) return;
+  if (!isOn || !hasActiveVideo() || !faceModelReady || !faceMeshModel || faceProcessing) {
+    if (window.__debugFaceStepSkipLogged !== true) {
+      console.log('[DEBUG] runFaceTrackingStep skipped (first)', { isOn, hasVideo: hasActiveVideo(), faceModelReady, faceMeshModel: !!faceMeshModel, faceProcessing });
+      window.__debugFaceStepSkipLogged = true;
+    }
+    return;
+  }
   const video = getVideoEl();
   if (!video || video.paused || video.ended || video.readyState < 2) return;
   faceProcessing = true;
@@ -142,7 +163,8 @@ async function runFaceTrackingStep() {
     await faceMeshModel.send({ image: video });
     const videoTime = getVideoTime();
     const boxes = lastFaceBoxes ? JSON.parse(JSON.stringify(lastFaceBoxes)) : null;
-    faceTrackingSnapshots.push({ videoTime, boxes });
+    const viewport = { width: window.innerWidth, height: window.innerHeight };
+    faceTrackingSnapshots.push({ videoTime, viewport, boxes });
     window.faceTrackingSnapshots = faceTrackingSnapshots;
     renderWordOutlines();
   } catch { }
@@ -199,6 +221,7 @@ function initSpeech() {
   recognition.onstart = () => { isListening = true; setStatus('In ascolto (' + getActiveAudioSource() + ')...', true); };
   recognition.onend = () => { isListening = false; if (isOn) setTimeout(safeStart, 300); else setStatus('Fermo', false); };
   recognition.onerror = (e) => {
+    __dbg('recognition.onerror', { error: e.error });
     isListening = false;
     if (e.error === 'no-speech') { setStatus('Nessuna voce rilevata, riprovo...', true); return; }
     if (e.error === 'not-allowed' || e.error === 'service-not-allowed') { isOn = false; updateMicBtn(); setStatus('Microfono non consentito', false); return; }
@@ -210,6 +233,7 @@ function initSpeech() {
       if (e.results[i].isFinal) fin += e.results[i][0].transcript; else intr += e.results[i][0].transcript;
     }
     fin = fixRecognizedText(fin); intr = fixRecognizedText(intr);
+    __dbg('onresult', { finLen: fin.length, intrLen: intr.length, fin: fin.slice(0, 60), intr: intr.slice(0, 60) });
     if (fin) { finalText += fin + ' '; logLines.push({ t: new Date(), txt: fin.trim() }); refreshLog(); }
     interimText = intr; render();
   };
@@ -280,6 +304,7 @@ async function startScreenRecordingIfEnabled() {
     const vTrack = screenStream.getVideoTracks()[0];
     if (vTrack) {
       vTrack.onended = () => {
+        __dbg('screenStream.vTrack.onended', { isOn, snaps: textUpdateSnapshots.length });
         if (!isOn) return;
         isOn = false;
         stopSessionAndExport();
@@ -394,6 +419,11 @@ function renderWordOutlines() {
 
 function clearTrackingData() {
   // Full reset of current-session tracking buffers.
+  __dbg('clearTrackingData', {
+    prevSnaps: textUpdateSnapshots.length,
+    prevMeta: Object.keys(wordMetaById).length,
+    stack: new Error().stack.split('\n').slice(1, 6).join(' | ')
+  });
   wordAutoIncrementalId = 0;
   textUpdateId = 0;
   lastRenderedTokenRefs = [];
@@ -411,15 +441,23 @@ function clearTrackingData() {
 }
 
 function exportTrackingDataJson() {
+  __dbg('exportTrackingDataJson', {
+    textUpdateSnapshots: textUpdateSnapshots.length,
+    faceTrackingSnapshots: faceTrackingSnapshots.length,
+    wordMeta: Object.keys(wordMetaById).length
+  });
   // Manual export triggered from toolbar button.
   const payload = {
+    version: 2,
     exportedAt: new Date().toISOString(),
     source: getActiveAudioSource(),
+    viewport: { width: window.innerWidth, height: window.innerHeight },
     wordsSaved: Object.keys(wordMetaById).length,
     wordMetaById,
     wordLocationsByIdAndTime,
     textUpdateSnapshots,
-    faceTrackingSnapshots
+    faceTrackingSnapshots,
+    __debugLog
   };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
@@ -489,11 +527,13 @@ function safeStart() {
 async function toggleMic() {
   if (!recognition) return;
   isOn = !isOn;
+  __dbg('toggleMic', { newIsOn: isOn, hasVideo: hasActiveVideo(), screenRecEnabled });
   const video = getVideoEl();
 
   if (isOn) {
     setFocusMode(true);
     const recOk = await startScreenRecordingIfEnabled();
+    __dbg('toggleMic.afterScreenRec', { recOk });
     if (!recOk) {
       isOn = false;
       setFocusMode(false);
@@ -517,6 +557,7 @@ async function toggleMic() {
 function updateMicBtn() { const b = document.getElementById('btn-mic'); b.className = isOn ? 'danger' : 'primary'; b.innerHTML = isOn ? '<span class="dot pulse"></span> FERMA' : '<span class="dot"></span> AVVIA'; }
 function setStatus(msg, on) { document.getElementById('stxt').textContent = msg; const d = document.getElementById('sdot'); d.className = 'dot' + (on ? ' pulse' : ''); d.style.color = on ? 'var(--accent2)' : 'var(--muted)'; }
 function clearCaption() {
+  __dbg('clearCaption (btn-clear)', { stack: new Error().stack.split('\n').slice(1, 4).join(' | ') });
   finalText = '';
   interimText = '';
   logLines = [];
@@ -527,15 +568,6 @@ function clearCaption() {
 function changeSize(d) { fontSize = Math.max(24, Math.min(128, fontSize + d)); document.documentElement.style.setProperty('--caption-size', fontSize + 'px'); document.getElementById('szlbl').textContent = fontSize + 'px'; }
 function setTheme(v) { document.body.setAttribute('data-theme', v); }
 function setMode(v) { mode = v; localStorage.setItem('caption_mode', mode); render(); }
-function setMaxLines(v) {
-  const n = Math.max(1, Math.min(6, parseInt(v, 10) || 2));
-  maxLines = n;
-  localStorage.setItem('caption_max_lines', String(n));
-  document.documentElement.style.setProperty('--max-lines', String(n));
-  const sel = document.getElementById('max-lines');
-  if (sel && sel.value !== String(n)) sel.value = String(n);
-  render();
-}
 function setMaxLines(v) {
   const n = Math.max(1, Math.min(6, parseInt(v, 10) || 2));
   maxLines = n;
@@ -590,6 +622,7 @@ function addRenderedToken(line, token, isInterim, forcedId) {
 function render() {
   const el = document.getElementById('caption'); const ph = document.getElementById('placeholder');
   const hasContent = (finalText.trim() || interimText.trim()); ph.style.display = hasContent ? 'none' : 'block'; el.innerHTML = '';
+  if (hasContent) __dbg('render', { finalLen: finalText.length, interimLen: interimText.length });
   if (!hasContent) return;
   const line = document.createElement('div'); line.className = 'line';
   const tokens = [];
@@ -664,19 +697,35 @@ function trackRenderedWordLocations() {
   const videoTime = getVideoTime();
   const videoTimeKey = videoTime.toFixed(3);
   const updateId = ++textUpdateId;
+  const viewport = { width: window.innerWidth, height: window.innerHeight };
+  // Compute the bottom of the video area so we can skip bboxes covered by the video header.
+  let videoBottom = 0;
+  const videoWrapEl = document.getElementById('video-wrap');
+  if (videoWrapEl && !videoWrapEl.classList.contains('hidden')) {
+    const vr = videoWrapEl.getBoundingClientRect();
+    if (vr && Number.isFinite(vr.bottom)) videoBottom = vr.bottom;
+  }
   const entries = [];
+  let skippedHidden = 0;
   const trackedNodes = document.querySelectorAll('#caption [data-word-id]');
   trackedNodes.forEach((node) => {
     const id = Number(node.getAttribute('data-word-id'));
     if (!id) return;
     const r = node.getBoundingClientRect();
+    // Skip if the bbox crosses (even partially) the bottom line of the video,
+    // or if it's off the top/bottom of the viewport.
+    if (r.top < videoBottom || r.bottom <= 0 || r.top >= viewport.height) {
+      skippedHidden++;
+      return;
+    }
     const meta = wordMetaById[id] || {};
     const loc = { x: r.left, y: r.top, w: r.width, h: r.height, interim: !!meta.interim };
     if (!wordLocationsByIdAndTime[id]) wordLocationsByIdAndTime[id] = {};
     wordLocationsByIdAndTime[id][videoTimeKey] = loc;
     entries.push({ wordAutoIncrementalId: id, videoTime, location: loc });
   });
-  textUpdateSnapshots.push({ updateId, videoTime, entries });
+  textUpdateSnapshots.push({ updateId, videoTime, viewport, videoBottom, entries });
+  __dbg('trackRenderedWordLocations', { snapId: updateId, entries: entries.length, skippedHidden, skippedBehindImage, videoBottom: Math.round(videoBottom), totalSnaps: textUpdateSnapshots.length });
   window.wordLocationsByIdAndTime = wordLocationsByIdAndTime;
   window.wordMetaById = wordMetaById;
   window.textUpdateSnapshots = textUpdateSnapshots;
@@ -711,6 +760,7 @@ async function bindVideoTrack(video) {
 
 async function onVideoSelected(event) {
   const file = (event.target.files || [])[0];
+  __dbg('onVideoSelected', { fileName: file && file.name, fileSize: file && file.size, isOn });
   if (!file) return;
   const videoWrap = document.getElementById('video-wrap');
   const video = document.getElementById('story-video');
@@ -738,6 +788,7 @@ async function onVideoSelected(event) {
   };
   video.addEventListener('canplay', onCanPlay);
   video.onended = () => {
+    __dbg('video.onended', { isOn, snapsAtEnd: textUpdateSnapshots.length });
     if (!isOn) return;
     isOn = false;
     stopSessionAndExport();
