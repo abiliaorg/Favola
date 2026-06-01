@@ -13,11 +13,30 @@
 
     #stage{position:fixed;inset:0;background:#000;overflow:hidden}
     #videoWrap{position:relative;width:100vw;height:100vh}
-    #video{position:absolute;top:0;left:0;max-width:100vw;max-height:100vh;width:auto;height:auto;background:#000}
+    #video{
+      position:absolute;
+      top:0 !important;
+      left:0 !important;
+      margin:0;
+      display:block;
+      width:auto;
+      height:auto;
+      max-width:none;
+      max-height:none;
+      object-fit:contain;
+      background:#000;
+    }
     #overlay{position:absolute;inset:0;pointer-events:none}
     .box{position:absolute;border:2px solid #00e5ff;border-radius:4px;background:transparent}
-    .box.image{border-color:#ffb703}.box.face{border-color:#ffd166}.box.mouth{border-color:#ff4d6d}.box.nose{border-color:#8ac926}.box.eyeLeft{border-color:#3a86ff}.box.eyeRight{border-color:#8338ec}
-    #gazeDot{position:absolute;width:10px;height:10px;margin-left:-5px;margin-top:-5px;border-radius:50%;background:#ff2d2d;box-shadow:0 0 0 2px rgba(255,255,255,.4)}
+    .box.image{border-color:#ff4fc1}.box.face{border-color:#ffd166}.box.mouth{border-color:#ff4d6d}.box.nose{border-color:#8ac926}.box.eyeLeft{border-color:#3a86ff}.box.eyeRight{border-color:#8338ec}
+    #gazeDot{position:absolute;width:10px;height:10px;margin-left:-5px;margin-top:-5px;border-radius:50%;background:#ff2d2d;box-shadow:0 0 0 2px rgba(255,255,255,.4);display:none}
+    body.presentation-mode #gazeDot{display:block}
+    body.presentation-mode #stage,body.presentation-mode #videoWrap,body.presentation-mode video{cursor:none}
+
+    .status-pill{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+    .status-pill.off{background:#2a2a2a;color:#9a9a9a}
+    .status-pill.on{background:#0a3d1d;color:#86efac}
+    .status-pill.err{background:#5a1010;color:#ffb3b3}
 
     #floating-controls{position:fixed;top:10px;left:16px;z-index:200;display:none;gap:6px}
     #floating-controls button{font-size:12px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;background:#0f0f0f;color:var(--text);opacity:1}
