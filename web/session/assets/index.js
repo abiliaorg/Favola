@@ -1,26 +1,29 @@
     const els = {
-      video: document.getElementById('video'), videoFile: document.getElementById('videoFile'), jsonFile: document.getElementById('jsonFile'),
-      participant: document.getElementById('participant'), story: document.getElementById('story'), typology: document.getElementById('typology'),
+      video: document.getElementById('video'),
+      participant: document.getElementById('participant'), classSel: document.getElementById('classSel'),
+      story: document.getElementById('story'), typology: document.getElementById('typology'),
       outlineToggle: document.getElementById('outlineToggle'), gazeStep: document.getElementById('gazeStep'),
-      startBtn: document.getElementById('btn-start'), pauseBtn: document.getElementById('btn-pause'), saveBtn: document.getElementById('btn-save'),
+      startBtn: document.getElementById('btn-start'), pauseBtn: document.getElementById('btn-pause'),
       miniStop: document.getElementById('btn-mini-stop'), toolsToggle: document.getElementById('btn-tools-toggle'), status: document.getElementById('status'),
       overlay: document.getElementById('overlay'), gazeDot: document.getElementById('gazeDot'),
-      tobiiStatus: document.getElementById('tobii-status'), tobiiReconnect: document.getElementById('btn-tobii-reconnect')
+      tobiiStatus: document.getElementById('tobii-status'), tobiiReconnect: document.getElementById('btn-tobii-reconnect'),
+      sourcesStatus: document.getElementById('sources-status')
     };
 
     for (let i=1;i<=30;i++){ const o=document.createElement('option'); o.value=String(i).padStart(2,'0'); o.textContent='ID '+String(i).padStart(2,'0'); els.participant.appendChild(o); }
 
-    let data=null, gaze={x:0,y:0}, tickTimer=null, intersections=[], lastWordIdx=0, lastFaceIdx=0, isRunning=false;
+    let data=null, gaze={x:0,y:0}, tickTimer=null, samples=[], lastWordIdx=0, lastFaceIdx=0, isRunning=false;
 
-    // Bridge protocol: WebSocket ws://127.0.0.1:8765/.
+    // Tobii bridge protocol: WebSocket ws://127.0.0.1:8765/.
     // Server sends {"type":"gaze","ts":<ms>,"x":<0..1>,"y":<0..1>,"valid":<bool>}.
     // x,y are display-normalized (top-left origin). Without calibration we assume
     // the browser fills the same display so viewport coords == display coords.
-    const TOBII_URL = 'ws://127.0.0.1:8765/';
+    const TOBII_URL = 'ws://127.0.0.1:12346/';
     const TOBII_FRESH_MS = 500;
     let tobii = { ws:null, connected:false, lastSample:null, lastSampleAt:0, reconnectTimer:null };
 
     function setTobiiStatus(cls,text){ if(!els.tobiiStatus) return; els.tobiiStatus.className='status-pill '+cls; els.tobiiStatus.textContent=text; }
+    function setSourcesStatus(cls,text){ if(!els.sourcesStatus) return; els.sourcesStatus.className='status-pill '+cls; els.sourcesStatus.textContent=text; }
     function scheduleTobiiReconnect(){ if(tobii.reconnectTimer) return; tobii.reconnectTimer=setTimeout(()=>{ tobii.reconnectTimer=null; connectTobii(); },2000); }
     function connectTobii(){
       try{
@@ -37,7 +40,9 @@
     function tobiiSend(obj){ if(tobii.ws && tobii.ws.readyState===1){ try{ tobii.ws.send(JSON.stringify(obj)); }catch{} } }
 
     const setStatus = (t)=> els.status.textContent=t;
-    const yyyymmdd=(d=new Date())=>`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+    const pad2=(n)=>String(n).padStart(2,'0');
+    const yyyymmdd=(d=new Date())=>`${d.getFullYear()}${pad2(d.getMonth()+1)}${pad2(d.getDate())}`;
+    const hhmmss=(d=new Date())=>`${pad2(d.getHours())}${pad2(d.getMinutes())}${pad2(d.getSeconds())}`;
     const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
 
     function setFocusMode(active){
@@ -109,10 +114,10 @@
     function drawCurrentOutline(t){
       clearOutline();
       if(!data || els.outlineToggle.value!=='on') return;
-      const typ=els.typology.value, meta=data.wordMetaById||{};
       const wordSnap=getCurrentWordSnapshot(t);
       const wordVp=getSnapshotViewport(wordSnap);
       if(wordSnap && Array.isArray(wordSnap.entries)){
+        const meta=data.wordMetaById||{};
         wordSnap.entries.forEach(e=>{ const m=meta[String(e.wordAutoIncrementalId)]||{}; const isImage=!!m.image; drawBox(isImage?'image':'word', e.location, wordVp); });
       }
       const faceSnap=getCurrentFaceSnapshot(t);
@@ -135,79 +140,156 @@
       els.gazeDot.style.left=gaze.x+'px'; els.gazeDot.style.top=gaze.y+'px';
     }
 
-    function categorizeIntersections(t){
-      const hits=[], typ=els.typology.value, pt={x:gaze.x,y:gaze.y};
-      if(data){
-        const meta=data.wordMetaById||{};
-        const wordSnap=getCurrentWordSnapshot(t);
-        const wordVp=getSnapshotViewport(wordSnap);
-        if(wordSnap && Array.isArray(wordSnap.entries)){
-          for(const e of wordSnap.entries){ const mapped=mapBoxToViewport(e.location,wordVp); if(!mapped||!inBox(pt,mapped)) continue; const m=meta[String(e.wordAutoIncrementalId)]||{}; const isImage=!!m.image; if(typ==='solo_testo'&&isImage) continue; hits.push({category:isImage?'image':'word',subcategory:m.word||'',id:e.wordAutoIncrementalId}); }
-        }
-        const faceSnap=getCurrentFaceSnapshot(t);
-        const faceVp=getSnapshotViewport(faceSnap);
-        const face=faceSnap?faceSnap.boxes:null;
-        if(face){ [['face',face.face,'face'],['face',face.mouth,'mouth'],['face',face.nose,'nose'],['face',face.eyeLeft,'eyeLeft'],['face',face.eyeRight,'eyeRight']].forEach(p=>{ const mapped=mapBoxToViewport(p[1],faceVp); if(mapped&&inBox(pt,mapped)) hits.push({category:p[0],subcategory:p[2]}); }); }
-      }
-      let primaryCategory='none', primarySubcategory='none';
-      if(hits.length){ const wordHit=hits.find(h=>h.category==='word'||h.category==='image'); const faceHit=hits.find(h=>h.category==='face'); const chosen=wordHit||faceHit||hits[0]; primaryCategory=chosen.category; primarySubcategory=chosen.subcategory; }
-      intersections.push({t:Number(t.toFixed(3)),gaze:{x:Number(gaze.x.toFixed(2)),y:Number(gaze.y.toFixed(2))},primaryCategory,primarySubcategory,hits});
+    // The session records only raw gaze samples vs. video time. Intersection
+    // analysis (which word/face was looked at) is computed offline by the
+    // analysis module, so the same recording can be re-evaluated with different
+    // bounding-box scaling factors.
+    function recordSample(t){
+      samples.push({
+        t: Number(t.toFixed(3)),
+        gaze: { x: Number(gaze.x.toFixed(2)), y: Number(gaze.y.toFixed(2)) }
+      });
     }
 
-    function tick(){ const t=els.video.currentTime||0; moveGaze(); drawCurrentOutline(t); categorizeIntersections(t); setStatus(`Video t=${t.toFixed(2)}s\nIntersezioni: ${intersections.length}\nOutline: ${els.outlineToggle.value.toUpperCase()}`); }
+    function tick(){ const t=els.video.currentTime||0; moveGaze(); drawCurrentOutline(t); recordSample(t); setStatus(`Video t=${t.toFixed(2)}s\nSample: ${samples.length}\nOutline: ${els.outlineToggle.value.toUpperCase()}`); }
     function startTick(){ if(tickTimer) return; tickTimer=setInterval(tick,100); }
     function stopTick(){ if(!tickTimer) return; clearInterval(tickTimer); tickTimer=null; }
 
-    function resetSession(){ intersections=[]; lastWordIdx=0; lastFaceIdx=0; const v=vRect(); gaze={x:v.w*.5,y:v.h*.5}; els.gazeDot.style.left=gaze.x+'px'; els.gazeDot.style.top=gaze.y+'px'; clearOutline(); }
+    function resetSession(){ samples=[]; lastWordIdx=0; lastFaceIdx=0; const v=vRect(); gaze={x:v.w*.5,y:v.h*.5}; els.gazeDot.style.left=gaze.x+'px'; els.gazeDot.style.top=gaze.y+'px'; clearOutline(); }
 
-    function saveIntersections(){
-      if(!els.video.src){ alert('Carica prima un video.'); return; }
-      const payload={date:new Date().toISOString(), participantId:els.participant.value, story:els.story.value, typology:els.typology.value, sourceJsonLoaded:!!data, intersections};
-      const filename=`${yyyymmdd()}_${els.participant.value}_${els.story.value}_${els.typology.value}.json`;
-      const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
-      const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=filename; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(a.href);
+    // Auto-load video + tracking JSON from /sources/ based on (story, typology).
+    // Convention: <baseSlug> = "2_<story>_<typology>" -- where 2_ marks the
+    // record/ output that feeds session/ replay. Video can be .mp4 or .webm.
+    let currentLoadToken = 0;
+    async function fileExists(url){
+      try { const r=await fetch(url,{method:'HEAD'}); return r.ok; } catch { return false; }
+    }
+    async function loadSourcesForSelection(){
+      const token = ++currentLoadToken;
+      const cls=els.classSel.value, story=els.story.value, typ=els.typology.value;
+      const base=`/sources/2_${cls}_${story}_${typ}`;
+      setSourcesStatus('off','caricamento...');
+
+      // Pick a video extension that actually exists.
+      let videoUrl=null;
+      for(const ext of ['mp4','webm']){
+        if(await fileExists(`${base}.${ext}`)){ videoUrl=`${base}.${ext}`; break; }
+      }
+      if(token!==currentLoadToken) return;
+
+      // Reset existing state.
+      data=null; els.outlineToggle.disabled=true; els.outlineToggle.value='off';
+      try{ els.video.pause(); }catch{}
+      els.video.removeAttribute('src');
+      els.video.load();
+      resetSession();
+
+      if(!videoUrl){
+        setSourcesStatus('err','video mancante');
+        setStatus(`Nessun video trovato per 2_${cls}_${story}_${typ}.mp4|.webm in /sources/.`);
+        return;
+      }
+      els.video.src=videoUrl;
+
+      // Tracking JSON (may not exist for every combination).
+      const jsonUrl=`${base}.json`;
+      let jsonLoaded=false;
+      try{
+        const r=await fetch(jsonUrl);
+        if(r.ok){
+          const txt=await r.text();
+          const parsed=JSON.parse(txt);
+          if(token!==currentLoadToken) return;
+          data=parsed;
+          if(!Array.isArray(data.textUpdateSnapshots)) data.textUpdateSnapshots=[];
+          if(!Array.isArray(data.faceTrackingSnapshots)) data.faceTrackingSnapshots=[];
+          data.textUpdateSnapshots.sort((a,b)=>Number(a.videoTime)-Number(b.videoTime));
+          data.faceTrackingSnapshots.sort((a,b)=>Number(a.videoTime)-Number(b.videoTime));
+          els.outlineToggle.disabled=false;
+          jsonLoaded=true;
+        }
+      }catch{ /* leave data null */ }
+
+      if(token!==currentLoadToken) return;
+      setSourcesStatus('on', jsonLoaded ? 'pronto' : 'video ok, json mancante');
+      setStatus(`Sorgenti caricate: ${videoUrl.split('/').pop()}${jsonLoaded?' + tracking JSON':' (no tracking JSON)'}\nPremi AVVIA.`);
+    }
+
+    // POST the raw gaze track to the local server -> recordings/<filename>.json.
+    async function saveSession(){
+      if(!samples.length) return false;
+      const now=new Date();
+      const filename=`${yyyymmdd(now)}_${hhmmss(now)}_${els.participant.value}_${els.classSel.value}_${els.story.value}_${els.typology.value}.json`;
+      const payload={
+        date:now.toISOString(),
+        participantId:els.participant.value,
+        class:els.classSel.value,
+        story:els.story.value,
+        typology:els.typology.value,
+        sourceJsonLoaded:!!data,
+        viewport:{width:window.innerWidth, height:window.innerHeight},
+        samples
+      };
+      try{
+        const r=await fetch(`/api/recordings/${encodeURIComponent(filename)}`,{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify(payload)
+        });
+        if(!r.ok){ console.error('save failed',r.status); setStatus(`Salvataggio fallito (HTTP ${r.status}).`); return false; }
+        const j=await r.json().catch(()=>null);
+        setStatus(`Salvato: recordings/${filename}\nSample: ${samples.length}`);
+        return true;
+      }catch(e){
+        console.error('save error',e);
+        setStatus(`Errore di rete nel salvataggio: ${e.message||e}`);
+        return false;
+      }
     }
 
     async function startSession(){
-      if(!els.video.src){ alert('Carica prima un video.'); return; }
+      if(!els.video.src){ alert('Sorgenti non caricate. Controlla la combinazione storia/tipologia.'); return; }
       setFocusMode(true);
       setPresentationMode(true);
       isRunning=true;
-      if(!intersections.length) resetSession();
+      if(!samples.length) resetSession();
       tobiiSend({cmd:'trigger-start'});
       await els.video.play();
     }
-    function stopSession(){
+    async function stopSession(){
+      const wasRunning=isRunning;
       isRunning=false;
       setFocusMode(false);
       setPresentationMode(false);
       tobiiSend({cmd:'trigger-stop'});
       els.video.pause();
       stopTick();
+      if(wasRunning && samples.length){
+        await saveSession();
+      }
     }
-
-    els.videoFile.addEventListener('change',(ev)=>{ const f=ev.target.files&&ev.target.files[0]; if(!f) return; els.video.src=URL.createObjectURL(f); els.video.style.top='0px'; els.video.style.left='0px'; resetSession(); setStatus('Video caricato. Premi AVVIA.'); });
-    els.jsonFile.addEventListener('change',async(ev)=>{ const f=ev.target.files&&ev.target.files[0]; if(!f){data=null;els.outlineToggle.disabled=true;els.outlineToggle.value='off';return;} try{const txt=await f.text(); data=JSON.parse(txt); if(!Array.isArray(data.textUpdateSnapshots)) data.textUpdateSnapshots=[]; if(!Array.isArray(data.faceTrackingSnapshots)) data.faceTrackingSnapshots=[]; data.textUpdateSnapshots.sort((a,b)=>Number(a.videoTime)-Number(b.videoTime)); data.faceTrackingSnapshots.sort((a,b)=>Number(a.videoTime)-Number(b.videoTime)); els.outlineToggle.disabled=false; setStatus('JSON caricato. Outline disponibile.');}catch{data=null;els.outlineToggle.disabled=true;els.outlineToggle.value='off';alert('JSON non valido.');} });
 
     els.startBtn.addEventListener('click', startSession);
     els.pauseBtn.addEventListener('click', stopSession);
     els.miniStop.addEventListener('click', stopSession);
     els.toolsToggle.addEventListener('click', toggleTools);
 
-    els.video.addEventListener('play', ()=>{ if(!intersections.length) resetSession(); startTick(); });
+    els.video.addEventListener('play', ()=>{ if(!samples.length) resetSession(); startTick(); });
     els.video.addEventListener('pause', stopTick);
     els.video.addEventListener('ended', ()=>{ stopTick(); stopSession(); });
     els.video.addEventListener('loadedmetadata', layoutVideoTopLeft);
     window.addEventListener('resize', layoutVideoTopLeft);
 
-    els.saveBtn.addEventListener('click', saveIntersections);
     els.outlineToggle.addEventListener('change', ()=> drawCurrentOutline(els.video.currentTime||0));
-    els.typology.addEventListener('change', ()=> drawCurrentOutline(els.video.currentTime||0));
+    els.typology.addEventListener('change', ()=>{ drawCurrentOutline(els.video.currentTime||0); loadSourcesForSelection(); });
+    els.story.addEventListener('change', loadSourcesForSelection);
+    els.classSel.addEventListener('change', loadSourcesForSelection);
     if(els.tobiiReconnect) els.tobiiReconnect.addEventListener('click', connectTobii);
 
     window.addEventListener('keydown',(ev)=>{ if(ev.key==='F2'){ ev.preventDefault(); togglePresentationMode(); } });
 
     setTobiiStatus('off','disconnesso');
+    setSourcesStatus('off','non caricate');
     connectTobii();
-    setStatus('Carica un video per iniziare. F2 per mostrare/nascondere il pallino. F1 e\' usato da Tobii.');
-  
+    loadSourcesForSelection();
+    setStatus('Seleziona partecipante, storia e tipologia. F2 per mostrare/nascondere il pallino. F1 e\' usato da Tobii.');

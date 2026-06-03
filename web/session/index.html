@@ -15,53 +15,53 @@
     <div class="sep"></div>
 
     <div class="tb-group">
-      <span class="label">Video</span>
-      <input id="videoFile" type="file" accept="video/*" />
-    </div>
-    <div class="sep"></div>
-
-    <div class="tb-group">
-      <span class="label">Json</span>
-      <input id="jsonFile" type="file" accept=".json,application/json" />
-    </div>
-    <div class="sep"></div>
-
-    <div class="tb-group">
       <span class="label">Partecipante</span>
-      <select id="participant"></select>
+      <select id="participant" title="Partecipante"></select>
+    </div>
+    <div class="tb-group">
+      <span class="label">Class</span>
+      <select id="classSel" title="Class (elementary year)">
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4" selected>4</option>
+        <option value="5">5</option>
+      </select>
     </div>
     <div class="tb-group">
       <span class="label">Storia</span>
-      <select id="story">
-        <option value="tappeto">tappeto</option>
-        <option value="volpe">volpe</option>
+      <select id="story" title="Storia">
+        <option value="carpet">carpet</option>
+        <option value="fox">fox</option>
       </select>
     </div>
     <div class="tb-group">
       <span class="label">Tipologia</span>
-      <select id="typology">
-        <option value="solo_testo">solo testo</option>
-        <option value="testo_immagini">testo + immagini</option>
+      <select id="typology" title="Tipologia">
+        <option value="text">text</option>
+        <option value="images">images</option>
       </select>
     </div>
     <div class="tb-group">
+      <span class="label">Sorgenti</span>
+      <span id="sources-status" class="status-pill off">non caricate</span>
+    </div>
+    <div class="sep"></div>
+
+    <div class="tb-group">
       <span class="label">Outline</span>
-      <select id="outlineToggle" disabled>
+      <select id="outlineToggle" title="Mostra/nascondi outline parole e volto" disabled>
         <option value="off">OFF</option>
         <option value="on">ON</option>
       </select>
     </div>
     <div class="tb-group">
       <span class="label">Step occhi</span>
-      <input id="gazeStep" type="number" value="20" min="1" max="120" style="width:80px" />
+      <input id="gazeStep" type="number" value="20" min="1" max="120" title="Step random walk del pallino quando Tobii e' offline" />
     </div>
     <div class="tb-group" id="tb-tobii">
       <span class="label">Tobii</span>
       <span id="tobii-status" class="status-pill off">disconnesso</span>
-      <button id="btn-tobii-reconnect" title="Riconnetti al bridge GazeBridge">&#x21bb;</button>
-    </div>
-    <div class="tb-group">
-      <button id="btn-save">Salva JSON</button>
+      <button id="btn-tobii-reconnect" title="Riconnetti al bridge Tobii">&#x21bb;</button>
     </div>
   </div>
 
@@ -79,7 +79,7 @@
     </div>
   </div>
 
-  <div id="status">Carica un video per iniziare.</div>
+  <div id="status">Seleziona partecipante, storia e tipologia.</div>
 
   <script src="assets/index.js"></script>
 </body>

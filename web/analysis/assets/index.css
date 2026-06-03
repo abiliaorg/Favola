@@ -1,0 +1,106 @@
+:root { --bg:#0b0b0b; --surface:#151515; --border:#2b2b2b; --text:#e9e9e9; --muted:#9a9a9a; --accent:#22c55e; }
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:Arial,sans-serif;overflow:hidden}
+
+#toolbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--border)}
+.tb-group{display:flex;align-items:center;gap:6px}
+.label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+button,select,input[type=range]{font-size:12px;border:1px solid var(--border);border-radius:6px;background:#0f0f0f;color:var(--text);padding:6px 8px}
+button{cursor:pointer}
+#recordingPicker{min-width:380px}
+.badge{padding:4px 10px;border-radius:10px;background:#202020;color:#bdbdbd;font-size:11px;font-weight:600;letter-spacing:.04em}
+.check{display:flex;align-items:center;gap:4px;font-size:12px;color:#bdbdbd}
+.check input{margin:0}
+
+/* Drawer for the bbox scaling panel. */
+.drawer{
+  position:fixed;top:56px;left:0;bottom:0;
+  width:360px;max-width:90vw;
+  background:var(--surface);border-right:1px solid var(--border);
+  padding:14px;display:flex;flex-direction:column;gap:12px;
+  transform:translateX(-100%);transition:transform .2s ease;
+  z-index:100;overflow-y:auto;
+  box-shadow:6px 0 16px rgba(0,0,0,.5);
+}
+.drawer.open{transform:translateX(0)}
+.drawer-header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);padding-bottom:8px}
+.drawer-header h2{margin:0;font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.drawer-header button{background:transparent;border:none;color:#bdbdbd;font-size:22px;cursor:pointer;padding:0 4px;line-height:1}
+.drawer-header button:hover{color:#fff}
+
+/* Slider grid: 6 columns repeated twice per category (W/H row, dx/dy row),
+   plus a full-width header row per category. */
+#alphaList{
+  display:grid;
+  grid-template-columns: 22px 1fr 56px 22px 1fr 56px;
+  gap:4px 8px;
+  align-items:center;
+  margin-bottom:8px;
+}
+.alpha-group-name{
+  grid-column:1 / -1;
+  font-size:11px;color:#dcdcdc;text-transform:uppercase;letter-spacing:.06em;
+  font-weight:700;margin-top:10px;padding-bottom:2px;border-bottom:1px solid #2a2a2a;
+}
+.alpha-group-name:first-child{margin-top:0}
+.alpha-row-input{width:100%;accent-color:var(--accent);margin:0}
+.alpha-row-num{
+  width:100%;font-size:11px;color:#cfcfcf;background:#0f0f0f;
+  border:1px solid var(--border);border-radius:4px;padding:3px 6px;
+  text-align:right;font-variant-numeric:tabular-nums;
+}
+.alpha-row-num::-webkit-outer-spin-button,
+.alpha-row-num::-webkit-inner-spin-button{margin:0}
+.alpha-row-axis{font-size:10px;color:var(--muted);text-align:center;font-weight:700;font-variant-numeric:tabular-nums}
+
+#videoStage{position:relative}
+/* HUD floats above the moving gaze dot. Position is updated in JS to follow the dot. */
+#hud{
+  position:absolute;left:0;top:0;
+  background:rgba(0,0,0,.78);border:1px solid #444;border-radius:5px;
+  padding:3px 8px;color:#fff;font-size:11px;line-height:1.2;text-align:center;
+  pointer-events:none;display:none;
+  transform:translate(-50%, calc(-100% - 12px));
+  white-space:nowrap;
+  box-shadow:0 2px 8px rgba(0,0,0,.5);
+}
+#hud::after{
+  content:'';position:absolute;left:50%;top:100%;transform:translateX(-50%);
+  border:5px solid transparent;border-top-color:rgba(0,0,0,.78);
+}
+.hud-cat{font-size:9px;color:#bdbdbd;text-transform:uppercase;letter-spacing:.06em}
+.hud-sub{font-size:13px;font-weight:700;color:#fff}
+
+#main{display:grid;grid-template-columns: 1fr 420px;gap:14px;padding:14px;height:calc(100vh - 56px);min-height:0}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;display:flex;flex-direction:column;min-width:0;min-height:0}
+.card h2{margin:0 0 8px;font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.video-card{min-height:0}
+
+#videoStage{position:relative;flex:1;min-height:0;background:#000;border-radius:6px;overflow:hidden}
+#video{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:contain;background:#000}
+#overlay{position:absolute;inset:0;pointer-events:none}
+#gazeDot{position:absolute;width:12px;height:12px;margin-left:-6px;margin-top:-6px;border-radius:50%;background:#ff2d2d;box-shadow:0 0 0 2px rgba(255,255,255,.55);display:none}
+.box{position:absolute;border:2px solid #00e5ff;border-radius:3px;background:transparent;pointer-events:none}
+.box.image{border-color:#ff4fc1}
+.box.face{border-color:#ffd166}
+.box.mouth{border-color:#ff4d6d}
+.box.nose{border-color:#8ac926}
+.box.eyeLeft{border-color:#3a86ff}
+.box.eyeRight{border-color:#8338ec}
+
+.hint{margin-top:8px;color:var(--muted);font-size:11px}
+
+#panels{display:flex;flex-direction:column;gap:14px;min-height:0;overflow-y:auto;overflow-x:hidden;padding-right:4px}
+.chart{width:100%;overflow:hidden}
+#chart-primary{height:220px}
+#chart-face-sub{height:220px}
+#chart-words{height:300px}
+#chart-heatmap{height:200px}
+
+#status{position:fixed;left:10px;bottom:10px;z-index:120;background:rgba(0,0,0,.55);border:1px solid #333;padding:6px 10px;border-radius:6px;color:#ddd;font-size:11px;white-space:pre-line;max-width:40vw}
+
+@media (max-width: 1100px){
+  #main{grid-template-columns:1fr;height:auto;overflow:auto}
+  html,body{overflow:auto}
+  .video-card{min-height:420px}
+}

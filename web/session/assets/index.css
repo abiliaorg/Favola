@@ -8,6 +8,7 @@
     .label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
     button,select,input{font-size:12px;border:1px solid var(--border);border-radius:6px;background:#0f0f0f;color:var(--text);padding:6px 8px}
     button{cursor:pointer}
+    #gazeStep{width:80px}
     #btn-start{background:var(--ok);border-color:var(--ok);color:#06210f;font-weight:700}
     #btn-save{background:#1f4bff;border-color:#1f4bff;color:#fff}
 

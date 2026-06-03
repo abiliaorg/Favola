@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analysis</title>
+  <link rel="stylesheet" href="assets/index.css" />
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+</head>
+<body>
+  <div id="toolbar">
+    <div class="tb-group">
+      <span class="label">Recording</span>
+      <select id="recordingPicker" title="Recording da analizzare"></select>
+      <button id="btn-reload" title="Ricarica lista">&#x21bb;</button>
+    </div>
+    <div class="tb-group">
+      <span id="info" class="badge">-</span>
+    </div>
+    <div class="tb-group">
+      <label class="check"><input id="showBoxes" type="checkbox" checked /> Mostra bbox</label>
+      <label class="check"><input id="showGaze" type="checkbox" checked /> Mostra gaze</label>
+    </div>
+    <div class="tb-group">
+      <button id="btn-bbox-toggle" title="Apri/chiudi pannello scaling bbox">BBox scaling</button>
+    </div>
+  </div>
+
+  <aside id="bboxDrawer" class="drawer" aria-hidden="true">
+    <div class="drawer-header">
+      <h2>Bbox scaling</h2>
+      <button id="bbox-close" title="Chiudi" type="button">&times;</button>
+    </div>
+    <div id="alphaList"></div>
+    <button id="alpha-reset" title="Resetta tutti gli alpha a 1.0" type="button">reset all</button>
+  </aside>
+
+  <main id="main">
+    <section class="card video-card">
+      <h2>Replay</h2>
+      <div id="videoStage">
+        <video id="video" controls preload="auto"></video>
+        <div id="overlay">
+          <div id="gazeDot"></div>
+        </div>
+        <div id="hud">
+          <div class="hud-cat" id="hud-cat">-</div>
+          <div class="hud-sub" id="hud-sub">-</div>
+        </div>
+      </div>
+      <div class="hint" id="videoHint">Carica un recording dalla lista.</div>
+    </section>
+
+    <aside id="panels">
+      <section class="card">
+        <h2>Primary category (%)</h2>
+        <div class="chart small" id="chart-primary"></div>
+      </section>
+      <section class="card">
+        <h2>Face subcategory (%)</h2>
+        <div class="chart small" id="chart-face-sub"></div>
+      </section>
+      <section class="card">
+        <h2>Top words / images</h2>
+        <div class="chart small" id="chart-words"></div>
+      </section>
+      <section class="card">
+        <h2>Gaze heatmap</h2>
+        <div class="chart small" id="chart-heatmap"></div>
+      </section>
+    </aside>
+  </main>
+
+  <div id="status">Carica un recording dalla lista.</div>
+
+  <script src="assets/index.js"></script>
+</body>
+</html>

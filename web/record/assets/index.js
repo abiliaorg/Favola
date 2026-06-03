@@ -290,16 +290,22 @@ async function startScreenRecordingIfEnabled() {
     screenRecorder.ondataavailable = (e) => {
       if (e.data && e.data.size > 0) screenChunks.push(e.data);
     };
-    screenRecorder.onstop = () => {
+    screenRecorder.onstop = async () => {
       const blob = new Blob(screenChunks, { type: 'video/webm' });
+      screenChunks = [];
+      const base = currentTargetBase();
+      if (base) {
+        const ok = await uploadToServer(`/api/sources/${base}.webm`, blob, 'video/webm');
+        if (ok) { setStatus(`Salvato sources/${base}.webm`, false); return; }
+        setStatus(`Upload webm fallito, scarico in locale`, false);
+      }
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = 'screen-recording-' + new Date().toISOString().replace(/[:.]/g, '-') + '.webm';
+      a.download = (base ? base : 'screen-recording-' + new Date().toISOString().replace(/[:.]/g, '-')) + '.webm';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(a.href);
-      screenChunks = [];
     };
     const vTrack = screenStream.getVideoTracks()[0];
     if (vTrack) {
@@ -440,29 +446,39 @@ function clearTrackingData() {
   renderWordOutlines();
 }
 
-function exportTrackingDataJson() {
+async function exportTrackingDataJson() {
   __dbg('exportTrackingDataJson', {
     textUpdateSnapshots: textUpdateSnapshots.length,
     faceTrackingSnapshots: faceTrackingSnapshots.length,
     wordMeta: Object.keys(wordMetaById).length
   });
-  // Manual export triggered from toolbar button.
   const payload = {
     version: 2,
     exportedAt: new Date().toISOString(),
     source: getActiveAudioSource(),
     viewport: { width: window.innerWidth, height: window.innerHeight },
     wordsSaved: Object.keys(wordMetaById).length,
+    storyClass: storyMeta && storyMeta.valid ? storyMeta.class : null,
+    story: storyMeta && storyMeta.valid ? storyMeta.story : null,
+    type: currentRecordType(),
     wordMetaById,
     wordLocationsByIdAndTime,
     textUpdateSnapshots,
     faceTrackingSnapshots,
     __debugLog
   };
-  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const body = JSON.stringify(payload, null, 2);
+  const base = currentTargetBase();
+  if (base) {
+    const blob = new Blob([body], { type: 'application/json' });
+    const ok = await uploadToServer(`/api/sources/json/${base}.json`, blob, 'application/json');
+    if (ok) { setStatus(`Salvato sources/${base}.json`, false); return; }
+    setStatus(`Upload json fallito, scarico in locale`, false);
+  }
+  const blob = new Blob([body], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'tracking-' + new Date().toISOString().replace(/[:.]/g, '-') + '.json';
+  a.download = (base ? base : 'tracking-' + new Date().toISOString().replace(/[:.]/g, '-')) + '.json';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -483,6 +499,8 @@ function stopSessionAndExport() {
   isListening = false;
   updateMicBtn();
   setStatus('Fermo', false);
+  // Auto-export tracking JSON (uploaded to /api/sources/ when a 1_<class>_<story>.* video was loaded).
+  exportTrackingDataJson();
 }
 
 function allocateStableWordId(tokenRef, index) {
@@ -567,7 +585,45 @@ function clearCaption() {
 }
 function changeSize(d) { fontSize = Math.max(24, Math.min(128, fontSize + d)); document.documentElement.style.setProperty('--caption-size', fontSize + 'px'); document.getElementById('szlbl').textContent = fontSize + 'px'; }
 function setTheme(v) { document.body.setAttribute('data-theme', v); }
-function setMode(v) { mode = v; localStorage.setItem('caption_mode', mode); render(); }
+function setMode(v) { mode = v; localStorage.setItem('caption_mode', mode); render(); updateRecordTargetBadge(); }
+
+// Auto-detected metadata from the loaded video filename (1_<class>_<story>.<ext>).
+// When present, screen-recording webm and tracking JSON are uploaded to /api/sources/
+// with the deterministic name 2_<class>_<story>_<type>.{webm|json} instead of being
+// downloaded with a timestamp.
+let storyMeta = null;
+function parseStoryFilename(name) {
+  const m = /^1_([2-9])_([A-Za-z0-9]+)\.[A-Za-z0-9]+$/.exec(name || '');
+  if (!m) return { valid: false, raw: name || '' };
+  return { valid: true, class: m[1], story: m[2].toLowerCase(), raw: name };
+}
+function currentRecordType() { return mode === 'images' ? 'images' : 'text'; }
+function currentTargetBase() {
+  if (!storyMeta || !storyMeta.valid) return null;
+  return `2_${storyMeta.class}_${storyMeta.story}_${currentRecordType()}`;
+}
+function updateRecordTargetBadge() {
+  const sm = document.getElementById('story-meta');
+  const tn = document.getElementById('target-name');
+  if (sm) sm.textContent = storyMeta && storyMeta.valid
+    ? `Storia: class ${storyMeta.class} / ${storyMeta.story}`
+    : 'Storia: -';
+  if (tn) {
+    const base = currentTargetBase();
+    tn.textContent = base ? `Target: ${base}.{webm,json}` : 'Target: - (carica 1_<class>_<story>.mp4)';
+  }
+}
+async function uploadToServer(url, blob, contentType) {
+  try {
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': contentType || blob.type || 'application/octet-stream' },
+      body: blob,
+    });
+    if (!r.ok) { console.error('upload failed', url, r.status); return false; }
+    return true;
+  } catch (e) { console.error('upload error', url, e); return false; }
+}
 function setMaxLines(v) {
   const n = Math.max(1, Math.min(6, parseInt(v, 10) || 2));
   maxLines = n;
@@ -762,6 +818,11 @@ async function onVideoSelected(event) {
   const file = (event.target.files || [])[0];
   __dbg('onVideoSelected', { fileName: file && file.name, fileSize: file && file.size, isOn });
   if (!file) return;
+  storyMeta = parseStoryFilename(file.name);
+  updateRecordTargetBadge();
+  if (!storyMeta.valid) {
+    setStatus(`Filename "${file.name}" non rispetta lo schema 1_<class>_<story>.<ext> -- l'auto-save sara' disabilitato.`, false);
+  }
   const videoWrap = document.getElementById('video-wrap');
   const video = document.getElementById('story-video');
   if (!video || !videoWrap) return;

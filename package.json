@@ -4,11 +4,9 @@
   "private": true,
   "description": "Live subtitle storytelling + eye-tracking analyzer",
   "scripts": {
-    "server": "http-server -p 8080 -c-1 -s",
-    "tobii": "python gaze/tobii_gaze.py --ws --no-csv",
-    "kiosk": "start \"\" chrome --app=http://127.0.0.1:8080/session/index.html --start-maximized --no-first-run --disable-features=Translate"
-  },
-  "devDependencies": {
-    "http-server": "^14.1.1"
+    "start": "node launch.js",
+    "server": "node server.js",
+    "tobii": "python gaze/tobii_gaze.py --ws --ws-port 12346 --no-csv",
+    "kiosk": "start \"\" chrome --app=http://127.0.0.1:12345/session/index.html --start-maximized --no-first-run --disable-features=Translate"
   }
 }
