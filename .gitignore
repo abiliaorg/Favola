@@ -143,5 +143,5 @@ vite.config.ts.timestamp-*
 .vite/
 
 sources/
-gaze-bridge/bin/
-gaze-bridge/obj/
+__pycache__/
+*.pyc

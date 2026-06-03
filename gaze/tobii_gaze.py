@@ -19,7 +19,16 @@ import signal
 import sys
 import argparse
 import os
+import json
+import asyncio
+import threading
 from datetime import datetime
+
+try:
+    import websockets
+    WEBSOCKETS_AVAILABLE = True
+except ImportError:
+    WEBSOCKETS_AVAILABLE = False
 
 # ── DLL path ────────────────────────────────────────────────────────────────
 
@@ -122,6 +131,71 @@ def load_dll(path):
     return dll
 
 
+# ── WebSocket broadcast ──────────────────────────────────────────────────────
+# Bridge protocol expected by session/assets/index.js:
+#   {"type":"gaze","ts":<ms>,"x":<0..1>,"y":<0..1>,"valid":true}
+# x,y are display-normalized with top-left origin (same as Tobii).
+
+_ws_clients = set()
+_ws_loop = None
+
+async def _ws_handler(ws):
+    _ws_clients.add(ws)
+    try:
+        async for _ in ws:
+            pass
+    except Exception:
+        pass
+    finally:
+        _ws_clients.discard(ws)
+
+async def _ws_server_main(host, port):
+    global _ws_loop
+    _ws_loop = asyncio.get_running_loop()
+    async with websockets.serve(_ws_handler, host, port):
+        print(f"WebSocket server listening on ws://{host}:{port}/")
+        await asyncio.Future()
+
+def start_ws_server(host="127.0.0.1", port=8765):
+    if not WEBSOCKETS_AVAILABLE:
+        raise RuntimeError(
+            "Module 'websockets' is not installed. Run: pip install websockets"
+        )
+    t = threading.Thread(
+        target=lambda: asyncio.run(_ws_server_main(host, port)),
+        daemon=True,
+    )
+    t.start()
+    # short wait so the event loop has time to register itself
+    for _ in range(50):
+        if _ws_loop is not None:
+            break
+        time.sleep(0.02)
+    return t
+
+def ws_broadcast(payload_dict):
+    if not _ws_clients or _ws_loop is None:
+        return
+    payload = json.dumps(payload_dict, separators=(",", ":"))
+
+    async def _send():
+        if not _ws_clients:
+            return
+        dead = []
+        for c in list(_ws_clients):
+            try:
+                await c.send(payload)
+            except Exception:
+                dead.append(c)
+        for d in dead:
+            _ws_clients.discard(d)
+
+    try:
+        asyncio.run_coroutine_threadsafe(_send(), _ws_loop)
+    except Exception:
+        pass
+
+
 # ── Main recorder ─────────────────────────────────────────────────────────────
 
 def get_screen_resolution():
@@ -138,13 +212,17 @@ def get_screen_resolution():
     return None, None
 
 
-def record(duration_s=None, out_path="gaze_data.csv", screen_w=None, screen_h=None):
+def record(duration_s=None, out_path="gaze_data.csv", screen_w=None, screen_h=None,
+           ws_enabled=False, ws_port=8765, csv_enabled=True):
     # Auto-detect screen resolution if not provided
     if screen_w is None or screen_h is None:
         auto_w, auto_h = get_screen_resolution()
         screen_w = screen_w or auto_w or 1920
         screen_h = screen_h or auto_h or 1080
         print(f"Screen resolution: {screen_w}x{screen_h}")
+
+    if ws_enabled:
+        start_ws_server("127.0.0.1", ws_port)
 
     dll = load_dll(DLL_PATH)
 
@@ -194,9 +272,18 @@ def record(duration_s=None, out_path="gaze_data.csv", screen_w=None, screen_h=No
         # validity=1 means VALID in this DLL version
         if gp.validity != 1:
             return
-        x_px = x * screen_w
-        y_px = y * screen_h
-        records.append((gp.timestamp_us, round(x_px, 2), round(y_px, 2)))
+        if ws_enabled:
+            ws_broadcast({
+                "type": "gaze",
+                "ts": gp.timestamp_us // 1000,
+                "x": float(x),
+                "y": float(y),
+                "valid": True,
+            })
+        if csv_enabled:
+            x_px = x * screen_w
+            y_px = y * screen_h
+            records.append((gp.timestamp_us, round(x_px, 2), round(y_px, 2)))
     cb_gaze = GAZE_POINT_CB(gaze_cb)
     rc = dll.tobii_gaze_point_subscribe(device, cb_gaze, None)
     if rc != TOBII_ERROR_NO_ERROR:
@@ -229,13 +316,15 @@ def record(duration_s=None, out_path="gaze_data.csv", screen_w=None, screen_h=No
     dll.tobii_api_destroy(api)
 
     # Save CSV
-    print(f"Saving {len(records)} samples to {out_path}...")
-    with open(out_path, "w", newline="") as f:
-        writer = csv.writer(f)
-        writer.writerow(["timestamp_us", "x_px", "y_px"])
-        writer.writerows(records)
-
-    print(f"Done. {len(records)} gaze samples saved to: {out_path}")
+    if csv_enabled:
+        print(f"Saving {len(records)} samples to {out_path}...")
+        with open(out_path, "w", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(["timestamp_us", "x_px", "y_px"])
+            writer.writerows(records)
+        print(f"Done. {len(records)} gaze samples saved to: {out_path}")
+    else:
+        print(f"CSV disabled. {len(records)} samples not written.")
     if records:
         duration_actual = (records[-1][0] - records[0][0]) / 1_000_000
         hz = len(records) / duration_actual if duration_actual > 0 else 0
@@ -253,6 +342,11 @@ if __name__ == "__main__":
                         help="Output CSV filename")
     parser.add_argument("--width",  type=int, default=None, help="Screen width in pixels")
     parser.add_argument("--height", type=int, default=None, help="Screen height in pixels")
+    parser.add_argument("--ws", action="store_true",
+                        help="Start a WebSocket server and stream gaze live (consumed by the session module)")
+    parser.add_argument("--ws-port", type=int, default=8765, help="WebSocket server port (default 8765)")
+    parser.add_argument("--no-csv", action="store_true",
+                        help="Do not save the final CSV (useful for WS-only mode)")
     args = parser.parse_args()
 
     record(
@@ -260,4 +354,7 @@ if __name__ == "__main__":
         out_path=args.out,
         screen_w=args.width,
         screen_h=args.height,
+        ws_enabled=args.ws,
+        ws_port=args.ws_port,
+        csv_enabled=not args.no_csv,
     )
