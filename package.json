@@ -4,6 +4,7 @@
   "private": true,
   "description": "Live subtitle storytelling + eye-tracking analyzer",
   "scripts": {
+    "setup": "install\\install.bat",
     "start": "node launch.js",
     "server": "node server.js",
     "dev": "node --watch server.js",
