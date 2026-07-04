@@ -30,7 +30,7 @@
     .box{position:absolute;border:2px solid #00e5ff;border-radius:4px;background:transparent}
     .box.image{border-color:#ff4fc1}.box.face{border-color:#ffd166}.box.mouth{border-color:#ff4d6d}.box.nose{border-color:#8ac926}.box.eyeLeft{border-color:#3a86ff}.box.eyeRight{border-color:#8338ec}
     #gazeDot{position:absolute;width:10px;height:10px;margin-left:-5px;margin-top:-5px;border-radius:50%;background:#ff2d2d;box-shadow:0 0 0 2px rgba(255,255,255,.4);display:none}
-    body.presentation-mode #gazeDot{display:block}
+    body.show-gaze #gazeDot{display:block}
     body.presentation-mode #stage,body.presentation-mode #videoWrap,body.presentation-mode video{cursor:none}
 
     .status-pill{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
@@ -48,5 +48,6 @@
     body.running-collapsed #toolbar{display:none}
     body.running-collapsed.header-expanded #toolbar{display:flex}
 
-    #status{position:fixed;right:10px;bottom:10px;z-index:120;background:rgba(0,0,0,.55);border:1px solid #333;padding:8px 10px;border-radius:6px;color:#ddd;font-size:12px;white-space:pre-line}
+    #status{position:fixed;right:10px;bottom:10px;z-index:120;background:rgba(0,0,0,.55);border:1px solid #333;padding:8px 10px;border-radius:6px;color:#ddd;font-size:12px;white-space:pre-line;opacity:.1;transition:opacity .15s ease}
+    #status:hover{opacity:1}
   

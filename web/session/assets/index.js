@@ -5,7 +5,7 @@
       outlineToggle: document.getElementById('outlineToggle'),
       startBtn: document.getElementById('btn-start'), pauseBtn: document.getElementById('btn-pause'),
       miniStop: document.getElementById('btn-mini-stop'), toolsToggle: document.getElementById('btn-tools-toggle'), status: document.getElementById('status'),
-      overlay: document.getElementById('overlay'), gazeDot: document.getElementById('gazeDot'),
+      overlay: document.getElementById('overlay'), gazeDot: document.getElementById('gazeDot'), gazeToggle: document.getElementById('gazeToggle'),
       tobiiStatus: document.getElementById('tobii-status'), tobiiReconnect: document.getElementById('btn-tobii-reconnect'),
       tobiiCalibrate: document.getElementById('btn-tobii-calibrate'),
       sourcesStatus: document.getElementById('sources-status')
@@ -88,6 +88,9 @@
     }
     function setPresentationMode(on){ document.body.classList.toggle('presentation-mode', !!on); }
     function togglePresentationMode(){ setPresentationMode(!document.body.classList.contains('presentation-mode')); }
+    // Gaze dot is hidden by default; shown only when explicitly enabled (toggle or F2).
+    function setGazeVisible(on){ document.body.classList.toggle('show-gaze', !!on); if(els.gazeToggle) els.gazeToggle.value = on ? 'on' : 'off'; }
+    function toggleGazeVisible(){ setGazeVisible(!document.body.classList.contains('show-gaze')); }
     function toggleTools(){
       if(!document.body.classList.contains('running-collapsed')) return;
       const expanded=document.body.classList.toggle('header-expanded');
@@ -285,7 +288,11 @@
     async function saveSession(){
       if(!samples.length) return false;
       const now=new Date();
-      const filename=`${yyyymmdd(now)}_${hhmmss(now)}_${els.participant.value}_${els.classSel.value}_${els.story.value}_${els.typology.value}.json`;
+      // The server only accepts filenames matching [A-Za-z0-9_-.]; the participant
+      // is a free-text field, so strip anything else to avoid a 400 rejection.
+      const safe = s => String(s==null?'':s).replace(/[^A-Za-z0-9\-.]/g, '');
+      const pid = safe(els.participant.value) || 'NA';
+      const filename=`${yyyymmdd(now)}_${hhmmss(now)}_${pid}_${els.classSel.value}_${els.story.value}_${els.typology.value}.json`;
       const payload={
         date:now.toISOString(),
         participantId:els.participant.value,
@@ -335,9 +342,14 @@
       tobiiSend({cmd:'trigger-stop'});
       els.video.pause();
       stopTick();
-      if(wasRunning && samples.length){
-        await saveSession();
+
+      // Determine the outcome BEFORE clearing anything.
+      const hadSamples = samples.length > 0;
+      let saved = false;
+      if(wasRunning && hadSamples){
+        saved = await saveSession();
       }
+
       // Clear the whole selection on every stop / end of session: participant,
       // class, story and typology all reset to empty. The next run must re-enter
       // them, and start stays blocked until they are set again.
@@ -345,7 +357,18 @@
       els.classSel.value = '';
       els.typology.value = '';
       populateStories();          // class empty -> story dropdown back to empty
-      loadSourcesForSelection();  // unload the video, stand by
+      loadSourcesForSelection();  // unload the video, stand by (this overwrites the status)
+
+      // Make the outcome explicit AFTER the reset status, so a save is never
+      // silently swallowed and an empty (Tobii-offline) session is loudly flagged.
+      if(wasRunning && !hadSamples){
+        setStatus('Sessione terminata: NESSUN campione di gaze registrato (Tobii offline?). Niente salvato.\nSeleziona i campi per ripartire.');
+        alert('Nessun campione di gaze registrato: il bridge Tobii era connesso (pill verde)?\nLa sessione NON e\' stata salvata.');
+      } else if(saved){
+        setStatus('Salvataggio completato in data/02_gaze/.\nSeleziona partecipante, classe, storia e tipologia per una nuova sessione.');
+      } else if(wasRunning){
+        setStatus('Salvataggio FALLITO (vedi console/Sample). Riprova.\nSeleziona i campi per ripartire.');
+      }
     }
 
     els.startBtn.addEventListener('click', startSession);
@@ -366,7 +389,8 @@
     if(els.tobiiReconnect) els.tobiiReconnect.addEventListener('click', connectTobii);
     if(els.tobiiCalibrate) els.tobiiCalibrate.addEventListener('click', calibrateTobii);
 
-    window.addEventListener('keydown',(ev)=>{ if(ev.key==='F2'){ ev.preventDefault(); togglePresentationMode(); } });
+    els.gazeToggle.addEventListener('change', ()=> setGazeVisible(els.gazeToggle.value==='on'));
+    window.addEventListener('keydown',(ev)=>{ if(ev.key==='F2'){ ev.preventDefault(); toggleGazeVisible(); } });
 
     setTobiiStatus('off','disconnesso');
     setSourcesStatus('off','non caricate');
