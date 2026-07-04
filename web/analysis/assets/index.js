@@ -71,6 +71,20 @@ function initAlphasDefault() {
 }
 initAlphasDefault();
 
+// Eye-tracker pointer vertical calibration: shifts the recorded gaze up/down as a
+// fraction of the video frame height (+ = down, - = up). Applied to every use of
+// the gaze (dot, intersections, heatmap) via gazeToVideoFraction.
+let gazePointerDy = 0;
+const GAZE_DY_KEY = 'favola:analysis:gazeDy';
+const GAZE_DY_BOUNDS = { min: -0.5, max: 0.5, step: 0.005, digits: 3 };
+function loadGazePointer() {
+  try {
+    const v = parseFloat(localStorage.getItem(GAZE_DY_KEY));
+    if (Number.isFinite(v)) gazePointerDy = Math.max(GAZE_DY_BOUNDS.min, Math.min(GAZE_DY_BOUNDS.max, v));
+  } catch {}
+}
+function saveGazePointer() { try { localStorage.setItem(GAZE_DY_KEY, String(gazePointerDy)); } catch {} }
+
 function keyForCat(cat) { return cat === 'word' ? 'text' : cat; }
 function alphaWFor(cat)  { const v = alphaByCat[keyForCat(cat)]?.w;  return Number.isFinite(v) && v > 0 ? v : 1.0; }
 function alphaHFor(cat)  { const v = alphaByCat[keyForCat(cat)]?.h;  return Number.isFinite(v) && v > 0 ? v : 1.0; }
@@ -157,6 +171,41 @@ function renderAlphaPanel() {
     num.addEventListener('input',    () => onAlphaChange(cat, axis, num.value,    slider, num));
   };
 
+  // --- Eye-tracker pointer (vertical calibration) — first control in the panel ---
+  {
+    const header = document.createElement('div');
+    header.className = 'alpha-group-name';
+    header.textContent = 'gaze pointer (su/giù)';
+    els.alphaList.appendChild(header);
+
+    const b = GAZE_DY_BOUNDS;
+    const axisLabel = mkAxisLabel('Y');
+    const slider = document.createElement('input');
+    slider.type = 'range'; slider.className = 'alpha-row-input';
+    slider.min = String(b.min); slider.max = String(b.max); slider.step = String(b.step);
+    slider.value = String(gazePointerDy);
+    slider.title = 'Sposta il pointer del gaze su (valori negativi) / giù (positivi)';
+    const num = document.createElement('input');
+    num.type = 'number'; num.className = 'alpha-row-num';
+    num.min = String(b.min); num.max = String(b.max); num.step = String(b.step);
+    num.value = gazePointerDy.toFixed(b.digits);
+    num.title = 'Offset verticale del pointer (frazione dell\'altezza frame)';
+    const onGazeDy = (raw) => {
+      let v = parseFloat(raw);
+      if (!Number.isFinite(v)) return;
+      v = Math.max(b.min, Math.min(b.max, v));
+      gazePointerDy = v;
+      const f = v.toFixed(b.digits);
+      if (slider.value !== String(v)) slider.value = String(v);
+      if (num.value !== f) num.value = f;
+      saveGazePointer();
+      refreshChartsForAlpha();   // recompute % / heatmap; the live dot follows via rAF
+    };
+    slider.addEventListener('input', () => onGazeDy(slider.value));
+    num.addEventListener('input',    () => onGazeDy(num.value));
+    els.alphaList.append(axisLabel, slider, num);
+  }
+
   for (const c of ALPHA_CATEGORIES) {
     const a = alphaByCat[c];
     const header = document.createElement('div');
@@ -175,6 +224,8 @@ function renderAlphaPanel() {
 
 function resetAlphas() {
   initAlphasDefault();
+  gazePointerDy = 0;
+  saveGazePointer();
   renderAlphaPanel();
   saveAlphasToStorage();
   refreshChartsForAlpha();
@@ -313,7 +364,8 @@ function gazeToVideoFraction(gazeSess, sessionVp, vid) {
   const s = Math.min(sessionVp.width / vid.w, sessionVp.height / vid.h);
   const sw = vid.w * s, sh = vid.h * s;
   if (sw <= 0 || sh <= 0) return null;
-  return { x: gazeSess.x / sw, y: gazeSess.y / sh };
+  // gazePointerDy: user calibration shift of the pointer along Y (frame fraction).
+  return { x: gazeSess.x / sw, y: gazeSess.y / sh + gazePointerDy };
 }
 
 function boxToVideoFraction(box, recordVp) {
@@ -818,5 +870,6 @@ els.video.addEventListener('pause', () => { renderLiveOverlay(); stopOverlayLoop
 els.video.addEventListener('seeked', () => { renderLiveOverlay(); });
 
 loadAlphasFromStorage();
+loadGazePointer();
 renderAlphaPanel();
 loadRecordingsList();
