@@ -101,16 +101,44 @@ function Ensure-WingetPackage {
 }
 
 # ---------------------------------------------------------------------------
+# Funzione: trova un interprete Python che *funziona davvero* (non basta che il
+# comando 'py'/'python' esista: il launcher 'py' puo' esserci ma puntare a una
+# versione il cui interprete e' stato rimosso -> 'Unable to create process').
+# ---------------------------------------------------------------------------
+function Get-WorkingPython {
+  foreach ($cand in @('py', 'python', 'python3')) {
+    if (-not (Get-Command $cand -ErrorAction SilentlyContinue)) { continue }
+    $prev = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
+    try { & $cand --version *> $null; $ok = ($LASTEXITCODE -eq 0) }
+    catch { $ok = $false }
+    finally { $ErrorActionPreference = $prev }
+    if ($ok) { return $cand }
+  }
+  return $null
+}
+
+# ---------------------------------------------------------------------------
 # 1) Node.js LTS
 # ---------------------------------------------------------------------------
 Ensure-WingetPackage -Name "Node.js LTS" -Id "OpenJS.NodeJS.LTS" -Probe "node" `
   -FallbackUrl "https://nodejs.org/en/download/prebuilt-installer" | Out-Null
 
 # ---------------------------------------------------------------------------
-# 2) Python 3 (64-bit)  — usiamo la 3.12
+# 2) Python 3 (64-bit)  — deve essere un interprete FUNZIONANTE
 # ---------------------------------------------------------------------------
-Ensure-WingetPackage -Name "Python 3.12" -Id "Python.Python.3.12" -Probe "py" `
-  -FallbackUrl "https://www.python.org/downloads/windows/" | Out-Null
+Write-Step "Installazione: Python 3 (64-bit)"
+$pyCmd = Get-WorkingPython
+if ($pyCmd) {
+  Write-Ok "Python funzionante gia' presente (interprete: $pyCmd)."
+} elseif ($hasWinget) {
+  Ensure-WingetPackage -Name "Python 3.12" -Id "Python.Python.3.12" | Out-Null
+  $pyCmd = Get-WorkingPython   # ri-verifica (potrebbe servire un nuovo terminale per il PATH)
+} else {
+  Write-Warn2 "Nessun Python funzionante e winget non disponibile: installalo manualmente."
+  Write-Host "  Download: https://www.python.org/downloads/windows/" -ForegroundColor Yellow
+  Write-Host "  IMPORTANTE: durante il setup spunta 'Add python.exe to PATH'." -ForegroundColor Yellow
+  Write-Host "  Se hai un 'py' rotto (punta a un Python rimosso), reinstalla Python o rimuovi la voce guasta." -ForegroundColor Yellow
+}
 
 # ---------------------------------------------------------------------------
 # 3) Google Chrome  (spesso non e' in PATH: rileviamo anche i percorsi noti)
@@ -163,15 +191,14 @@ if ($SkipTobii) {
 # 5) Pacchetto Python 'websockets'
 # ---------------------------------------------------------------------------
 Write-Step "Pacchetto Python 'websockets'"
-# Rileva il launcher Python (py preferito su Windows, altrimenti python)
-$pyCmd = $null
-if (Get-Command py -ErrorAction SilentlyContinue)     { $pyCmd = "py" }
-elseif (Get-Command python -ErrorAction SilentlyContinue) { $pyCmd = "python" }
+# Riusa l'interprete funzionante individuato allo step Python (ri-verifica nel caso
+# Python sia stato appena installato).
+if (-not $pyCmd) { $pyCmd = Get-WorkingPython }
 
 if (-not $pyCmd) {
-  Write-Warn2 "Python non trovato in PATH in questa sessione."
-  Write-Host "  Chiudi e riapri il terminale (o riavvia il PC) e rilancia l'installer" -ForegroundColor Yellow
-  Write-Host "  per completare l'installazione di 'websockets'." -ForegroundColor Yellow
+  Write-Warn2 "Nessun interprete Python funzionante in questa sessione."
+  Write-Host "  Installa Python (con 'Add to PATH'), chiudi e riapri il terminale," -ForegroundColor Yellow
+  Write-Host "  poi rilancia l'installer per completare 'websockets'." -ForegroundColor Yellow
 } else {
   Write-Host "  Uso interprete: $pyCmd" -ForegroundColor Gray
   # pip writes upgrade/deprecation notices to stderr; under ErrorActionPreference='Stop'
@@ -214,7 +241,14 @@ function Test-Tool {
 }
 
 $okNode   = Test-Tool -Name "Node.js"  -Cmd "node"   -VersionArgs @("--version")
-$okPython = Test-Tool -Name "Python"   -Cmd "py"     -VersionArgs @("--version")
+# Python: verifica un interprete che *funziona* (py.exe puo' esistere ma essere rotto).
+if ($pyCmd) {
+  $prevEAP = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
+  try { $pv = (& $pyCmd --version 2>&1 | Select-Object -First 1) } catch { $pv = '' } finally { $ErrorActionPreference = $prevEAP }
+  Write-Ok ("{0,-16} {1}" -f "Python", $pv); $okPython = $true
+} else {
+  Write-Warn2 ("{0,-16} interprete non funzionante ('py' rotto o Python assente)" -f "Python"); $okPython = $false
+}
 $okChrome = [bool](Get-Command chrome -ErrorAction SilentlyContinue) -or `
             (Test-Path "C:\Program Files\Google\Chrome\Application\chrome.exe") -or `
             (Test-Path "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe")
