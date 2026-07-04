@@ -62,6 +62,12 @@
         <option value="on">ON</option>
       </select>
     </div>
+    <div class="tb-group">
+      <label title="Esegui la calibrazione a 5 punti prima della storia" style="display:flex;align-items:center;gap:5px;cursor:pointer">
+        <input id="calToggle" type="checkbox" checked />
+        <span class="label" style="cursor:pointer">Calibrazione</span>
+      </label>
+    </div>
     <div class="tb-group" id="tb-tobii">
       <span class="label">Tobii</span>
       <span id="tobii-status" class="status-pill off">disconnesso</span>
@@ -83,6 +89,8 @@
       </div>
     </div>
   </div>
+
+  <div id="calibration" aria-hidden="true"><div id="calDot"></div></div>
 
   <div id="status">Seleziona partecipante, storia e tipologia.</div>
 

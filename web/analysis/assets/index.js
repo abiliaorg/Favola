@@ -86,6 +86,38 @@ function loadGazePointer() {
 }
 function saveGazePointer() { try { localStorage.setItem(GAZE_DY_KEY, String(gazePointerDy)); } catch {} }
 
+// Per-axis gaze calibration derived from the 5-point step recorded in session/.
+// Maps measured gaze -> intended target: corrected = a*raw + b (session-viewport px).
+// Identity until a recording with a valid `calibration` block is loaded.
+let gazeCalX = { a: 1, b: 0 };
+let gazeCalY = { a: 1, b: 0 };
+let gazeCalActive = false;
+function fitAxisLinear(ms, ts) {
+  const n = ms.length;
+  if (n === 0) return { a: 1, b: 0 };
+  const mm = ms.reduce((s, v) => s + v, 0) / n;
+  const mt = ts.reduce((s, v) => s + v, 0) / n;
+  let num = 0, den = 0;
+  for (let i = 0; i < n; i++) { num += (ms[i] - mm) * (ts[i] - mt); den += (ms[i] - mm) * (ms[i] - mm); }
+  if (n < 2 || den < 1e-6) return { a: 1, b: mt - mm };  // offset-only fallback
+  const a = num / den;
+  return { a, b: mt - a * mm };
+}
+function computeGazeCalibration(cal) {
+  gazeCalX = { a: 1, b: 0 }; gazeCalY = { a: 1, b: 0 }; gazeCalActive = false;
+  if (!cal || !Array.isArray(cal.points)) return;
+  const pts = cal.points.filter(p => p && p.measured && p.target);
+  if (pts.length === 1) {
+    gazeCalX = { a: 1, b: pts[0].target.x - pts[0].measured.x };
+    gazeCalY = { a: 1, b: pts[0].target.y - pts[0].measured.y };
+    gazeCalActive = true; return;
+  }
+  if (pts.length < 2) return;
+  gazeCalX = fitAxisLinear(pts.map(p => p.measured.x), pts.map(p => p.target.x));
+  gazeCalY = fitAxisLinear(pts.map(p => p.measured.y), pts.map(p => p.target.y));
+  gazeCalActive = true;
+}
+
 function keyForCat(cat) { return cat === 'word' ? 'text' : cat; }
 function alphaWFor(cat)  { const v = alphaByCat[keyForCat(cat)]?.w;  return Number.isFinite(v) && v > 0 ? v : 1.0; }
 function alphaHFor(cat)  { const v = alphaByCat[keyForCat(cat)]?.h;  return Number.isFinite(v) && v > 0 ? v : 1.0; }
@@ -280,8 +312,14 @@ async function loadRecording(filename) {
     }
   }
 
+  // Derive the per-axis gaze calibration from the 5-point block (if present).
+  computeGazeCalibration(session.calibration);
+  const calN = (session.calibration && Array.isArray(session.calibration.points))
+    ? session.calibration.points.filter(p => p && p.measured).length : 0;
+
   els.info.textContent =
-    `pid=${session.participantId||'?'} class=${session.class||'?'} story=${session.story||'?'} typ=${session.typology||'?'} samples=${session.samples.length}`;
+    `pid=${session.participantId||'?'} class=${session.class||'?'} story=${session.story||'?'} typ=${session.typology||'?'} samples=${session.samples.length}` +
+    (gazeCalActive ? ` · cal:${calN}pt` : ' · cal:off');
 
   // Locate source video and tracking JSON based on class/story/typology.
   const base = `/data/01_record/${session.class}_${session.story}_${session.typology}`;
@@ -365,9 +403,11 @@ function gazeToVideoFraction(gazeSess, sessionVp, vid) {
   const s = Math.min(sessionVp.width / vid.w, sessionVp.height / vid.h);
   const sw = vid.w * s, sh = vid.h * s;
   if (sw <= 0 || sh <= 0) return null;
-  // gazePointerDy: user calibration shift of the pointer along Y, in recording
-  // (session-viewport) pixels — added before converting to frame fraction.
-  return { x: gazeSess.x / sw, y: (gazeSess.y + gazePointerDy) / sh };
+  // 5-point per-axis calibration first (session-viewport px), then the manual
+  // gazePointerDy fine-tune (px), then convert to frame fraction.
+  const gx = gazeCalX.a * gazeSess.x + gazeCalX.b;
+  const gy = gazeCalY.a * gazeSess.y + gazeCalY.b;
+  return { x: gx / sw, y: (gy + gazePointerDy) / sh };
 }
 
 function boxToVideoFraction(box, recordVp) {

@@ -8,7 +8,8 @@
       overlay: document.getElementById('overlay'), gazeDot: document.getElementById('gazeDot'), gazeToggle: document.getElementById('gazeToggle'),
       tobiiStatus: document.getElementById('tobii-status'), tobiiReconnect: document.getElementById('btn-tobii-reconnect'),
       tobiiCalibrate: document.getElementById('btn-tobii-calibrate'),
-      sourcesStatus: document.getElementById('sources-status')
+      sourcesStatus: document.getElementById('sources-status'),
+      calToggle: document.getElementById('calToggle'), calDot: document.getElementById('calDot')
     };
 
 
@@ -301,6 +302,7 @@
         typology:els.typology.value,
         sourceJsonLoaded:!!data,
         viewport:{width:window.innerWidth, height:window.innerHeight},
+        calibration:calibrationData,
         samples
       };
       try{
@@ -320,6 +322,55 @@
       }
     }
 
+    // ---- 5-point calibration (black screen + white dot), run before the story ----
+    // 4 corners (with a margin) + centre. Positions are fractions of the window.
+    const CAL_POINTS = [
+      { x:0.5, y:0.5 }, { x:0.1, y:0.1 }, { x:0.9, y:0.1 }, { x:0.9, y:0.9 }, { x:0.1, y:0.9 }
+    ];
+    let calibrationData = null;
+    let calAbort = false;
+    const sleep = (ms)=> new Promise(r=> setTimeout(r, ms));
+    function median(a){ if(!a.length) return null; const b=a.slice().sort((p,q)=>p-q); const m=b.length>>1; return b.length%2 ? b[m] : (b[m-1]+b[m])/2; }
+    async function captureGazeMedian(durationMs){
+      const xs=[], ys=[]; const start=performance.now();
+      while(performance.now()-start < durationMs){
+        if(calAbort) break;
+        if(tobiiHasFreshSample()){ xs.push(tobii.lastSample.x); ys.push(tobii.lastSample.y); }
+        await sleep(40);
+      }
+      const mx=median(xs), my=median(ys);
+      return (mx==null||my==null) ? null : { x:mx, y:my };   // normalized [0,1]
+    }
+    // Returns {viewport, points:[{target,measured}]} in window px, or null if skipped/aborted.
+    async function runCalibration(){
+      if(!els.calToggle || !els.calToggle.checked) return null;         // disabled by checkbox
+      if(!tobii.connected){ setStatus('Tobii offline: calibrazione saltata.'); return null; }
+      calAbort=false;
+      document.body.classList.add('calibrating');
+      setStatus('Calibrazione: fai guardare al bambino il pallino bianco. (Esc per saltare)');
+      const points=[]; const dot=els.calDot;
+      for(const p of CAL_POINTS){
+        if(calAbort) break;
+        const px=p.x*window.innerWidth, py=p.y*window.innerHeight;
+        dot.style.left=px+'px'; dot.style.top=py+'px';
+        dot.classList.remove('capturing');            // pulsing: attract the gaze
+        await sleep(800);
+        if(calAbort) break;
+        dot.classList.add('capturing');               // shrink: encourage a precise fixation
+        const med=await captureGazeMedian(1000);
+        dot.classList.remove('capturing');
+        points.push({
+          target:{ x:Math.round(px), y:Math.round(py) },
+          measured: med ? { x:Math.round(med.x*window.innerWidth), y:Math.round(med.y*window.innerHeight) } : null
+        });
+        await sleep(150);
+      }
+      document.body.classList.remove('calibrating');
+      const valid = points.filter(p=>p.measured).length;
+      if(calAbort || !valid) return null;
+      return { viewport:{ width:window.innerWidth, height:window.innerHeight }, points };
+    }
+
     async function startSession(){
       els.participant.value = els.participant.value.trim();
       if(!els.participant.value){ alert('Inserisci l\'ID partecipante prima di avviare.'); els.participant.focus(); return; }
@@ -327,6 +378,8 @@
       if(!els.story.value){ alert('Seleziona la storia prima di avviare.'); els.story.focus(); return; }
       if(!els.typology.value){ alert('Seleziona la tipologia prima di avviare.'); els.typology.focus(); return; }
       if(!els.video.src){ alert('Sorgenti non caricate. Controlla la combinazione storia/tipologia.'); return; }
+      // Calibration first (5-point), if enabled and Tobii connected, then the story.
+      calibrationData = await runCalibration();
       setFocusMode(true);
       setPresentationMode(true);
       isRunning=true;
@@ -390,7 +443,10 @@
     if(els.tobiiCalibrate) els.tobiiCalibrate.addEventListener('click', calibrateTobii);
 
     els.gazeToggle.addEventListener('change', ()=> setGazeVisible(els.gazeToggle.value==='on'));
-    window.addEventListener('keydown',(ev)=>{ if(ev.key==='F2'){ ev.preventDefault(); toggleGazeVisible(); } });
+    window.addEventListener('keydown',(ev)=>{
+      if(ev.key==='F2'){ ev.preventDefault(); toggleGazeVisible(); }
+      else if(ev.key==='Escape'){ calAbort=true; }   // skip calibration in progress
+    });
 
     setTobiiStatus('off','disconnesso');
     setSourcesStatus('off','non caricate');
