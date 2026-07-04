@@ -144,3 +144,10 @@ vite.config.ts.timestamp-*
 
 __pycache__/
 *.pyc
+
+# Gaze recordings: keep the folder, ignore its contents
+data/02_gaze/*
+!data/02_gaze/.gitkeep
+
+# Claude Code local settings
+.claude/
