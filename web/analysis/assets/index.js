@@ -71,12 +71,13 @@ function initAlphasDefault() {
 }
 initAlphasDefault();
 
-// Eye-tracker pointer vertical calibration: shifts the recorded gaze up/down as a
-// fraction of the video frame height (+ = down, - = up). Applied to every use of
-// the gaze (dot, intersections, heatmap) via gazeToVideoFraction.
+// Eye-tracker pointer vertical calibration: shifts the recorded gaze up/down by a
+// number of PIXELS in the recording's coordinate space (session viewport px;
+// + = down, - = up). Applied to every use of the gaze (dot, intersections,
+// heatmap) via gazeToVideoFraction.
 let gazePointerDy = 0;
-const GAZE_DY_KEY = 'favola:analysis:gazeDy';
-const GAZE_DY_BOUNDS = { min: -0.5, max: 0.5, step: 0.005, digits: 3 };
+const GAZE_DY_KEY = 'favola:analysis:gazeDyPx';
+const GAZE_DY_BOUNDS = { min: -400, max: 400, step: 1, digits: 0 };
 function loadGazePointer() {
   try {
     const v = parseFloat(localStorage.getItem(GAZE_DY_KEY));
@@ -175,7 +176,7 @@ function renderAlphaPanel() {
   {
     const header = document.createElement('div');
     header.className = 'alpha-group-name';
-    header.textContent = 'gaze pointer (su/giù)';
+    header.textContent = 'gaze pointer (px, su/giù)';
     els.alphaList.appendChild(header);
 
     const b = GAZE_DY_BOUNDS;
@@ -184,12 +185,12 @@ function renderAlphaPanel() {
     slider.type = 'range'; slider.className = 'alpha-row-input';
     slider.min = String(b.min); slider.max = String(b.max); slider.step = String(b.step);
     slider.value = String(gazePointerDy);
-    slider.title = 'Sposta il pointer del gaze su (valori negativi) / giù (positivi)';
+    slider.title = 'Sposta il pointer del gaze in pixel: su (negativi) / giù (positivi)';
     const num = document.createElement('input');
     num.type = 'number'; num.className = 'alpha-row-num';
     num.min = String(b.min); num.max = String(b.max); num.step = String(b.step);
     num.value = gazePointerDy.toFixed(b.digits);
-    num.title = 'Offset verticale del pointer (frazione dell\'altezza frame)';
+    num.title = 'Offset verticale del pointer in pixel (spazio recording)';
     const onGazeDy = (raw) => {
       let v = parseFloat(raw);
       if (!Number.isFinite(v)) return;
@@ -364,8 +365,9 @@ function gazeToVideoFraction(gazeSess, sessionVp, vid) {
   const s = Math.min(sessionVp.width / vid.w, sessionVp.height / vid.h);
   const sw = vid.w * s, sh = vid.h * s;
   if (sw <= 0 || sh <= 0) return null;
-  // gazePointerDy: user calibration shift of the pointer along Y (frame fraction).
-  return { x: gazeSess.x / sw, y: gazeSess.y / sh + gazePointerDy };
+  // gazePointerDy: user calibration shift of the pointer along Y, in recording
+  // (session-viewport) pixels — added before converting to frame fraction.
+  return { x: gazeSess.x / sw, y: (gazeSess.y + gazePointerDy) / sh };
 }
 
 function boxToVideoFraction(box, recordVp) {
