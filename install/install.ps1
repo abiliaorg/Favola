@@ -44,13 +44,15 @@ Write-Host "============================================" -ForegroundColor White
 # ---------------------------------------------------------------------------
 Write-Step "Verifica di winget (App Installer)"
 $winget = Get-Command winget -ErrorAction SilentlyContinue
-if (-not $winget) {
-  Write-Err2 "'winget' non trovato. E' incluso in 'App Installer' dal Microsoft Store."
-  Write-Host "  Installa 'App Installer' da: https://apps.microsoft.com/detail/9nblggh4nns1" -ForegroundColor Yellow
-  Write-Host "  In alternativa aggiorna Windows, poi rilancia questo installer." -ForegroundColor Yellow
-  exit 1
+$hasWinget = [bool]$winget
+if ($hasWinget) {
+  Write-Ok "winget disponibile."
+} else {
+  Write-Warn2 "'winget' non trovato: verifichero' cio' che e' gia' presente e per il resto"
+  Write-Host "  forniro' un link di download diretto (niente installazione automatica)." -ForegroundColor Yellow
+  Write-Host "  Per l'installazione automatica completa, installa 'App Installer':" -ForegroundColor Yellow
+  Write-Host "  https://apps.microsoft.com/detail/9nblggh4nns1" -ForegroundColor Yellow
 }
-Write-Ok "winget disponibile."
 
 # ---------------------------------------------------------------------------
 # Funzione: installa un pacchetto winget se il comando 'probe' non esiste gia'
@@ -59,7 +61,8 @@ function Ensure-WingetPackage {
   param(
     [Parameter(Mandatory)][string]$Name,     # etichetta leggibile
     [Parameter(Mandatory)][string]$Id,       # winget package id
-    [string]$Probe                            # comando da testare per capire se e' gia' installato
+    [string]$Probe,                           # comando da testare per capire se e' gia' installato
+    [string]$FallbackUrl                      # link di download diretto se winget manca
   )
   Write-Step "Installazione: $Name"
 
@@ -69,6 +72,12 @@ function Ensure-WingetPackage {
       Write-Ok "$Name gia' presente ($($existing.Source))."
       return $true
     }
+  }
+
+  if (-not $hasWinget) {
+    Write-Warn2 "$Name non presente e winget non disponibile: installalo manualmente."
+    if ($FallbackUrl) { Write-Host "  Download: $FallbackUrl" -ForegroundColor Yellow }
+    return $false
   }
 
   # Gia' installato secondo winget?
@@ -94,17 +103,28 @@ function Ensure-WingetPackage {
 # ---------------------------------------------------------------------------
 # 1) Node.js LTS
 # ---------------------------------------------------------------------------
-Ensure-WingetPackage -Name "Node.js LTS" -Id "OpenJS.NodeJS.LTS" -Probe "node" | Out-Null
+Ensure-WingetPackage -Name "Node.js LTS" -Id "OpenJS.NodeJS.LTS" -Probe "node" `
+  -FallbackUrl "https://nodejs.org/en/download/prebuilt-installer" | Out-Null
 
 # ---------------------------------------------------------------------------
 # 2) Python 3 (64-bit)  — usiamo la 3.12
 # ---------------------------------------------------------------------------
-Ensure-WingetPackage -Name "Python 3.12" -Id "Python.Python.3.12" -Probe "py" | Out-Null
+Ensure-WingetPackage -Name "Python 3.12" -Id "Python.Python.3.12" -Probe "py" `
+  -FallbackUrl "https://www.python.org/downloads/windows/" | Out-Null
 
 # ---------------------------------------------------------------------------
-# 3) Google Chrome
+# 3) Google Chrome  (spesso non e' in PATH: rileviamo anche i percorsi noti)
 # ---------------------------------------------------------------------------
-Ensure-WingetPackage -Name "Google Chrome" -Id "Google.Chrome" -Probe "chrome" | Out-Null
+$chromePresent = [bool](Get-Command chrome -ErrorAction SilentlyContinue) -or `
+                 (Test-Path "C:\Program Files\Google\Chrome\Application\chrome.exe") -or `
+                 (Test-Path "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe")
+if ($chromePresent) {
+  Write-Step "Installazione: Google Chrome"
+  Write-Ok "Google Chrome gia' presente."
+} else {
+  Ensure-WingetPackage -Name "Google Chrome" -Id "Google.Chrome" -Probe "chrome" `
+    -FallbackUrl "https://www.google.com/chrome/" | Out-Null
+}
 
 # ---------------------------------------------------------------------------
 # 4) Tobii Experience (driver ET5 + DLL). Opzionale.
@@ -121,12 +141,14 @@ if ($SkipTobii) {
     # winget potrebbe non avere il pacchetto: proviamo, poi fallback al link.
     $tobiiIds = @("Tobii.GamingHub", "Tobii.Experience")
     $done = $false
-    foreach ($id in $tobiiIds) {
-      $found = & winget show --id $id -e 2>$null | Out-String
-      if ($found -match [regex]::Escape($id)) {
-        Ensure-WingetPackage -Name "Tobii ($id)" -Id $id | Out-Null
-        $done = $true
-        break
+    if ($hasWinget) {
+      foreach ($id in $tobiiIds) {
+        $found = & winget show --id $id -e 2>$null | Out-String
+        if ($found -match [regex]::Escape($id)) {
+          Ensure-WingetPackage -Name "Tobii ($id)" -Id $id | Out-Null
+          $done = $true
+          break
+        }
       }
     }
     if (-not $done) {
