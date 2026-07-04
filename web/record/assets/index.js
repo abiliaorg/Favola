@@ -14,7 +14,7 @@ window.__debugLog = __debugLog;
 window.__debugClear = () => { __debugLog.length = 0; try { sessionStorage.removeItem(__DBG_KEY); } catch { } console.log('[DEBUG] cleared'); };
 __dbg('boot', { url: location.href, ua: navigator.userAgent.slice(0, 80) });
 let recognition = null, isOn = false, isListening = false, finalText = '', interimText = '';
-let words = [], pendingImg = null, logLines = [], fontSize = 64, currentPanel = null;
+let words = [], pendingImg = null, logLines = [], fontSize = 80, currentPanel = null;
 let mode = localStorage.getItem('caption_mode') || 'images';
 let maxLines = parseInt(localStorage.getItem('caption_max_lines') || '2', 10);
 let videoAudioTrack = null, videoUrl = null;
@@ -204,6 +204,19 @@ async function loadBuiltinWords() {
   } catch { return []; }
 }
 
+// Normalized word -> entry lookup, rebuilt whenever `words` changes. Replaces a
+// linear scan that re-normalized all ~3000 entries for every token on every
+// render (the CPU half of the "Parole + immagini" slowness). First match wins,
+// matching the previous words.find() behaviour.
+let wordIndex = new Map();
+function rebuildWordIndex() {
+  wordIndex = new Map();
+  for (const w of words) {
+    const k = normalizeWord(w.word);
+    if (k && !wordIndex.has(k)) wordIndex.set(k, w);
+  }
+}
+
 function loadUserWords() {
   try { return JSON.parse(localStorage.getItem('sottotitoli_user_words') || '[]'); } catch { return []; }
 }
@@ -237,6 +250,19 @@ function initSpeech() {
     if (fin) { finalText += fin + ' '; logLines.push({ t: new Date(), txt: fin.trim() }); refreshLog(); }
     interimText = intr; render();
   };
+}
+
+// Chrome's SpeechRecognition can get wedged after a stop() (or stop + clear)
+// cycle and silently stop delivering results on the next start(). Rebuild a
+// fresh instance so every AVVIA begins from a clean state. Handlers on the old
+// instance are detached first so its late onend can't retrigger safeStart.
+function resetRecognition() {
+  if (recognition) {
+    recognition.onstart = recognition.onend = recognition.onerror = recognition.onresult = null;
+    try { recognition.abort(); } catch { }
+  }
+  isListening = false;
+  initSpeech();
 }
 
 function getActiveAudioSource() {
@@ -295,8 +321,8 @@ async function startScreenRecordingIfEnabled() {
       screenChunks = [];
       const base = currentTargetBase();
       if (base) {
-        const ok = await uploadToServer(`/api/sources/${base}.webm`, blob, 'video/webm');
-        if (ok) { setStatus(`Salvato sources/${base}.webm`, false); return; }
+        const ok = await uploadToServer(`/api/record/${base}.webm`, blob, 'video/webm');
+        if (ok) { setStatus(`Salvato record/${base}.webm`, false); return; }
         setStatus(`Upload webm fallito, scarico in locale`, false);
       }
       const a = document.createElement('a');
@@ -471,8 +497,8 @@ async function exportTrackingDataJson() {
   const base = currentTargetBase();
   if (base) {
     const blob = new Blob([body], { type: 'application/json' });
-    const ok = await uploadToServer(`/api/sources/json/${base}.json`, blob, 'application/json');
-    if (ok) { setStatus(`Salvato sources/${base}.json`, false); return; }
+    const ok = await uploadToServer(`/api/record/json/${base}.json`, blob, 'application/json');
+    if (ok) { setStatus(`Salvato record/${base}.json`, false); return; }
     setStatus(`Upload json fallito, scarico in locale`, false);
   }
   const blob = new Blob([body], { type: 'application/json' });
@@ -485,7 +511,7 @@ async function exportTrackingDataJson() {
   URL.revokeObjectURL(a.href);
 }
 
-function stopSessionAndExport() {
+async function stopSessionAndExport() {
   setFocusMode(false);
   stopScreenRecording();
   stopFaceTrackingLoop();
@@ -498,9 +524,28 @@ function stopSessionAndExport() {
   try { recognition.stop(); } catch { }
   isListening = false;
   updateMicBtn();
-  setStatus('Fermo', false);
-  // Auto-export tracking JSON (uploaded to /api/sources/ when a 1_<class>_<story>.* video was loaded).
-  exportTrackingDataJson();
+  setStatus('Salvataggio...', false);
+  // Auto-export tracking JSON (uploaded to /api/record/ when a <class>_<story>.* video was loaded).
+  // exportTrackingDataJson() builds its payload synchronously, so the tracking
+  // globals are safe to clear once it resolves.
+  await exportTrackingDataJson();
+  // Everything saved: wipe the caption, rewind the story to 00:00 and stand by.
+  resetForNextRecording();
+}
+
+// After a take is stopped and saved, clear the on-screen text + tracking + log,
+// rewind the loaded story video to the start, and stand by for a new recording.
+function resetForNextRecording() {
+  finalText = '';
+  interimText = '';
+  logLines = [];
+  clearTrackingData();
+  refreshLog();
+  render();
+  const video = getVideoEl();
+  if (video) { try { video.pause(); video.currentTime = 0; } catch { } }
+  sessionStartedAtMs = null;
+  setStatus('Salvato. Pronto per una nuova registrazione.', false);
 }
 
 function allocateStableWordId(tokenRef, index) {
@@ -560,6 +605,7 @@ async function toggleMic() {
     }
     sessionStartedAtMs = performance.now();
     clearTrackingData();
+    resetRecognition(); // fresh STT instance each take: avoids Chrome's stuck-after-stop/clear bug
     if (hasActiveVideo() && video) {
       try { await video.play(); } catch { }
       startFaceTrackingLoop();
@@ -587,20 +633,20 @@ function changeSize(d) { fontSize = Math.max(24, Math.min(128, fontSize + d)); d
 function setTheme(v) { document.body.setAttribute('data-theme', v); }
 function setMode(v) { mode = v; localStorage.setItem('caption_mode', mode); render(); updateRecordTargetBadge(); }
 
-// Auto-detected metadata from the loaded video filename (1_<class>_<story>.<ext>).
-// When present, screen-recording webm and tracking JSON are uploaded to /api/sources/
-// with the deterministic name 2_<class>_<story>_<type>.{webm|json} instead of being
+// Auto-detected metadata from the loaded video filename (<class>_<story>.<ext>).
+// When present, screen-recording webm and tracking JSON are uploaded to /api/record/
+// with the deterministic name <class>_<story>_<type>.{webm|json} instead of being
 // downloaded with a timestamp.
 let storyMeta = null;
 function parseStoryFilename(name) {
-  const m = /^1_([2-9])_([A-Za-z0-9]+)\.[A-Za-z0-9]+$/.exec(name || '');
+  const m = /^([1-9])_([A-Za-z0-9]+)\.[A-Za-z0-9]+$/.exec(name || '');
   if (!m) return { valid: false, raw: name || '' };
   return { valid: true, class: m[1], story: m[2].toLowerCase(), raw: name };
 }
 function currentRecordType() { return mode === 'images' ? 'images' : 'text'; }
 function currentTargetBase() {
   if (!storyMeta || !storyMeta.valid) return null;
-  return `2_${storyMeta.class}_${storyMeta.story}_${currentRecordType()}`;
+  return `${storyMeta.class}_${storyMeta.story}_${currentRecordType()}`;
 }
 function updateRecordTargetBadge() {
   const sm = document.getElementById('story-meta');
@@ -610,7 +656,7 @@ function updateRecordTargetBadge() {
     : 'Storia: -';
   if (tn) {
     const base = currentTargetBase();
-    tn.textContent = base ? `Target: ${base}.{webm,json}` : 'Target: - (carica 1_<class>_<story>.mp4)';
+    tn.textContent = base ? `Target: ${base}.{webm,json}` : 'Target: - (carica <class>_<story>.mp4)';
   }
 }
 async function uploadToServer(url, blob, contentType) {
@@ -648,7 +694,7 @@ function matchWordToken(token) {
   const seen = new Set();
   for (const a of attempts) {
     if (!a || seen.has(a)) continue; seen.add(a);
-    const found = words.find(w => normalizeWord(w.word) === a);
+    const found = wordIndex.get(a);
     if (found) return { found, suffix };
   }
   return null;
@@ -716,7 +762,7 @@ function applyRowOpacity(lineEl) {
     return { node: n, centerY: (r.top + r.bottom) / 2 };
   }).sort((a, b) => a.centerY - b.centerY);
 
-  const fontPx = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--caption-size')) || 64;
+  const fontPx = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--caption-size')) || 80;
   const rowThreshold = Math.max(8, fontPx * 0.45);
   const rows = [];
   for (const p of points) {
@@ -736,7 +782,12 @@ function applyRowOpacity(lineEl) {
   rows.forEach((row) => {
     const visible = visibleRows.has(row);
     row.items.forEach((p) => {
-      p.node.style.opacity = visible ? '1' : '0.10';
+      // Rows beyond the last `maxLines` are fully hidden (not just dimmed) and
+      // flagged so trackRenderedWordLocations() skips them: an over-limit line
+      // must be neither shown nor tracked.
+      p.node.style.opacity = visible ? '1' : '0';
+      if (visible) delete p.node.dataset.rowHidden;
+      else p.node.dataset.rowHidden = '1';
     });
   });
 }
@@ -763,10 +814,14 @@ function trackRenderedWordLocations() {
   }
   const entries = [];
   let skippedHidden = 0;
+  let skippedBehindImage = 0; // referenced by the debug line below; no rule increments it currently
   const trackedNodes = document.querySelectorAll('#caption [data-word-id]');
   trackedNodes.forEach((node) => {
     const id = Number(node.getAttribute('data-word-id'));
     if (!id) return;
+    // Skip tokens on rows beyond the visible `maxLines` window (flagged by
+    // applyRowOpacity): they are hidden, so they must not be tracked either.
+    if (node.dataset.rowHidden === '1') { skippedHidden++; return; }
     const r = node.getBoundingClientRect();
     // Skip if the bbox crosses (even partially) the bottom line of the video,
     // or if it's off the top/bottom of the viewport.
@@ -818,10 +873,11 @@ async function onVideoSelected(event) {
   const file = (event.target.files || [])[0];
   __dbg('onVideoSelected', { fileName: file && file.name, fileSize: file && file.size, isOn });
   if (!file) return;
+  clearCaption(); // changing the story video starts a fresh take: wipe the caption text + tracking
   storyMeta = parseStoryFilename(file.name);
   updateRecordTargetBadge();
   if (!storyMeta.valid) {
-    setStatus(`Filename "${file.name}" non rispetta lo schema 1_<class>_<story>.<ext> -- l'auto-save sara' disabilitato.`, false);
+    setStatus(`Filename "${file.name}" non rispetta lo schema <class>_<story>.<ext> -- l'auto-save sara' disabilitato.`, false);
   }
   const videoWrap = document.getElementById('video-wrap');
   const video = document.getElementById('story-video');
@@ -863,6 +919,7 @@ function clearVideo() {
   const input = document.getElementById('video-file');
   if (!video || !videoWrap) return;
 
+  clearCaption(); // removing the video also clears the written caption text + tracking
   video.pause();
   stopFaceTrackingLoop();
   video.removeAttribute('src');
@@ -904,8 +961,8 @@ function renderImagesPanel() {
 
 function onFileChg(e) { const f = e.target.files[0]; if (f) readFile(f); }
 function readFile(f) { const r = new FileReader(); r.onload = (e) => { pendingImg = e.target.result; const p = document.getElementById('dprev'); const l = document.getElementById('dzlbl'); if (p) { p.src = pendingImg; p.style.display = 'block'; } if (l) l.style.display = 'none'; }; r.readAsDataURL(f); }
-function addWord() { const word = ((document.getElementById('nw') || {}).value || '').trim(); const url = ((document.getElementById('nu') || {}).value || '').trim(); const src = url || pendingImg; if (!word) { alert('Inserisci la parola'); return; } if (!src) { alert('Carica un\'immagine o inserisci un URL'); return; } words.push({ word, src }); saveUserWords(); pendingImg = null; renderImagesPanel(); render(); }
-function removeWord(i) { words.splice(i, 1); saveUserWords(); renderImagesPanel(); render(); }
+function addWord() { const word = ((document.getElementById('nw') || {}).value || '').trim(); const url = ((document.getElementById('nu') || {}).value || '').trim(); const src = url || pendingImg; if (!word) { alert('Inserisci la parola'); return; } if (!src) { alert('Carica un\'immagine o inserisci un URL'); return; } words.push({ word, src }); rebuildWordIndex(); saveUserWords(); pendingImg = null; renderImagesPanel(); render(); }
+function removeWord(i) { words.splice(i, 1); rebuildWordIndex(); saveUserWords(); renderImagesPanel(); render(); }
 
 function renderLogPanel() { refreshLog(); document.getElementById('panel-footer').innerHTML = '<button onclick="copyLog()" style="width:100%">Copia testo</button>'; }
 function refreshLog() { if (currentPanel !== 'log') return; const b = document.getElementById('panel-body'); b.innerHTML = ''; if (!logLines.length) { b.innerHTML = '<div class="empty">Nessuna trascrizione ancora.</div>'; return; } logLines.slice().reverse().forEach(l => { const d = document.createElement('div'); d.className = 'log-entry'; d.innerHTML = '<span class="ts">' + l.t.toTimeString().slice(0, 8) + '</span>' + esc(l.txt); b.appendChild(d); }); }
@@ -918,6 +975,7 @@ function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').
   const builtins = await loadBuiltinWords();
   window.BUILTIN_WORDS = builtins;
   words = builtins.concat(loadUserWords());
+  rebuildWordIndex();
   window.faceTrackingSnapshots = faceTrackingSnapshots;
   refreshAudioSourceBadge();
   refreshWordsSavedCounter();

@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node launch.js",
     "server": "node server.js",
-    "tobii": "python gaze/tobii_gaze.py --ws --ws-port 12346 --no-csv",
+    "dev": "node --watch server.js",
+    "tobii": "py gaze/tobii_gaze.py --ws --ws-port 12346 --no-csv",
     "kiosk": "start \"\" chrome --app=http://127.0.0.1:12345/session/index.html --start-maximized --no-first-run --disable-features=Translate"
   }
 }

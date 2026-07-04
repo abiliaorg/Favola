@@ -2,15 +2,36 @@
       video: document.getElementById('video'),
       participant: document.getElementById('participant'), classSel: document.getElementById('classSel'),
       story: document.getElementById('story'), typology: document.getElementById('typology'),
-      outlineToggle: document.getElementById('outlineToggle'), gazeStep: document.getElementById('gazeStep'),
+      outlineToggle: document.getElementById('outlineToggle'),
       startBtn: document.getElementById('btn-start'), pauseBtn: document.getElementById('btn-pause'),
       miniStop: document.getElementById('btn-mini-stop'), toolsToggle: document.getElementById('btn-tools-toggle'), status: document.getElementById('status'),
       overlay: document.getElementById('overlay'), gazeDot: document.getElementById('gazeDot'),
       tobiiStatus: document.getElementById('tobii-status'), tobiiReconnect: document.getElementById('btn-tobii-reconnect'),
+      tobiiCalibrate: document.getElementById('btn-tobii-calibrate'),
       sourcesStatus: document.getElementById('sources-status')
     };
 
-    for (let i=1;i<=30;i++){ const o=document.createElement('option'); o.value=String(i).padStart(2,'0'); o.textContent='ID '+String(i).padStart(2,'0'); els.participant.appendChild(o); }
+
+    // Stories available per class (mirrors data/00_sources naming <class>_<story>).
+    // Selecting a class rebuilds the Story dropdown with just its stories.
+    const STORIES_BY_CLASS = {
+      '1': ['carpet', 'fox'],
+      '2': ['carpet', 'fox'],
+      '3': ['cats', 'yawn'],
+      '4': ['dolphin', 'panda'],
+      '5': ['bear', 'eels'],
+    };
+    function populateStories(){
+      const stories = STORIES_BY_CLASS[els.classSel.value] || [];
+      const prev = els.story.value;
+      els.story.innerHTML = '';
+      // Leading empty placeholder: story stays empty until a class is selected
+      // and a story explicitly chosen.
+      const ph = document.createElement('option'); ph.value=''; ph.textContent='—'; els.story.appendChild(ph);
+      for (const s of stories){ const o=document.createElement('option'); o.value=s; o.textContent=s; els.story.appendChild(o); }
+      // Keep the previous story only if this class still offers it, else empty.
+      els.story.value = stories.includes(prev) ? prev : '';
+    }
 
     let data=null, gaze={x:0,y:0}, tickTimer=null, samples=[], lastWordIdx=0, lastFaceIdx=0, isRunning=false;
 
@@ -35,6 +56,21 @@
         ws.onerror=()=>{ setTobiiStatus('err','errore'); };
         ws.onmessage=(ev)=>{ try{ const m=JSON.parse(ev.data); if(m && m.type==='gaze' && m.valid){ tobii.lastSample={x:m.x,y:m.y,ts:m.ts}; tobii.lastSampleAt=performance.now(); } }catch{} };
       }catch{ setTobiiStatus('err','errore'); scheduleTobiiReconnect(); }
+    }
+    async function calibrateTobii(){
+      const btn=els.tobiiCalibrate; if(btn) btn.disabled=true;
+      setTobiiStatus('off','calibrazione...');
+      try{
+        const r=await fetch('/api/tobii/calibrate',{method:'POST'});
+        const j=await r.json().catch(()=>({}));
+        if(!r.ok) throw new Error(j.error||('HTTP '+r.status));
+        setStatus('Calibrazione Tobii avviata: segui le istruzioni sullo schermo.');
+      }catch(e){
+        setTobiiStatus('err','errore');
+        setStatus('Calibrazione non avviata: '+(e.message||e));
+      }finally{
+        if(btn) btn.disabled=false;
+      }
     }
     function tobiiHasFreshSample(){ return tobii.connected && tobii.lastSample && (performance.now()-tobii.lastSampleAt) < TOBII_FRESH_MS; }
     function tobiiSend(obj){ if(tobii.ws && tobii.ws.readyState===1){ try{ tobii.ws.send(JSON.stringify(obj)); }catch{} } }
@@ -74,15 +110,34 @@
     }
     function mapBoxToViewport(box, captureViewport){
       if(!box) return null;
-      if(!captureViewport){
+      if(!captureViewport || !captureViewport.width){
         return { x:box.x, y:box.y, w:box.w, h:box.h };
       }
-      // Use uniform scaling (same factor on x and y) to match object-fit:contain on the video.
-      // The video is laid out top-left aligned by layoutVideoTopLeft, so no offset needed.
-      const sw = window.innerWidth || 0;
-      const sh = window.innerHeight || 0;
-      const scale = Math.min(sw / captureViewport.width, sh / captureViewport.height);
-      return { x:box.x*scale, y:box.y*scale, w:box.w*scale, h:box.h*scale };
+      // Anchor outlines to the video's actually-displayed *content* rectangle.
+      // Two robustness points learned the hard way:
+      //   1) Some browsers mis-report videoHeight for these webm (e.g. 1024 vs the
+      //      real 1080), so we derive the uniform scale from WIDTH only (the recorded
+      //      content spans the full capture width, and width is reported reliably).
+      //   2) object-fit:contain can letterbox the content inside the <video> element;
+      //      we add that letterbox offset (and the element's own position) so the
+      //      outlines never drift when the element aspect != the content aspect.
+      const v = els.video;
+      const r = v.getBoundingClientRect();
+      const vw = v.videoWidth || 0, vh = v.videoHeight || 0;
+      let contentW = r.width, offX = 0, offY = 0;
+      if (vw && vh) {
+        const fit = Math.min(r.width / vw, r.height / vh);
+        contentW = vw * fit;
+        offX = (r.width - contentW) / 2;
+        offY = (r.height - vh * fit) / 2;
+      }
+      const scale = contentW / captureViewport.width;
+      return {
+        x: r.left + offX + box.x*scale,
+        y: r.top  + offY + box.y*scale,
+        w: box.w*scale,
+        h: box.h*scale,
+      };
     }
     const inBox=(pt,b)=>pt.x>=b.x&&pt.x<=b.x+b.w&&pt.y>=b.y&&pt.y<=b.y+b.h;
 
@@ -127,17 +182,17 @@
       drawBox('face',face.face,faceVp); drawBox('mouth',face.mouth,faceVp); drawBox('nose',face.nose,faceVp); drawBox('eyeLeft',face.eyeLeft,faceVp); drawBox('eyeRight',face.eyeRight,faceVp);
     }
 
+    // Move the gaze dot to the latest real Tobii sample. Returns true if a fresh
+    // sample was available. When Tobii is offline there is no simulated gaze: the
+    // dot holds its last position and the caller records nothing.
     function moveGaze(){
-      const v=vRect(); if(!v.w||!v.h) return;
-      if(tobiiHasFreshSample()){
-        const vw=window.innerWidth||v.w, vh=window.innerHeight||v.h;
-        gaze.x=clamp(tobii.lastSample.x*vw,0,vw);
-        gaze.y=clamp(tobii.lastSample.y*vh,0,vh);
-      } else {
-        const step=clamp(parseFloat(els.gazeStep.value)||20,1,200);
-        if(gaze.x===0&&gaze.y===0){gaze.x=v.w*.5;gaze.y=v.h*.5;} else { gaze.x=clamp(gaze.x+((Math.random()*2-1)*step),0,v.w); gaze.y=clamp(gaze.y+((Math.random()*2-1)*step),0,v.h); }
-      }
+      const v=vRect(); if(!v.w||!v.h) return false;
+      if(!tobiiHasFreshSample()) return false;
+      const vw=window.innerWidth||v.w, vh=window.innerHeight||v.h;
+      gaze.x=clamp(tobii.lastSample.x*vw,0,vw);
+      gaze.y=clamp(tobii.lastSample.y*vh,0,vh);
       els.gazeDot.style.left=gaze.x+'px'; els.gazeDot.style.top=gaze.y+'px';
+      return true;
     }
 
     // The session records only raw gaze samples vs. video time. Intersection
@@ -151,15 +206,15 @@
       });
     }
 
-    function tick(){ const t=els.video.currentTime||0; moveGaze(); drawCurrentOutline(t); recordSample(t); setStatus(`Video t=${t.toFixed(2)}s\nSample: ${samples.length}\nOutline: ${els.outlineToggle.value.toUpperCase()}`); }
+    function tick(){ const t=els.video.currentTime||0; const hasGaze=moveGaze(); drawCurrentOutline(t); if(hasGaze) recordSample(t); setStatus(`Video t=${t.toFixed(2)}s\nSample: ${samples.length}\nOutline: ${els.outlineToggle.value.toUpperCase()}`); }
     function startTick(){ if(tickTimer) return; tickTimer=setInterval(tick,100); }
     function stopTick(){ if(!tickTimer) return; clearInterval(tickTimer); tickTimer=null; }
 
     function resetSession(){ samples=[]; lastWordIdx=0; lastFaceIdx=0; const v=vRect(); gaze={x:v.w*.5,y:v.h*.5}; els.gazeDot.style.left=gaze.x+'px'; els.gazeDot.style.top=gaze.y+'px'; clearOutline(); }
 
-    // Auto-load video + tracking JSON from /sources/ based on (story, typology).
-    // Convention: <baseSlug> = "2_<story>_<typology>" -- where 2_ marks the
-    // record/ output that feeds session/ replay. Video can be .mp4 or .webm.
+    // Auto-load video + tracking JSON from /data/01_record/ based on (story, typology).
+    // Convention: <baseSlug> = "<class>_<story>_<typology>" -- the record/ output
+    // that feeds session/ replay. Video can be .mp4 or .webm.
     let currentLoadToken = 0;
     async function fileExists(url){
       try { const r=await fetch(url,{method:'HEAD'}); return r.ok; } catch { return false; }
@@ -167,7 +222,18 @@
     async function loadSourcesForSelection(){
       const token = ++currentLoadToken;
       const cls=els.classSel.value, story=els.story.value, typ=els.typology.value;
-      const base=`/sources/2_${cls}_${story}_${typ}`;
+      // Nothing to load until class, story and typology are all chosen: unload
+      // any current video and stand by.
+      if(!cls || !story || !typ){
+        data=null; els.outlineToggle.disabled=true; els.outlineToggle.value='off';
+        try{ els.video.pause(); }catch{}
+        els.video.removeAttribute('src'); els.video.load();
+        resetSession();
+        setSourcesStatus('off','non caricate');
+        setStatus('Seleziona classe, storia e tipologia.');
+        return;
+      }
+      const base=`/data/01_record/${cls}_${story}_${typ}`;
       setSourcesStatus('off','caricamento...');
 
       // Pick a video extension that actually exists.
@@ -186,7 +252,7 @@
 
       if(!videoUrl){
         setSourcesStatus('err','video mancante');
-        setStatus(`Nessun video trovato per 2_${cls}_${story}_${typ}.mp4|.webm in /sources/.`);
+        setStatus(`Nessun video trovato per ${cls}_${story}_${typ}.mp4|.webm in /data/01_record/.`);
         return;
       }
       els.video.src=videoUrl;
@@ -215,7 +281,7 @@
       setStatus(`Sorgenti caricate: ${videoUrl.split('/').pop()}${jsonLoaded?' + tracking JSON':' (no tracking JSON)'}\nPremi AVVIA.`);
     }
 
-    // POST the raw gaze track to the local server -> recordings/<filename>.json.
+    // POST the raw gaze track to the local server -> data/02_gaze/<filename>.json.
     async function saveSession(){
       if(!samples.length) return false;
       const now=new Date();
@@ -231,14 +297,14 @@
         samples
       };
       try{
-        const r=await fetch(`/api/recordings/${encodeURIComponent(filename)}`,{
+        const r=await fetch(`/api/gaze/${encodeURIComponent(filename)}`,{
           method:'POST',
           headers:{'Content-Type':'application/json'},
           body:JSON.stringify(payload)
         });
         if(!r.ok){ console.error('save failed',r.status); setStatus(`Salvataggio fallito (HTTP ${r.status}).`); return false; }
         const j=await r.json().catch(()=>null);
-        setStatus(`Salvato: recordings/${filename}\nSample: ${samples.length}`);
+        setStatus(`Salvato: gaze/${filename}\nSample: ${samples.length}`);
         return true;
       }catch(e){
         console.error('save error',e);
@@ -248,6 +314,11 @@
     }
 
     async function startSession(){
+      els.participant.value = els.participant.value.trim();
+      if(!els.participant.value){ alert('Inserisci l\'ID partecipante prima di avviare.'); els.participant.focus(); return; }
+      if(!els.classSel.value){ alert('Seleziona la classe prima di avviare.'); els.classSel.focus(); return; }
+      if(!els.story.value){ alert('Seleziona la storia prima di avviare.'); els.story.focus(); return; }
+      if(!els.typology.value){ alert('Seleziona la tipologia prima di avviare.'); els.typology.focus(); return; }
       if(!els.video.src){ alert('Sorgenti non caricate. Controlla la combinazione storia/tipologia.'); return; }
       setFocusMode(true);
       setPresentationMode(true);
@@ -267,6 +338,14 @@
       if(wasRunning && samples.length){
         await saveSession();
       }
+      // Clear the whole selection on every stop / end of session: participant,
+      // class, story and typology all reset to empty. The next run must re-enter
+      // them, and start stays blocked until they are set again.
+      els.participant.value = '';
+      els.classSel.value = '';
+      els.typology.value = '';
+      populateStories();          // class empty -> story dropdown back to empty
+      loadSourcesForSelection();  // unload the video, stand by
     }
 
     els.startBtn.addEventListener('click', startSession);
@@ -283,13 +362,15 @@
     els.outlineToggle.addEventListener('change', ()=> drawCurrentOutline(els.video.currentTime||0));
     els.typology.addEventListener('change', ()=>{ drawCurrentOutline(els.video.currentTime||0); loadSourcesForSelection(); });
     els.story.addEventListener('change', loadSourcesForSelection);
-    els.classSel.addEventListener('change', loadSourcesForSelection);
+    els.classSel.addEventListener('change', ()=>{ populateStories(); loadSourcesForSelection(); });
     if(els.tobiiReconnect) els.tobiiReconnect.addEventListener('click', connectTobii);
+    if(els.tobiiCalibrate) els.tobiiCalibrate.addEventListener('click', calibrateTobii);
 
     window.addEventListener('keydown',(ev)=>{ if(ev.key==='F2'){ ev.preventDefault(); togglePresentationMode(); } });
 
     setTobiiStatus('off','disconnesso');
     setSourcesStatus('off','non caricate');
     connectTobii();
+    populateStories();
     loadSourcesForSelection();
-    setStatus('Seleziona partecipante, storia e tipologia. F2 per mostrare/nascondere il pallino. F1 e\' usato da Tobii.');
+    setStatus('Seleziona partecipante, classe, storia e tipologia. F2 per mostrare/nascondere il pallino. F1 e\' usato da Tobii.');

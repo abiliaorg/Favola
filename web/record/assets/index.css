@@ -8,7 +8,7 @@
     --muted: #666;
     --font-ui: 'Space Mono', monospace;
     --font-caption: 'DM Sans', sans-serif;
-    --caption-size: 64px;
+    --caption-size: 80px;
     --max-lines: 2;
     --caption-color: #fff;
     --caption-bg: #000;
@@ -212,9 +212,10 @@
     background: transparent;
     border: 1px solid var(--border);
     color: var(--text);
-    opacity: .5;
+    opacity: .05;
     transition: opacity .15s ease;
   }
+  /* Barely visible at rest; only fully opaque on mouse hover / keyboard focus. */
   #floating-controls button:hover,
   #floating-controls button:focus-visible { opacity: 1; }
   #btn-mini-stop {

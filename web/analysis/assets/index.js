@@ -184,7 +184,7 @@ function resetAlphas() {
 
 async function loadRecordingsList() {
   setStatus('Caricamento lista...');
-  const r = await fetch('/api/recordings');
+  const r = await fetch('/api/gaze');
   if (!r.ok) { setStatus(`Errore lista: HTTP ${r.status}`); return; }
   const j = await r.json();
   const items = j.items || [];
@@ -193,7 +193,7 @@ async function loadRecordingsList() {
     const o = document.createElement('option');
     o.value = ''; o.textContent = '(nessun recording)';
     els.picker.appendChild(o);
-    setStatus('Nessun recording in /recordings.');
+    setStatus('Nessun recording in /gaze.');
     return;
   }
   for (const it of items) {
@@ -215,7 +215,7 @@ async function fileExists(url) {
 async function loadRecording(filename) {
   if (!filename) return;
   setStatus(`Caricamento ${filename}...`);
-  const r = await fetch(`/recordings/${encodeURIComponent(filename)}`);
+  const r = await fetch(`/data/02_gaze/${encodeURIComponent(filename)}`);
   if (!r.ok) { setStatus(`Errore caricamento: HTTP ${r.status}`); return; }
   session = await r.json();
   if (!Array.isArray(session.samples)) {
@@ -232,7 +232,7 @@ async function loadRecording(filename) {
     `pid=${session.participantId||'?'} class=${session.class||'?'} story=${session.story||'?'} typ=${session.typology||'?'} samples=${session.samples.length}`;
 
   // Locate source video and tracking JSON based on class/story/typology.
-  const base = `/sources/2_${session.class}_${session.story}_${session.typology}`;
+  const base = `/data/01_record/${session.class}_${session.story}_${session.typology}`;
   let foundVideo = null;
   for (const ext of ['mp4', 'webm']) {
     if (await fileExists(`${base}.${ext}`)) { foundVideo = `${base}.${ext}`; break; }
@@ -244,7 +244,7 @@ async function loadRecording(filename) {
   } else {
     els.video.removeAttribute('src');
     els.video.load();
-    els.videoHint.textContent = `Video non trovato in /sources/2_${session.class}_${session.story}_${session.typology}.{mp4,webm}`;
+    els.videoHint.textContent = `Video non trovato in /data/01_record/${session.class}_${session.story}_${session.typology}.{mp4,webm}`;
   }
 
   // Load tracking JSON (optional).
@@ -318,11 +318,20 @@ function gazeToVideoFraction(gazeSess, sessionVp, vid) {
 
 function boxToVideoFraction(box, recordVp) {
   if (!box || !recordVp || !recordVp.width || !recordVp.height) return null;
+  // The recorded content spans the full captured video width from the top-left,
+  // so derive the record-px -> frame-fraction scale from width and use the video's
+  // real aspect for the vertical axis. This keeps boxes in the same fraction space
+  // as the gaze (already computed against the video's intrinsic size) even when the
+  // captured frame is taller/shorter than the record viewport (e.g. a full-screen
+  // capture 1920x1080 while the browser viewport was 1920x1024). For a matching
+  // aspect (proper tab capture) denomH == recordVp.height, so nothing changes.
+  const vid = videoIntrinsic();
+  const denomH = (vid && vid.w && vid.h) ? (recordVp.width * vid.h / vid.w) : recordVp.height;
   return {
     x: box.x / recordVp.width,
-    y: box.y / recordVp.height,
+    y: box.y / denomH,
     w: box.w / recordVp.width,
-    h: box.h / recordVp.height,
+    h: box.h / denomH,
   };
 }
 

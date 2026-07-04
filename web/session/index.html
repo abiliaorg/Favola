@@ -16,27 +16,28 @@
 
     <div class="tb-group">
       <span class="label">Partecipante</span>
-      <select id="participant" title="Partecipante"></select>
+      <input id="participant" type="text" placeholder="ID" title="Partecipante (obbligatorio per avviare)" autocomplete="off" size="6" />
     </div>
     <div class="tb-group">
-      <span class="label">Class</span>
-      <select id="classSel" title="Class (elementary year)">
+      <span class="label">Classe</span>
+      <select id="classSel" title="Classe (anno scuola primaria)">
+        <option value="" selected>—</option>
+        <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
-        <option value="4" selected>4</option>
+        <option value="4">4</option>
         <option value="5">5</option>
       </select>
     </div>
     <div class="tb-group">
       <span class="label">Storia</span>
-      <select id="story" title="Storia">
-        <option value="carpet">carpet</option>
-        <option value="fox">fox</option>
-      </select>
+      <!-- Opzioni popolate da JS in base alla classe (STORIES_BY_CLASS). -->
+      <select id="story" title="Storia"></select>
     </div>
     <div class="tb-group">
       <span class="label">Tipologia</span>
       <select id="typology" title="Tipologia">
+        <option value="" selected>—</option>
         <option value="text">text</option>
         <option value="images">images</option>
       </select>
@@ -54,14 +55,11 @@
         <option value="on">ON</option>
       </select>
     </div>
-    <div class="tb-group">
-      <span class="label">Step occhi</span>
-      <input id="gazeStep" type="number" value="20" min="1" max="120" title="Step random walk del pallino quando Tobii e' offline" />
-    </div>
     <div class="tb-group" id="tb-tobii">
       <span class="label">Tobii</span>
       <span id="tobii-status" class="status-pill off">disconnesso</span>
       <button id="btn-tobii-reconnect" title="Riconnetti al bridge Tobii">&#x21bb;</button>
+      <button id="btn-tobii-calibrate" title="Avvia la calibrazione Tobii">Calibra</button>
     </div>
   </div>
 

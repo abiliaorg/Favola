@@ -8,7 +8,6 @@
     .label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
     button,select,input{font-size:12px;border:1px solid var(--border);border-radius:6px;background:#0f0f0f;color:var(--text);padding:6px 8px}
     button{cursor:pointer}
-    #gazeStep{width:80px}
     #btn-start{background:var(--ok);border-color:var(--ok);color:#06210f;font-weight:700}
     #btn-save{background:#1f4bff;border-color:#1f4bff;color:#fff}
 
@@ -40,7 +39,9 @@
     .status-pill.err{background:#5a1010;color:#ffb3b3}
 
     #floating-controls{position:fixed;top:10px;left:16px;z-index:200;display:none;gap:6px}
-    #floating-controls button{font-size:12px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;background:#0f0f0f;color:var(--text);opacity:1}
+    #floating-controls button{font-size:12px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;background:#0f0f0f;color:var(--text);opacity:.05;transition:opacity .15s ease}
+    /* Barely visible at rest; only fully opaque on mouse hover / keyboard focus. */
+    #floating-controls button:hover,#floating-controls button:focus-visible{opacity:1}
     #btn-mini-stop{background:var(--danger);border-color:var(--danger);color:#fff;font-weight:700}
 
     body.running-collapsed #floating-controls{display:flex}

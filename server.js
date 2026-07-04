@@ -1,22 +1,29 @@
 // Minimal Node HTTP server for Favola.
-// - Serves /            from ./web/
-// - Serves /sources/*   from ./sources/
-// - Accepts POST /api/recordings/<filename>.json -> writes ./recordings/<filename>.json
+// - Serves /            from ./web/   (front-end modules: record/, session/, analysis/)
+// - Serves /data/*      from ./data/  (00_sources/, 01_record/, 02_gaze/)
+//     NB: data is served under /data/ (not /record/ etc) so it does not shadow
+//     the web/record/ front-end module served from /record/.
+// - Accepts POST /api/record/<file>.(webm|mp4)      -> ./data/01_record/
+//           POST /api/record/json/<file>.json       -> ./data/01_record/
+//           POST /api/gaze/<file>.json              -> ./data/02_gaze/
 // Supports HTTP Range requests so <video> can seek.
 
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const { spawn } = require('child_process');
 
 const PORT = parseInt(process.env.PORT || '12345', 10);
 const HOST = '127.0.0.1';
 const ROOT = __dirname;
 const WEB_DIR = path.join(ROOT, 'web');
-const SOURCES_DIR = path.join(ROOT, 'sources');
-const RECORDINGS_DIR = path.join(ROOT, 'recordings');
+const DATA_DIR = path.join(ROOT, 'data');
+const SOURCES_DIR = path.join(DATA_DIR, '00_sources');
+const RECORD_DIR = path.join(DATA_DIR, '01_record');
+const GAZE_DIR = path.join(DATA_DIR, '02_gaze');
 
-if (!fs.existsSync(RECORDINGS_DIR)) {
-  fs.mkdirSync(RECORDINGS_DIR, { recursive: true });
+for (const dir of [SOURCES_DIR, RECORD_DIR, GAZE_DIR]) {
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 }
 
 const MIME = {
@@ -84,10 +91,17 @@ function serveStatic(req, res, baseDir, relUrl) {
   });
 }
 
+// Static image/font assets never change during a session but are re-created in
+// the DOM on every caption re-render; caching them (instead of no-store) avoids a
+// re-download storm that makes the "Parole + immagini" mode crawl. Everything else
+// (html/js/css/json/video) stays no-store for dev freshness / live data.
+const CACHEABLE_EXT = new Set(['.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.webp', '.woff', '.woff2', '.ttf', '.otf']);
+
 function streamFile(req, res, filePath, st) {
 
     const ext = path.extname(filePath).toLowerCase();
     const ct = MIME[ext] || 'application/octet-stream';
+    const cacheControl = CACHEABLE_EXT.has(ext) ? 'public, max-age=3600' : 'no-store';
     const range = req.headers.range;
 
     if (range) {
@@ -101,7 +115,7 @@ function streamFile(req, res, filePath, st) {
             'Content-Length': end - start + 1,
             'Content-Range': `bytes ${start}-${end}/${st.size}`,
             'Accept-Ranges': 'bytes',
-            'Cache-Control': 'no-store',
+            'Cache-Control': cacheControl,
           });
           fs.createReadStream(filePath, { start, end }).pipe(res);
           return;
@@ -115,7 +129,7 @@ function streamFile(req, res, filePath, st) {
       'Content-Type': ct,
       'Content-Length': st.size,
       'Accept-Ranges': 'bytes',
-      'Cache-Control': 'no-store',
+      'Cache-Control': cacheControl,
     });
     fs.createReadStream(filePath).pipe(res);
 }
@@ -191,46 +205,84 @@ function handleBinaryUpload(req, res, baseDir, urlPrefix, allowedNameRegex) {
   req.on('error', () => { try { stream.destroy(); fs.unlinkSync(tmpPath); } catch {} sendJson(res, 400, { error: 'request error' }); });
 }
 
-function handleRecordingsList(req, res) {
-  fs.readdir(RECORDINGS_DIR, (err, names) => {
-    if (err) return sendJson(res, 500, { error: 'cannot list recordings' });
+function handleGazeList(req, res) {
+  fs.readdir(GAZE_DIR, (err, names) => {
+    if (err) return sendJson(res, 500, { error: 'cannot list gaze recordings' });
     const items = names.filter(n => n.toLowerCase().endsWith('.json')).map(n => {
-      const st = fs.statSync(path.join(RECORDINGS_DIR, n));
+      const st = fs.statSync(path.join(GAZE_DIR, n));
       return { name: n, size: st.size, mtime: st.mtimeMs };
     }).sort((a, b) => b.mtime - a.mtime);
     sendJson(res, 200, { items });
   });
 }
 
-// Allowed input naming on disk:
-//   sources/    1_<class>_<story>.mp4    (record input)
-//               2_<class>_<story>_<type>.{webm|mp4|json}  (record output)
-//   recordings/ YYYYMMDD_HHMMSS_<pid>_<class>_<story>_<type>.json
-const SOURCES_BIN_RE = /^[A-Za-z0-9_\-.]+\.(?:webm|mp4)$/;
-const SOURCES_JSON_RE = /^[A-Za-z0-9_\-.]+\.json$/;
-const RECORDINGS_RE  = /^[A-Za-z0-9_\-.]+\.json$/;
+// POST /api/tobii/calibrate -> launches the Tobii calibration/configuration app.
+// The exe is auto-detected among the known Tobii install paths; override with the
+// FAVOLA_TOBII_CALIB_EXE env var (full path) and FAVOLA_TOBII_CALIB_ARGS
+// (space-separated extra args, e.g. a direct-calibration switch for your Tobii version).
+function findTobiiCalibExe() {
+  if (process.env.FAVOLA_TOBII_CALIB_EXE) return process.env.FAVOLA_TOBII_CALIB_EXE;
+  const candidates = [
+    'C:\\Program Files\\Tobii\\Tobii EyeX\\Tobii.Configuration.exe',
+    'C:\\Program Files (x86)\\Tobii\\Tobii EyeX\\Tobii.Configuration.exe',
+    'C:\\Program Files\\Tobii\\Tobii Experience\\Tobii.Experience.exe',
+    'C:\\Program Files (x86)\\Tobii\\Tobii Experience\\Tobii.Experience.exe',
+  ];
+  return candidates.find(p => fs.existsSync(p)) || null;
+}
+
+function handleTobiiCalibrate(req, res) {
+  if (process.platform !== 'win32') {
+    return sendJson(res, 501, { error: 'La calibrazione Tobii è disponibile solo su Windows.' });
+  }
+  const exe = findTobiiCalibExe();
+  if (!exe) {
+    return sendJson(res, 404, {
+      error: 'Eseguibile di calibrazione Tobii non trovato. Installa Tobii Experience oppure imposta FAVOLA_TOBII_CALIB_EXE.',
+    });
+  }
+  const extra = (process.env.FAVOLA_TOBII_CALIB_ARGS || '').trim();
+  const args = extra ? extra.split(/\s+/) : [];
+  try {
+    const child = spawn(exe, args, { detached: true, stdio: 'ignore' });
+    child.on('error', (e) => console.error(`tobii calibrate spawn error: ${e.message}`));
+    child.unref();
+    console.log(`POST /api/tobii/calibrate: launched ${exe} ${args.join(' ')}`.trim());
+    return sendJson(res, 200, { ok: true, exe, args });
+  } catch (e) {
+    return sendJson(res, 500, { error: `Impossibile avviare la calibrazione: ${e.message}` });
+  }
+}
+
+// Allowed naming on disk:
+//   data/00_sources/  <class>_<story>.mp4                        (record input)
+//   data/01_record/   <class>_<story>_<type>.{webm|mp4|json}     (record output)
+//   data/02_gaze/     YYYYMMDD_HHMMSS_<pid>_<class>_<story>_<type>.json
+const RECORD_BIN_RE = /^[A-Za-z0-9_\-.]+\.(?:webm|mp4)$/;
+const RECORD_JSON_RE = /^[A-Za-z0-9_\-.]+\.json$/;
+const GAZE_RE  = /^[A-Za-z0-9_\-.]+\.json$/;
 
 const server = http.createServer((req, res) => {
   if (req.method === 'POST') {
-    if (req.url.startsWith('/api/recordings/')) {
-      return handleJsonUpload(req, res, RECORDINGS_DIR, '/api/recordings/', RECORDINGS_RE);
+    if (req.url.startsWith('/api/gaze/')) {
+      return handleJsonUpload(req, res, GAZE_DIR, '/api/gaze/', GAZE_RE);
     }
-    if (req.url.startsWith('/api/sources/json/')) {
-      return handleJsonUpload(req, res, SOURCES_DIR, '/api/sources/json/', SOURCES_JSON_RE);
+    if (req.url.startsWith('/api/record/json/')) {
+      return handleJsonUpload(req, res, RECORD_DIR, '/api/record/json/', RECORD_JSON_RE);
     }
-    if (req.url.startsWith('/api/sources/')) {
-      return handleBinaryUpload(req, res, SOURCES_DIR, '/api/sources/', SOURCES_BIN_RE);
+    if (req.url.startsWith('/api/record/')) {
+      return handleBinaryUpload(req, res, RECORD_DIR, '/api/record/', RECORD_BIN_RE);
+    }
+    if (req.url === '/api/tobii/calibrate') {
+      return handleTobiiCalibrate(req, res);
     }
   }
   if (req.method === 'GET' || req.method === 'HEAD') {
-    if (req.url === '/api/recordings' || req.url === '/api/recordings/') {
-      return handleRecordingsList(req, res);
+    if (req.url === '/api/gaze' || req.url === '/api/gaze/') {
+      return handleGazeList(req, res);
     }
-    if (req.url.startsWith('/recordings/')) {
-      return serveStatic(req, res, RECORDINGS_DIR, req.url.substring('/recordings/'.length));
-    }
-    if (req.url.startsWith('/sources/')) {
-      return serveStatic(req, res, SOURCES_DIR, req.url.substring('/sources/'.length));
+    if (req.url.startsWith('/data/')) {
+      return serveStatic(req, res, DATA_DIR, req.url.substring('/data/'.length));
     }
     return serveStatic(req, res, WEB_DIR, req.url.split('?')[0]);
   }
@@ -239,11 +291,12 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, HOST, () => {
   console.log(`Favola server listening on http://${HOST}:${PORT}/`);
-  console.log(`  web/         ->  GET  /`);
-  console.log(`  sources/     ->  GET  /sources/<file>`);
-  console.log(`               ->  POST /api/sources/<file>.(webm|mp4)`);
-  console.log(`               ->  POST /api/sources/json/<file>.json`);
-  console.log(`  recordings/  ->  GET  /recordings/<file>.json`);
-  console.log(`               ->  GET  /api/recordings   (list)`);
-  console.log(`               ->  POST /api/recordings/<file>.json`);
+  console.log(`  web/              ->  GET  /            (record/, session/, analysis/)`);
+  console.log(`  data/00_sources/  ->  GET  /data/00_sources/<file>`);
+  console.log(`  data/01_record/   ->  GET  /data/01_record/<file>`);
+  console.log(`                    ->  POST /api/record/<file>.(webm|mp4)`);
+  console.log(`                    ->  POST /api/record/json/<file>.json`);
+  console.log(`  data/02_gaze/     ->  GET  /data/02_gaze/<file>.json`);
+  console.log(`                    ->  GET  /api/gaze   (list)`);
+  console.log(`                    ->  POST /api/gaze/<file>.json`);
 });

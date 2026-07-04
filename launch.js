@@ -52,6 +52,42 @@ function killProcessesOnPort(port) {
   }
 }
 
+// Kill leftover processes from a previous run by matching a substring of their
+// full command line. Scoped to our own children (the Tobii bridge script, the
+// Chrome app window opened on our URL) so unrelated python/chrome the user runs
+// are left untouched.
+function killProcessesByCmdline(needle, label, nameLike) {
+  try {
+    if (process.platform === 'win32') {
+      // Filter on the process image name too, otherwise the powershell.exe that
+      // evaluates this very query matches itself (its command line contains the
+      // needle) and we'd kill the matcher instead of the target.
+      const ps =
+        `Get-CimInstance Win32_Process | ` +
+        `Where-Object { $_.Name -like '${nameLike}' -and $_.CommandLine -like '*${needle}*' } | ` +
+        `ForEach-Object { $_.ProcessId }`;
+      let out = '';
+      try { out = execSync(`powershell -NoProfile -Command "${ps}"`, { stdio: ['ignore','pipe','ignore'] }).toString(); }
+      catch { return; }
+      for (const line of out.split(/\r?\n/)) {
+        const pid = line.trim();
+        if (!/^\d+$/.test(pid) || pid === String(process.pid)) continue;
+        try {
+          execSync(`taskkill /F /PID ${pid}`, { stdio: 'ignore' });
+          log('launch', `killed stale ${label} (pid ${pid})`);
+        } catch { /* already gone */ }
+      }
+    } else {
+      try {
+        execSync(`pkill -f ${JSON.stringify(needle)}`, { stdio: 'ignore' });
+        log('launch', `killed stale ${label}`);
+      } catch { /* no match */ }
+    }
+  } catch (e) {
+    log('launch', `cmdline cleanup error (${label}): ${e.message}`);
+  }
+}
+
 function startChild(name, command, args, opts = {}) {
   log('launch', `starting ${name}: ${command} ${args.join(' ')}`);
   const child = spawn(command, args, {
@@ -80,12 +116,18 @@ process.on('SIGINT',  () => shutdown('SIGINT'));
 process.on('SIGTERM', () => shutdown('SIGTERM'));
 if (process.platform === 'win32') process.on('SIGBREAK', () => shutdown('SIGBREAK'));
 
-// 0) Free ports from leftover processes from previous runs.
-killProcessesOnPort(WEB_PORT);
-killProcessesOnPort(TOBII_PORT);
+// 0) Kill leftovers from previous runs before starting a fresh stack.
+killProcessesOnPort(WEB_PORT);        // old server (in-process) holds the web port
+killProcessesOnPort(TOBII_PORT);      // old Tobii bridge holds the ws port
+killProcessesByCmdline('tobii_gaze.py', 'tobii bridge', 'python*');   // bridge not yet bound to the port
+killProcessesByCmdline(`--app=${URL}`, 'chrome app window', 'chrome.exe'); // previous kiosk window
 
 // 1) Tobii bridge (Python). If the ET5 isn't connected it will exit, that's OK.
-startChild('tobii', 'python', [
+// Use the Windows `py` launcher (resolves to the installed CPython with the
+// `websockets` dep, independent of PATH/conda) instead of a bare `python` that
+// a conda/msys shell may shadow with an interpreter missing the dependency.
+const PY = process.env.FAVOLA_PYTHON || (process.platform === 'win32' ? 'py' : 'python3');
+startChild('tobii', PY, [
   'gaze/tobii_gaze.py',
   '--ws',
   '--ws-port', String(TOBII_PORT),
