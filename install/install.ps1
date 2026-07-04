@@ -81,7 +81,7 @@ function Ensure-WingetPackage {
   }
 
   # Gia' installato secondo winget?
-  $listed = & winget list --id $Id -e 2>$null | Out-String
+  $listed = & winget list --id $Id -e | Out-String
   if ($listed -match [regex]::Escape($Id)) {
     Write-Ok "$Name risulta gia' installato (winget)."
     return $true
@@ -143,7 +143,7 @@ if ($SkipTobii) {
     $done = $false
     if ($hasWinget) {
       foreach ($id in $tobiiIds) {
-        $found = & winget show --id $id -e 2>$null | Out-String
+        $found = & winget show --id $id -e | Out-String
         if ($found -match [regex]::Escape($id)) {
           Ensure-WingetPackage -Name "Tobii ($id)" -Id $id | Out-Null
           $done = $true
@@ -174,9 +174,20 @@ if (-not $pyCmd) {
   Write-Host "  per completare l'installazione di 'websockets'." -ForegroundColor Yellow
 } else {
   Write-Host "  Uso interprete: $pyCmd" -ForegroundColor Gray
-  & $pyCmd -m pip install --upgrade pip 2>$null | Out-Null
-  & $pyCmd -m pip install websockets
-  if ($LASTEXITCODE -eq 0) {
+  # pip writes upgrade/deprecation notices to stderr; under ErrorActionPreference='Stop'
+  # (and PS 5.1) a redirected native stderr becomes a terminating error and aborts the
+  # script. Relax it to 'Continue' for these native calls and judge success by exit code.
+  $prevEAP = $ErrorActionPreference
+  $ErrorActionPreference = 'Continue'
+  try {
+    # Nota: non aggiorniamo pip (richiederebbe privilegi di scrittura su pip.exe e
+    # non e' necessario per installare 'websockets').
+    & $pyCmd -m pip install websockets
+    $okWs = ($LASTEXITCODE -eq 0)
+  } finally {
+    $ErrorActionPreference = $prevEAP
+  }
+  if ($okWs) {
     Write-Ok "'websockets' installato."
   } else {
     Write-Err2 "Installazione di 'websockets' fallita. Riprova con: $pyCmd -m pip install websockets"
@@ -211,8 +222,11 @@ if ($okChrome) { Write-Ok ("{0,-16} presente" -f "Chrome") } else { Write-Warn2 
 
 # websockets
 if ($pyCmd) {
-  & $pyCmd -c "import websockets" 2>$null
-  if ($LASTEXITCODE -eq 0) { Write-Ok ("{0,-16} importabile" -f "websockets") }
+  $prevEAP = $ErrorActionPreference
+  $ErrorActionPreference = 'Continue'
+  try { & $pyCmd -c "import websockets" 2>$null; $wsImportable = ($LASTEXITCODE -eq 0) }
+  finally { $ErrorActionPreference = $prevEAP }
+  if ($wsImportable) { Write-Ok ("{0,-16} importabile" -f "websockets") }
   else { Write-Warn2 "websockets non importabile (rilancia l'installer dopo il riavvio del terminale)." }
 }
 
