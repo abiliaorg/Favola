@@ -5,6 +5,7 @@
   "description": "Live subtitle storytelling + eye-tracking analyzer",
   "scripts": {
     "setup": "install\\install.bat",
+    "stop": "powershell -NoProfile -ExecutionPolicy Bypass -File stop.ps1",
     "start": "node launch.js",
     "server": "node server.js",
     "dev": "node --watch server.js",
