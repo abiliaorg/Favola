@@ -29,6 +29,7 @@ const els = {
   info: document.getElementById('info'),
   showBoxes: document.getElementById('showBoxes'),
   showGaze: document.getElementById('showGaze'),
+  useCal: document.getElementById('useCal'),
   alphaReset: document.getElementById('alpha-reset'),
   alphaList: document.getElementById('alphaList'),
   bboxToggle: document.getElementById('btn-bbox-toggle'),
@@ -403,10 +404,12 @@ function gazeToVideoFraction(gazeSess, sessionVp, vid) {
   const s = Math.min(sessionVp.width / vid.w, sessionVp.height / vid.h);
   const sw = vid.w * s, sh = vid.h * s;
   if (sw <= 0 || sh <= 0) return null;
-  // 5-point per-axis calibration first (session-viewport px), then the manual
-  // gazePointerDy fine-tune (px), then convert to frame fraction.
-  const gx = gazeCalX.a * gazeSess.x + gazeCalX.b;
-  const gy = gazeCalY.a * gazeSess.y + gazeCalY.b;
+  // 5-point per-axis calibration first (session-viewport px) — only when enabled
+  // via the toolbar checkbox — then the manual gazePointerDy fine-tune (px),
+  // then convert to frame fraction.
+  const applyCal = !!(els.useCal && els.useCal.checked);
+  const gx = applyCal ? (gazeCalX.a * gazeSess.x + gazeCalX.b) : gazeSess.x;
+  const gy = applyCal ? (gazeCalY.a * gazeSess.y + gazeCalY.b) : gazeSess.y;
   return { x: gx / sw, y: (gy + gazePointerDy) / sh };
 }
 
@@ -895,6 +898,7 @@ document.addEventListener('keydown', (e) => {
 
 els.showBoxes.addEventListener('change', () => { /* overlay loop will pick it up */ });
 els.showGaze.addEventListener('change',  () => { /* overlay loop will pick it up */ });
+els.useCal.addEventListener('change',    () => { refreshChartsForAlpha(); }); // dot follows via rAF
 
 els.video.addEventListener('loadedmetadata', () => {
   // We now know videoWidth/videoHeight, so intersections (which depend on the
