@@ -331,39 +331,66 @@
     let calAbort = false;
     const sleep = (ms)=> new Promise(r=> setTimeout(r, ms));
     function median(a){ if(!a.length) return null; const b=a.slice().sort((p,q)=>p-q); const m=b.length>>1; return b.length%2 ? b[m] : (b[m-1]+b[m])/2; }
-    async function captureGazeMedian(durationMs){
-      const xs=[], ys=[]; const start=performance.now();
-      while(performance.now()-start < durationMs){
-        if(calAbort) break;
-        if(tobiiHasFreshSample()){ xs.push(tobii.lastSample.x); ys.push(tobii.lastSample.y); }
-        await sleep(40);
+
+    // Fixation-gated capture: we can't require the gaze to be NEAR the target (the
+    // offset is exactly what we're measuring), so instead we wait for a STABLE
+    // fixation — a low-dispersion cluster held for CAL_FIX_WINDOW_MS. On a black
+    // screen with one white dot, a stable fixation means the child locked onto it.
+    const CAL_SETTLE_MS      = 350;   // ignore the initial saccade toward the new dot
+    const CAL_FIX_WINDOW_MS  = 420;   // how long the gaze must stay stable
+    const CAL_FIX_DISP       = 0.045; // max normalized bounding-box spread of a fixation
+    const CAL_MIN_SAMPLES    = 7;     // min samples inside the window
+    const CAL_POINT_TIMEOUT  = 3500;  // give up on a point after this
+    async function captureFixation(){
+      const buf=[]; // {x,y,t} in normalized coords
+      const start=performance.now();
+      await sleep(CAL_SETTLE_MS);
+      while(performance.now()-start < CAL_POINT_TIMEOUT){
+        if(calAbort) return null;
+        if(tobiiHasFreshSample()){
+          const now=performance.now();
+          buf.push({ x:tobii.lastSample.x, y:tobii.lastSample.y, t:now });
+          while(buf.length && buf[0].t < now-CAL_FIX_WINDOW_MS) buf.shift();
+          if(buf.length>=CAL_MIN_SAMPLES && (buf[buf.length-1].t - buf[0].t) >= CAL_FIX_WINDOW_MS*0.8){
+            const xs=buf.map(s=>s.x), ys=buf.map(s=>s.y);
+            const dispX=Math.max(...xs)-Math.min(...xs), dispY=Math.max(...ys)-Math.min(...ys);
+            if(dispX<=CAL_FIX_DISP && dispY<=CAL_FIX_DISP){
+              return { x:median(xs), y:median(ys) };   // stable fixation found
+            }
+          }
+        }
+        await sleep(30);
       }
-      const mx=median(xs), my=median(ys);
-      return (mx==null||my==null) ? null : { x:mx, y:my };   // normalized [0,1]
+      return null; // no stable fixation within the timeout
     }
+
     // Returns {viewport, points:[{target,measured}]} in window px, or null if skipped/aborted.
     async function runCalibration(){
       if(!els.calToggle || !els.calToggle.checked) return null;         // disabled by checkbox
       if(!tobii.connected){ setStatus('Tobii offline: calibrazione saltata.'); return null; }
       calAbort=false;
       document.body.classList.add('calibrating');
-      setStatus('Calibrazione: fai guardare al bambino il pallino bianco. (Esc per saltare)');
       const points=[]; const dot=els.calDot;
-      for(const p of CAL_POINTS){
+      for(let i=0;i<CAL_POINTS.length;i++){
         if(calAbort) break;
+        const p=CAL_POINTS[i];
         const px=p.x*window.innerWidth, py=p.y*window.innerHeight;
         dot.style.left=px+'px'; dot.style.top=py+'px';
-        dot.classList.remove('capturing');            // pulsing: attract the gaze
-        await sleep(800);
-        if(calAbort) break;
-        dot.classList.add('capturing');               // shrink: encourage a precise fixation
-        const med=await captureGazeMedian(1000);
-        dot.classList.remove('capturing');
+        dot.classList.remove('capturing','captured');   // pulsing: attract the gaze
+        setStatus(`Calibrazione ${i+1}/${CAL_POINTS.length}: fai fissare il pallino. (Esc per saltare)`);
+        // Wait for a genuine fixation; one retry before giving up on the point.
+        let med = await captureFixation();
+        if(!med && !calAbort) med = await captureFixation();
+        if(med){
+          dot.classList.add('captured');                // green flash = fixation acquired
+          await sleep(220);
+        }
+        dot.classList.remove('capturing','captured');
         points.push({
           target:{ x:Math.round(px), y:Math.round(py) },
           measured: med ? { x:Math.round(med.x*window.innerWidth), y:Math.round(med.y*window.innerHeight) } : null
         });
-        await sleep(150);
+        await sleep(120);
       }
       document.body.classList.remove('calibrating');
       const valid = points.filter(p=>p.measured).length;

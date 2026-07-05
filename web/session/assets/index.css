@@ -55,7 +55,12 @@
     #calibration{position:fixed;inset:0;z-index:300;background:#000;display:none}
     body.calibrating #calibration{display:block}
     body.calibrating{cursor:none}
-    #calDot{position:absolute;left:50%;top:50%;width:44px;height:44px;margin-left:-22px;margin-top:-22px;border-radius:50%;background:#fff;box-shadow:0 0 16px 4px rgba(255,255,255,.7);animation:calpulse 1s ease-in-out infinite}
-    #calDot.capturing{animation:none;transform:scale(.3)}
-    @keyframes calpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.55)}}
+    /* Target = a breathing, gently colour-shifting ring to attract a child's
+       attention; its centre is the fixation point. */
+    #calDot{position:absolute;left:50%;top:50%;width:56px;height:56px;margin-left:-28px;margin-top:-28px;border-radius:50%}
+    #calDot::before{content:'';position:absolute;inset:0;border-radius:50%;border:4px solid #4fd1ff;box-shadow:0 0 22px 6px rgba(79,209,255,.55);animation:calpulse 1.4s ease-in-out infinite, calhue 5s linear infinite}
+    @keyframes calpulse{0%,100%{transform:scale(.7);opacity:.85}50%{transform:scale(1.25);opacity:1}}
+    @keyframes calhue{from{filter:hue-rotate(0deg)}to{filter:hue-rotate(360deg)}}
+    /* Captured: reward feedback — ring stops and turns green. */
+    #calDot.captured::before{animation:none;transform:scale(1);filter:none;border-color:#22c55e;box-shadow:0 0 22px 6px rgba(34,197,94,.6)}
   
