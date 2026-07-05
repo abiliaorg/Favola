@@ -377,7 +377,7 @@
         const px=p.x*window.innerWidth, py=p.y*window.innerHeight;
         dot.style.left=px+'px'; dot.style.top=py+'px';
         dot.classList.remove('capturing','captured');   // pulsing: attract the gaze
-        setStatus(`Calibrazione ${i+1}/${CAL_POINTS.length}: fai fissare il pallino. (Esc per saltare)`);
+        setStatus(`Calibrazione ${i+1}/${CAL_POINTS.length}: fai fissare il pallino. (Spazio/Esc per saltare)`);
         // Wait for a genuine fixation; one retry before giving up on the point.
         let med = await captureFixation();
         if(!med && !calAbort) med = await captureFixation();
@@ -473,6 +473,9 @@
     window.addEventListener('keydown',(ev)=>{
       if(ev.key==='F2'){ ev.preventDefault(); toggleGazeVisible(); }
       else if(ev.key==='Escape'){ calAbort=true; }   // skip calibration in progress
+      // Spacebar (only while calibrating) skips calibration and starts the story;
+      // no calibration is saved, so analysis falls back to the raw gaze.
+      else if((ev.key===' ' || ev.code==='Space') && document.body.classList.contains('calibrating')){ ev.preventDefault(); calAbort=true; }
     });
 
     setTobiiStatus('off','disconnesso');
