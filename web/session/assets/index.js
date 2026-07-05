@@ -336,11 +336,11 @@
     // offset is exactly what we're measuring), so instead we wait for a STABLE
     // fixation — a low-dispersion cluster held for CAL_FIX_WINDOW_MS. On a black
     // screen with one white dot, a stable fixation means the child locked onto it.
-    const CAL_SETTLE_MS      = 350;   // ignore the initial saccade toward the new dot
-    const CAL_FIX_WINDOW_MS  = 420;   // how long the gaze must stay stable
+    const CAL_SETTLE_MS      = 400;   // ignore the initial saccade toward the new dot
+    const CAL_FIX_WINDOW_MS  = 650;   // how long the gaze must stay stable (longer = steadier)
     const CAL_FIX_DISP       = 0.045; // max normalized bounding-box spread of a fixation
-    const CAL_MIN_SAMPLES    = 7;     // min samples inside the window
-    const CAL_POINT_TIMEOUT  = 3500;  // give up on a point after this
+    const CAL_MIN_SAMPLES    = 11;    // min samples inside the window
+    const CAL_POINT_TIMEOUT  = 5000;  // give up on a point after this
     async function captureFixation(){
       const buf=[]; // {x,y,t} in normalized coords
       const start=performance.now();
