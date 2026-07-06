@@ -22,6 +22,12 @@
       '4': ['dolphin', 'panda'],
       '5': ['bear', 'eels'],
     };
+    // Italian label shown in the dropdown as "traduzione (slug)". The option value
+    // (and thus the saved story) stays the English slug.
+    const STORY_LABELS = {
+      carpet:'tappeto', fox:'volpe', cats:'gatti', yawn:'sbadiglio',
+      dolphin:'delfino', panda:'panda', bear:'orso', eels:'anguille',
+    };
     function populateStories(){
       const stories = STORIES_BY_CLASS[els.classSel.value] || [];
       const prev = els.story.value;
@@ -29,7 +35,11 @@
       // Leading empty placeholder: story stays empty until a class is selected
       // and a story explicitly chosen.
       const ph = document.createElement('option'); ph.value=''; ph.textContent='—'; els.story.appendChild(ph);
-      for (const s of stories){ const o=document.createElement('option'); o.value=s; o.textContent=s; els.story.appendChild(o); }
+      for (const s of stories){
+        const o=document.createElement('option'); o.value=s;
+        o.textContent = STORY_LABELS[s] ? `${STORY_LABELS[s]} (${s})` : s;
+        els.story.appendChild(o);
+      }
       // Keep the previous story only if this class still offers it, else empty.
       els.story.value = stories.includes(prev) ? prev : '';
     }
