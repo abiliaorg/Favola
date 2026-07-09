@@ -151,3 +151,7 @@ data/02_gaze/*
 
 # Claude Code local settings
 .claude/
+
+# render temporanei dei PDF (rigenerabili dagli script)
+study/testsheets/_pages/
+study/tests/_sheets/
