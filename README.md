@@ -121,9 +121,9 @@ and reload the matching video + tracking from `data/01_record/`.
 
 Main features:
 
-- Video replay with gaze and bbox overlays
-- Per-sample computation of the **gaze ↔ bbox intersections**, assigning each to a primary category (word / image / face) and, for the face, a sub-category (eyes / mouth / nose), with priority word/image > face
-- Charts: % distribution per primary category, face sub-category breakdown, top words/images, gaze heatmap
+- Video replay with gaze and bbox overlays (including the dashed caption-band outline)
+- Per-sample computation of the **gaze ↔ bbox intersections**, assigning each to a primary category — `caption` (the full-width bottom band where captions appear), `face` or `none` — and a sub-category: `word`/`image` for caption (`none` when inside the band but on no specific entry), `face`/`mouth`/`nose`/`eyeLeft`/`eyeRight` for face. Priority: specific word/image > face part > whole face > caption band
+- Charts: % distribution per primary category, face and caption sub-category breakdowns, top words/images, gaze heatmap
 - **Bbox scaling** panel (`alpha` parameters: W/H scale and dx/dy translation per category) to correct alignment after the fact without re-recording
 
 ## Tobii bridge (`gaze/tobii_gaze.py`)

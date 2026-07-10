@@ -2,7 +2,9 @@
 // the original source video and tracking JSON (word/face bounding boxes), then:
 //   - plays the video with a live overlay (gaze dot + bounding boxes)
 //   - computes per-sample intersections (configurable bbox scaling via alpha)
-//   - shows primary-category pie, category->subcategory sankey, gaze heatmap
+//   - categorizes each sample as caption (bottom caption band) / face / none,
+//     with subcategories word|image (caption) and mouth/nose/eyes/face (face)
+//   - shows primary + subcategory pies, top words/images, gaze heatmap
 
 const ALPHA_CATEGORIES = ['image', 'text', 'face', 'eyeLeft', 'eyeRight', 'nose', 'mouth'];
 const ALPHA_STORAGE_KEY = 'favola:analysis:alphas2';
@@ -12,6 +14,7 @@ const ALPHA_LABELS = { image:'image', text:'text', face:'face', eyeLeft:'L-eye',
 // 'word' equals the default .box border (cyan); 'none' is a muted grey reserved
 // for the "not in any tracked region" bucket.
 const CAT_COLOR = {
+  caption:  '#00e5ff',
   word:     '#00e5ff',
   image:    '#ff4fc1',
   face:     '#ffd166',
@@ -48,6 +51,7 @@ const els = {
 const charts = {
   primary: echarts.init(document.getElementById('chart-primary')),
   faceSub: echarts.init(document.getElementById('chart-face-sub')),
+  captionSub: echarts.init(document.getElementById('chart-caption-sub')),
   words:   echarts.init(document.getElementById('chart-words')),
   heatmap: echarts.init(document.getElementById('chart-heatmap')),
 };
@@ -193,7 +197,7 @@ function renderAlphaPanel() {
     if (slider && slider.value !== String(v)) slider.value = String(v);
     if (num && num.value !== formatted) num.value = formatted;
     saveAlphasToStorage();
-    refreshChartsForAlpha();
+    refreshCharts();
   };
 
   const addPair = (cat, axis, value) => {
@@ -233,7 +237,7 @@ function renderAlphaPanel() {
       if (slider.value !== String(v)) slider.value = String(v);
       if (num.value !== f) num.value = f;
       saveGazePointer();
-      refreshChartsForAlpha();   // recompute % / heatmap; the live dot follows via rAF
+      refreshCharts();   // recompute % / heatmap; the live dot follows via rAF
     };
     slider.addEventListener('input', () => onGazeDy(slider.value));
     num.addEventListener('input',    () => onGazeDy(num.value));
@@ -262,7 +266,7 @@ function resetAlphas() {
   saveGazePointer();
   renderAlphaPanel();
   saveAlphasToStorage();
-  refreshChartsForAlpha();
+  refreshCharts();
 }
 
 // ---------- Recording list ----------
@@ -350,6 +354,7 @@ async function loadRecording(filename) {
       tracking.faceTrackingSnapshots.sort((a,b) => Number(a.videoTime) - Number(b.videoTime));
     }
   } catch { /* leave tracking null */ }
+  invalidateCaptionBand();
 
   renderAll();
 }
@@ -473,28 +478,36 @@ const inBox = (pt, b) => pt && b && pt.x >= b.x && pt.x <= b.x + b.w && pt.y >= 
 
 // ---------- Intersection computation ----------
 
-// Macro-area: bounding rect (in record viewport pixels) of all word/image
-// entries in the current text snapshot. Used to detect "gaze fell inside the
-// text block but not on any specific word".
-function computeTextRegion(wordSnap) {
-  if (!wordSnap || !Array.isArray(wordSnap.entries) || !wordSnap.entries.length) return null;
-  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-  for (const e of wordSnap.entries) {
-    const b = e.location; if (!b) continue;
-    if (b.x < minX) minX = b.x;
-    if (b.y < minY) minY = b.y;
-    if (b.x + b.w > maxX) maxX = b.x + b.w;
-    if (b.y + b.h > maxY) maxY = b.y + b.h;
+// Caption band: full-width bottom strip of the frame where captions can appear,
+// in video-frame fraction space — from the topmost word/image entry seen across
+// the whole tracking down to the bottom edge. Used to detect "gaze fell inside
+// the caption area but not on any specific word/image". Alpha-independent on
+// purpose. Cached: invalidated when the recording or the video intrinsic size
+// changes (both affect the record-px -> fraction conversion).
+let captionBand;  // undefined = stale, null = tracking has no entries
+function invalidateCaptionBand() { captionBand = undefined; }
+function getCaptionBand() {
+  if (captionBand !== undefined) return captionBand;
+  captionBand = null;
+  if (!tracking) return captionBand;
+  let top = Infinity;
+  for (const snap of tracking.textUpdateSnapshots) {
+    const vp = snapshotCaptureViewport(snap, tracking.viewport);
+    if (!vp || !Array.isArray(snap.entries)) continue;
+    for (const e of snap.entries) {
+      const frac = boxToVideoFraction(e.location, vp);
+      if (frac && frac.y < top) top = frac.y;
+    }
   }
-  if (!isFinite(minX)) return null;
-  return { x: minX, y: minY, w: maxX - minX, h: maxY - minY };
+  if (isFinite(top)) captionBand = { x: 0, y: top, w: 1, h: Math.max(0, 1 - top) };
+  return captionBand;
 }
 
 // Categorize one sample in video-frame fraction space. Returns
-// { primaryCategory, primarySubcategory, hits[] }.
+// { primaryCategory, primarySubcategory, primaryWord, primaryWordId, hits[] }.
 // Rules:
-//   - specific hit on word/image -> category 'word'|'image', subcategory = word text
-//   - gaze in text macro-area but no specific word/image -> 'word'/'none'
+//   - specific hit on a word/image entry -> 'caption'/'word' or 'caption'/'image'
+//   - gaze inside the caption band but on no specific entry -> 'caption'/'none'
 //   - specific hit on face part (mouth/nose/eye*) or whole face -> 'face'/<part>
 //   - everything else -> 'none'/'none'
 function categorizeFraction(gazeFrac, t, hints) {
@@ -503,33 +516,29 @@ function categorizeFraction(gazeFrac, t, hints) {
 
   const meta = tracking.wordMetaById || {};
 
-  // Words / images: specific hits.
+  // Caption entries (words / images): specific hits.
   const wsRes = pickNearestAtOrBefore(tracking.textUpdateSnapshots, t, hints.word|0);
   hints.word = wsRes.idx;
   const wordSnap = wsRes.item;
   const wordVp = snapshotCaptureViewport(wordSnap, tracking.viewport);
-  let hasSpecificWordHit = false;
+  let hasSpecificCaptionHit = false;
   if (wordSnap && Array.isArray(wordSnap.entries) && wordVp) {
     for (const e of wordSnap.entries) {
       const m = meta[String(e.wordAutoIncrementalId)] || {};
-      const cat = m.image ? 'image' : 'word'; // 'word' = user-facing 'text'
+      const sub = m.image ? 'image' : 'word'; // also the alpha category ('word' -> text sliders)
       const frac = boxToVideoFraction(e.location, wordVp);
       if (!frac) continue;
-      const transformed = applyAlphaToFractionBox(frac, cat);
+      const transformed = applyAlphaToFractionBox(frac, sub);
       if (inBox(gazeFrac, transformed)) {
-        hits.push({ category: cat, subcategory: m.word || '', id: e.wordAutoIncrementalId });
-        hasSpecificWordHit = true;
+        hits.push({ category: 'caption', subcategory: sub, word: m.word || '', id: e.wordAutoIncrementalId });
+        hasSpecificCaptionHit = true;
       }
     }
-    // No specific hit but gaze sits inside the text macro-area -> 'word'/'none'.
-    // The macro-area is the layout region of text, kept alpha-independent on purpose.
-    if (!hasSpecificWordHit) {
-      const region = computeTextRegion(wordSnap);
-      const regionFrac = region ? boxToVideoFraction(region, wordVp) : null;
-      if (regionFrac && inBox(gazeFrac, regionFrac)) {
-        hits.push({ category: 'word', subcategory: 'none' });
-      }
-    }
+  }
+  // No specific entry hit but gaze sits inside the caption band -> 'caption'/'none'.
+  if (!hasSpecificCaptionHit) {
+    const band = getCaptionBand();
+    if (band && inBox(gazeFrac, band)) hits.push({ category: 'caption', subcategory: 'none' });
   }
 
   // Face parts. Whole-face stays at alpha 1.0 (not in user-controlled list).
@@ -554,29 +563,30 @@ function categorizeFraction(gazeFrac, t, hints) {
     }
   }
 
-  let primaryCategory = 'none', primarySubcategory = 'none', primaryWordId = null;
+  let primaryCategory = 'none', primarySubcategory = 'none', primaryWord = '', primaryWordId = null;
   if (hits.length) {
-    const wordHit = hits.find(h => h.category === 'word' || h.category === 'image');
-    // Face priority: specific part (mouth/nose/eye*) wins over the whole-face
-    // container. Otherwise primary subcategory was always "face" since
-    // face.face is itself a hit whenever the gaze lands on the head.
+    // Priority: specific word/image entry > specific face part (mouth/nose/eye*)
+    // > whole-face container > caption band with no specific entry.
+    const captionSpecific = hits.find(h => h.category === 'caption' && h.id != null);
     const facePartHit = hits.find(h => h.category === 'face' && h.subcategory !== 'face');
     const faceWholeHit = hits.find(h => h.category === 'face');
-    const chosen = wordHit || facePartHit || faceWholeHit || hits[0];
+    const chosen = captionSpecific || facePartHit || faceWholeHit || hits[0];
     primaryCategory = chosen.category;
     primarySubcategory = chosen.subcategory;
-    if (wordHit && wordHit.id != null) primaryWordId = String(wordHit.id);
+    primaryWord = chosen.word || '';
+    if (chosen.id != null) primaryWordId = String(chosen.id);
   }
-  return { primaryCategory, primarySubcategory, primaryWordId, hits };
+  return { primaryCategory, primarySubcategory, primaryWord, primaryWordId, hits };
 }
 
 function aggregateIntersections(samples) {
-  const primaryCounts = {};   // by primaryCategory: word, image, face, none
-  const faceSubCounts = {};   // by primarySubcategory when primaryCategory == 'face'
-  const wordCounts = {};      // by wordAutoIncrementalId when primary in {word,image}
-                              //   ('none' subcategory means "in text area but no specific hit"
-                              //    and has no id, so it's excluded)
-  if (!session) return { primaryCounts, faceSubCounts, wordCounts, total: 0 };
+  const primaryCounts = {};    // by primaryCategory: caption, face, none
+  const faceSubCounts = {};    // by primarySubcategory when primaryCategory == 'face'
+  const captionSubCounts = {}; // word / image / none when primaryCategory == 'caption'
+  const wordCounts = {};       // by wordAutoIncrementalId for specific caption hits
+                               //   ('none' subcategory means "in caption band but no
+                               //    specific hit" and has no id, so it's excluded)
+  if (!session) return { primaryCounts, faceSubCounts, captionSubCounts, wordCounts, total: 0 };
   const sessionVp = session.viewport || { width: window.innerWidth, height: window.innerHeight };
   const vid = videoIntrinsic();
   const hints = { word: 0, face: 0 };
@@ -586,18 +596,20 @@ function aggregateIntersections(samples) {
     primaryCounts[r.primaryCategory] = (primaryCounts[r.primaryCategory] || 0) + 1;
     if (r.primaryCategory === 'face') {
       faceSubCounts[r.primarySubcategory] = (faceSubCounts[r.primarySubcategory] || 0) + 1;
-    } else if ((r.primaryCategory === 'word' || r.primaryCategory === 'image') && r.primaryWordId != null) {
-      wordCounts[r.primaryWordId] = (wordCounts[r.primaryWordId] || 0) + 1;
+    } else if (r.primaryCategory === 'caption') {
+      captionSubCounts[r.primarySubcategory] = (captionSubCounts[r.primarySubcategory] || 0) + 1;
+      if (r.primaryWordId != null) wordCounts[r.primaryWordId] = (wordCounts[r.primaryWordId] || 0) + 1;
     }
   }
-  return { primaryCounts, faceSubCounts, wordCounts, total: samples.length };
+  return { primaryCounts, faceSubCounts, captionSubCounts, wordCounts, total: samples.length };
 }
 
-function refreshChartsForAlpha() {
+function refreshCharts() {
   if (!session) return;
-  const { primaryCounts, faceSubCounts, wordCounts } = aggregateIntersections(session.samples);
-  setPrimaryChart(primaryCounts);
-  setFaceSubChart(faceSubCounts);
+  const { primaryCounts, faceSubCounts, captionSubCounts, wordCounts } = aggregateIntersections(session.samples);
+  setPieChart(charts.primary, 'Primary', primaryCounts);
+  setPieChart(charts.faceSub, 'Face subcategory', faceSubCounts);
+  setPieChart(charts.captionSub, 'Caption subcategory', captionSubCounts);
   setWordsChart(wordCounts);
 }
 
@@ -609,34 +621,14 @@ function pctOf(map) {
     .sort((a, b) => b.value - a.value);
 }
 
-function setPrimaryChart(primaryCounts) {
-  const data = pctOf(primaryCounts).map(d => ({ ...d, itemStyle: { color: colorFor(d.name) } }));
-  charts.primary.setOption({
+function setPieChart(chart, name, counts) {
+  const data = pctOf(counts).map(d => ({ ...d, itemStyle: { color: colorFor(d.name) } }));
+  chart.setOption({
     backgroundColor: 'transparent',
     tooltip: { trigger: 'item', formatter: p => `${p.name}<br/>${p.value} (${p.percent}%)` },
     legend: { orient: 'vertical', right: 8, top: 8, textStyle: { color: '#bdbdbd', fontSize: 11 } },
     series: [{
-      name: 'Primary',
-      type: 'pie',
-      radius: ['38%', '70%'],
-      center: ['40%', '54%'],
-      avoidLabelOverlap: true,
-      itemStyle: { borderRadius: 4, borderColor: '#151515', borderWidth: 2 },
-      label: { show: true, position: 'outside', formatter: '{d}%', color: '#ffffff', fontSize: 11, fontWeight: 700 },
-      labelLine: { show: true, length: 6, length2: 6, lineStyle: { color: '#666' } },
-      data,
-    }],
-  });
-}
-
-function setFaceSubChart(faceSubCounts) {
-  const data = pctOf(faceSubCounts).map(d => ({ ...d, itemStyle: { color: colorFor(d.name) } }));
-  charts.faceSub.setOption({
-    backgroundColor: 'transparent',
-    tooltip: { trigger: 'item', formatter: p => `${p.name}<br/>${p.value} (${p.percent}%)` },
-    legend: { orient: 'vertical', right: 8, top: 8, textStyle: { color: '#bdbdbd', fontSize: 11 } },
-    series: [{
-      name: 'Face subcategory',
+      name,
       type: 'pie',
       radius: ['38%', '70%'],
       center: ['40%', '54%'],
@@ -780,9 +772,9 @@ function renderLiveOverlay() {
   const hud = document.getElementById('hud');
   if (currentGazeFrac && tracking && els.showGaze.checked) {
     const placed = projectFractionPoint(currentGazeFrac, dispRect);
-    const { primaryCategory, primarySubcategory } = categorizeFraction(currentGazeFrac, t, liveHints);
+    const { primaryCategory, primarySubcategory, primaryWord } = categorizeFraction(currentGazeFrac, t, liveHints);
     if (els.hudCat) els.hudCat.textContent = primaryCategory;
-    if (els.hudSub) els.hudSub.textContent = primarySubcategory;
+    if (els.hudSub) els.hudSub.textContent = primaryWord ? `${primarySubcategory} · ${primaryWord}` : primarySubcategory;
     if (hud && placed) {
       hud.style.left = placed.x + 'px';
       hud.style.top  = placed.y + 'px';
@@ -817,6 +809,19 @@ function renderLiveOverlay() {
       ensureBoxes(used + 1);
       const node = boxNodes[used++];
       node.className = 'box ' + cat;
+      node.style.left = b.x + 'px'; node.style.top = b.y + 'px';
+      node.style.width = b.w + 'px'; node.style.height = b.h + 'px';
+      node.style.display = 'block';
+    }
+  }
+  // Caption band outline (dashed) so the caption AOI is visible during replay.
+  const band = getCaptionBand();
+  if (band) {
+    const b = projectFractionBox(band, dispRect);
+    if (b) {
+      ensureBoxes(used + 1);
+      const node = boxNodes[used++];
+      node.className = 'box caption';
       node.style.left = b.x + 'px'; node.style.top = b.y + 'px';
       node.style.width = b.w + 'px'; node.style.height = b.h + 'px';
       node.style.display = 'block';
@@ -863,10 +868,7 @@ function stopOverlayLoop()  { if (rafId) { cancelAnimationFrame(rafId); rafId = 
 
 function renderAll() {
   if (!session) return;
-  const { primaryCounts, faceSubCounts, wordCounts } = aggregateIntersections(session.samples);
-  setPrimaryChart(primaryCounts);
-  setFaceSubChart(faceSubCounts);
-  setWordsChart(wordCounts);
+  refreshCharts();
   setHeatmap(session.samples, session.viewport);
   setStatus(`Rendered: ${session.samples.length} samples, tracking=${tracking ? 'yes' : 'no'}`);
   setTimeout(() => Object.values(charts).forEach(c => c.resize()), 50);
@@ -898,17 +900,13 @@ document.addEventListener('keydown', (e) => {
 
 els.showBoxes.addEventListener('change', () => { /* overlay loop will pick it up */ });
 els.showGaze.addEventListener('change',  () => { /* overlay loop will pick it up */ });
-els.useCal.addEventListener('change',    () => { refreshChartsForAlpha(); }); // dot follows via rAF
+els.useCal.addEventListener('change',    () => { refreshCharts(); }); // dot follows via rAF
 
 els.video.addEventListener('loadedmetadata', () => {
   // We now know videoWidth/videoHeight, so intersections (which depend on the
   // video frame fraction) can finally be computed correctly.
-  if (session) {
-    const { primaryCounts, faceSubCounts, wordCounts } = aggregateIntersections(session.samples);
-    setPrimaryChart(primaryCounts);
-    setFaceSubChart(faceSubCounts);
-    setWordsChart(wordCounts);
-  }
+  invalidateCaptionBand();
+  refreshCharts();
   startOverlayLoop();
 });
 els.video.addEventListener('play',  startOverlayLoop);

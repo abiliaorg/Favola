@@ -81,6 +81,7 @@ button{cursor:pointer}
 #overlay{position:absolute;inset:0;pointer-events:none}
 #gazeDot{position:absolute;width:12px;height:12px;margin-left:-6px;margin-top:-6px;border-radius:50%;background:#ff2d2d;box-shadow:0 0 0 2px rgba(255,255,255,.55);display:none}
 .box{position:absolute;border:2px solid #00e5ff;border-radius:3px;background:transparent;pointer-events:none}
+.box.caption{border-style:dashed;border-radius:0}
 .box.image{border-color:#ff4fc1}
 .box.face{border-color:#ffd166}
 .box.mouth{border-color:#ff4d6d}
@@ -94,6 +95,7 @@ button{cursor:pointer}
 .chart{width:100%;overflow:hidden}
 #chart-primary{height:220px}
 #chart-face-sub{height:220px}
+#chart-caption-sub{height:220px}
 #chart-words{height:300px}
 #chart-heatmap{height:200px}
 
