@@ -23,6 +23,11 @@ GAZE = STUDY.parent / "data" / "02_gaze"
 data = json.loads((STUDY / "chiave_derivata.json").read_text(encoding="utf-8"))
 KEY = {k: v for k, v in data.items() if not k.startswith("_")}
 FASCE = data["_fasce_mt"]
+ALT = data.get("_accetta_anche", {})  # es. orso Q11: accetta anche 'c' (stimolo dice "pesce")
+
+def is_correct(storia, qi, given):
+    """qi 1-based; True se la risposta è la chiave o un'alternativa accettata."""
+    return given == KEY[storia][qi - 1] or given in ALT.get(storia, {}).get(str(qi), [])
 
 _map = json.loads((STUDY / "mappatura_soggetti.json").read_text(encoding="utf-8"))
 MAPPING, EXCLUDED = _map["mapping"], _map["excluded"]
@@ -92,7 +97,7 @@ for r in rows[1:]:
     if all(a == "" for a in given):
         skipped.append((pid, storia))
         continue
-    correct = sum(1 for a, k in zip(given, key) if a == k)
+    correct = sum(1 for i, a in enumerate(given, start=1) if is_correct(storia, i, a))
     blank = sum(1 for a in given if a == "")
     invalid = sum(1 for a in given if a and (len(a) > 1 or a not in "abcd"))
     n = len(key)

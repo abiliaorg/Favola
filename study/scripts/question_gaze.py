@@ -33,6 +33,7 @@ PADDINGS = {"primario": (1.0, 1.5), "stretto": (0.5, 1.0), "largo": (2.0, 3.0)}
 windows = json.loads((STUDY / "question_windows.json").read_text(encoding="utf-8"))
 key_data = json.loads((STUDY / "chiave_derivata.json").read_text(encoding="utf-8"))
 KEY = {k: v for k, v in key_data.items() if not k.startswith("_")}
+ALT = key_data.get("_accetta_anche", {})
 MAPPING = json.loads((STUDY / "mappatura_soggetti.json").read_text(encoding="utf-8"))["mapping"]
 
 DEMO = {}
@@ -94,7 +95,8 @@ for folder in sorted(GAZE.iterdir()):
                 continue
             qi = int(q) - 1
             given = ans[qi] if ans and qi < len(ans) else ""
-            correct = 1 if given == KEY[storia][qi] else 0
+            correct = 1 if (given == KEY[storia][qi]
+                            or given in ALT.get(storia, {}).get(str(qi + 1), [])) else 0
             blank = given == ""
             anchor_ids = set(w["word_ids"])
 

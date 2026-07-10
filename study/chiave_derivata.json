@@ -153,5 +153,13 @@
       "RAD": 7
     }
   },
-  "_nota_sbadiglio": "Q2/Q3: il foglio adattato stampa Q3 sopra Q2; la trascrizione in test.xlsx segue ordine visivo, quindi le colonne 2-3 corrispondono alla numerazione MT (2=sorellina->b, 3=donna->a). Verificato empiricamente: con la numerazione stampata p=0.00 su entrambe, con quella MT p=0.80/0.60."
+  "_nota_sbadiglio": "Q2/Q3: il foglio adattato stampa Q3 sopra Q2; la trascrizione in test.xlsx segue ordine visivo, quindi le colonne 2-3 corrispondono alla numerazione MT (2=sorellina->b, 3=donna->a). Verificato empiricamente: con la numerazione stampata p=0.00 su entrambe, con quella MT p=0.80/0.60.",
+  "_accetta_anche": {
+    "orso": {
+      "11": [
+        "c"
+      ]
+    }
+  },
+  "_nota_orso_q11": "Q11: il brano MT dice pinnipede ma il video (riconoscimento vocale) dice/mostra pesce; tutti i bambini hanno risposto c=va a caccia di pesci, coerente con lo stimolo reale. Decisione: si accettano sia b (chiave MT) sia c. Da riportare nei limiti dello studio."
 }

@@ -145,7 +145,7 @@ Legenda: ✏ = opzioni testuali, 🖼 = opzioni a immagini (descritta l'immagine
 | 8 | Gli artigli | **b** (corti ma resistenti) | "robusti e corti artigli" |
 | 9 | L'olfatto | **c** (avverte animali anche lontani) | "gli segnala la presenza di prede anche a parecchi km" |
 | 10 | A caccia | **a** (si avvicina senza farsi notare) | "si avvicina strisciando carponi" |
-| 11 | Va in acqua perché | **b** (preda irraggiungibile sul ghiaccio) | "a nuoto si dirige verso il blocco di ghiaccio sul quale ha adocchiato" la preda |
+| 11 | Va in acqua perché | **b, accettata anche c** ⚠ | chiave MT = b (preda irraggiungibile sul ghiaccio), ma il video dice/mostra "pesce" al posto di "pinnipede" (refuso del riconoscimento nel master): tutti i bambini hanno risposto c ("va a caccia di pesci"), coerente con lo stimolo reale. Si accettano entrambe (`_accetta_anche` nel JSON); da riportare nei limiti dello studio |
 | 12 | Il pinnipede è | **a** (la foca) | contesto del brano |
 | 13 | Visto un pinnipede sul ghiaccio | **c** (entra in acqua con calma) | "si spinge in acqua e a nuoto si dirige verso il blocco" |
 | 14 | Quando la foca esce a respirare | **a** (la cattura immediatamente) | "quando la vede subito la afferra e la uccide" |

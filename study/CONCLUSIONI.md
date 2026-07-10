@@ -20,6 +20,10 @@ Dopo la pulizia dei dati (attribuzioni corrette, ordine di somministrazione veri
 
 Due osservazioni collaterali da tenere: le storie di una stessa classe non sono equivalenti in difficoltà (va sempre confrontato ciascun bambino con se stesso, come nel nostro disegno); e un'analisi esplorativa suggerisce che i maschi rendano un po' meglio col testo e le femmine con le immagini — numeri piccoli, da riverificare, ma direzione interessante.
 
+## Limiti da tenere presenti
+
+Le prove MT sono state usate fuori dal loro contesto normativo (somministrate a tutti a fine anno e in ascolto, non in lettura): le fasce vanno lette come riferimento descrittivo. Le numerosità per le classi 3ª–5ª sono piccole (5–7 bambini per storia). Le caption erano generate da riconoscimento vocale e contengono qualche refuso; in un caso il refuso tocca un contenuto testato (nell'orso il video dice e mostra "pesce" al posto di "pinnipede"): per quella domanda abbiamo accettato come corrette entrambe le risposte coerenti. Infine, in una domanda illustrata (la casa della gatta) l'illustrazione del distrattore (chalet con neve) ha attirato risposte che il testo narrato non giustificava: nelle prossime versioni le illustrazioni dei distrattori andranno bilanciate meglio.
+
 ## E adesso: lo studio con i bambini sordi
 
 Il quadro trovato è la **baseline ideale**: nei bambini udenti l'audio maschera qualunque differenza tra i due tipi di caption, perché la comprensione può sempre passare dall'ascolto. Nei **bambini sordi questo canale non c'è: le caption diventano la via primaria dell'informazione**, ed è lì che la differenza tra parole scritte e immagini potrà davvero emergere — con un'indicazione già incoraggiante da questo studio: le immagini attirano fortemente lo sguardo dei bambini, quindi il potenziale attentivo c'è. Lo studio con i bambini sordi ci saprà dire dove sta, e quanto vale, quella differenza.

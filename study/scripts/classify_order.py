@@ -20,6 +20,7 @@ GAZE = STUDY.parent / "data" / "02_gaze"
 
 data = json.loads((STUDY / "chiave_derivata.json").read_text(encoding="utf-8"))
 KEY = {k: v for k, v in data.items() if not k.startswith("_")}
+ALT = data.get("_accetta_anche", {})
 EN2IT = {"fox": "volpe e boscaiolo", "carpet": "tappeto", "cats": "gatta", "yawn": "sbadiglio",
          "dolphin": "delfino", "panda": "panda", "bear": "orso", "eels": "anguille"}
 FIRST_STORIES = {"volpe e boscaiolo", "gatta", "delfino", "anguille"}
@@ -56,7 +57,8 @@ for r in list(wb["PROVE"].iter_rows(values_only=True))[1:]:
     given = [str(r[2+i]).strip().lower() if r[2+i] is not None else "" for i in range(len(key))]
     if all(a == "" for a in given):
         continue
-    scores[(pid, storia)] = sum(1 for a, k in zip(given, key) if a == k) / len(key) * 100
+    scores[(pid, storia)] = sum(1 for i, (a, k) in enumerate(zip(given, key), start=1)
+                            if a == k or a in ALT.get(storia, {}).get(str(i), [])) / len(key) * 100
 
 # --- classificazione per soggetto ---
 all_pids = sorted(set(recs) | {p for p, _ in scores},

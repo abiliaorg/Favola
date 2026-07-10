@@ -20,6 +20,7 @@ STUDY = Path(__file__).resolve().parent.parent
 
 key_data = json.loads((STUDY / "chiave_derivata.json").read_text(encoding="utf-8"))
 KEY = {k: v for k, v in key_data.items() if not k.startswith("_")}
+ALT = key_data.get("_accetta_anche", {})
 MAPPING = json.loads((STUDY / "mappatura_soggetti.json").read_text(encoding="utf-8"))["mapping"]
 windows = json.loads((STUDY / "question_windows.json").read_text(encoding="utf-8"))
 
@@ -62,11 +63,12 @@ for r in list(wb["PROVE"].iter_rows(values_only=True))[1:]:
     key = KEY[storia]
     mod = gaze_mod.get((pid, storia))
     given_list = [str(r[2 + i]).strip().lower() if r[2 + i] is not None else "" for i in range(len(key))]
-    tot_correct = sum(1 for a, k in zip(given_list, key) if a == k)
+    ok_fn = lambda i, a: a == key[i - 1] or a in ALT.get(storia, {}).get(str(i), [])
+    tot_correct = sum(1 for i, a in enumerate(given_list, start=1) if ok_fn(i, a))
     for qi, (a, k) in enumerate(zip(given_list, key), start=1):
         obs.append({"pid": pid, "newid": MAPPING[pid], "storia": storia, "q": qi,
-                    "mod": mod, "given": a, "correct": int(a == k),
-                    "rest": tot_correct - int(a == k), "n_q": len(key)})
+                    "mod": mod, "given": a, "correct": int(ok_fn(qi, a)),
+                    "rest": tot_correct - int(ok_fn(qi, a)), "n_q": len(key)})
 
 def mean(xs): return sum(xs) / len(xs) if xs else float("nan")
 def sd(xs):

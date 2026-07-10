@@ -92,7 +92,7 @@
 
 - **I-42 [NS] La posizione dell'informazione nella storia non conta**: r=−0.04 con la correttezza (n=989); inizio 69.9%, centro 68.3%, fine 67.8%. Nessun effetto primacy/recency rilevabile.
 
-- **I-43 [MET] Item analysis (`item_analysis.csv`, 94 item)**: molti item segnalati derivano da n minuscoli (4–7 bambini). Due casi strutturali: **gatta Q1** (p=0.20: i bambini scelgono lo chalet innevato — l'illustrazione della neve fuorvia rispetto a "casa di campagna" narrato) e **orso Q11 (p=0.00: TUTTI rispondono "va a caccia di pesci" perché il video dice/mostra "pesce" al posto di "pinnipede" — item invalido rispetto allo stimolo reale; decidere se escluderlo o accettare anche "c")**.
+- **I-43 [MET] Item analysis (`item_analysis.csv`, 94 item)**: molti item segnalati derivano da n minuscoli (4–7 bambini). Due casi strutturali: **gatta Q1** (p=0.20: i bambini scelgono lo chalet innevato — l'illustrazione della neve fuorvia rispetto a "casa di campagna" narrato) e **orso Q11 (p=0.00: TUTTI rispondono "va a caccia di pesci" perché il video dice/mostra "pesce" al posto di "pinnipede" — item invalido rispetto allo stimolo reale). Decisione presa: si accettano sia "b" sia "c" (`_accetta_anche` nella chiave), da riportare nei limiti dello studio.** Rilanciata la pipeline: risultati principali invariati (I-01 = +1.4 pt, n.s.).
 
 - **I-44 [DES] Il profilo attentivo è un tratto moderatamente stabile**: r=+0.43 per la quota-volto tra le due storie dello stesso bambino (modalità diverse!). Cluster k=3 a livello di registrazione: "lettori di caption" (n=58, score 71.4%), "guardatori di volto" (n=26, prevalentemente text, score 64.2% — coerente con I-32), "fuori-AOI" (n=12, 82% none ma score 78.8%: quasi certamente artefatto di calibrazione, non disattenzione).
 
