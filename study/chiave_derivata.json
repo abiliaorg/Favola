@@ -1,22 +1,157 @@
 {
   "_nota": "Chiave per lo scoring dei fogli somministrati (adattati). Derivata da testsheet PDF + transcript e validata con le chiavi MT ufficiali (study/tests). Vedi chiave_derivata.md. Nomi storia come nel foglio PROVE di test.xlsx.",
-  "volpe e boscaiolo": ["b", "a", "b", "b", "c", "a", "c", "b", "a", "b"],
-  "tappeto": ["c", "b", "b", "b", "c", "c", "b", "c", "b", "a"],
-  "gatta": ["a", "b", "c", "c", "b", "a", "b", "d", "a", "b", "c", "a"],
-  "sbadiglio": ["c", "a", "b", "c", "b", "c", "a", "b", "c", "b"],
-  "delfino": ["c", "a", "d", "d", "a", "d", "a", "b", "d", "a", "c", "d", "d", "a"],
-  "panda": ["a", "d", "a", "c", "a", "d", "c", "a", "a", "c", "b", "a", "b", "a"],
-  "orso": ["b", "a", "c", "d", "b", "d", "a", "b", "c", "a", "b", "a", "c", "a"],
-  "anguille": ["b", "a", "b", "d", "c", "a", "b", "c", "d", "c"],
+  "volpe e boscaiolo": [
+    "b",
+    "a",
+    "b",
+    "b",
+    "c",
+    "a",
+    "c",
+    "b",
+    "a",
+    "b"
+  ],
+  "tappeto": [
+    "c",
+    "b",
+    "b",
+    "b",
+    "c",
+    "c",
+    "b",
+    "c",
+    "b",
+    "a"
+  ],
+  "gatta": [
+    "a",
+    "b",
+    "c",
+    "c",
+    "b",
+    "a",
+    "b",
+    "d",
+    "a",
+    "b",
+    "c",
+    "a"
+  ],
+  "sbadiglio": [
+    "c",
+    "b",
+    "a",
+    "c",
+    "b",
+    "c",
+    "a",
+    "b",
+    "c",
+    "b"
+  ],
+  "delfino": [
+    "c",
+    "a",
+    "d",
+    "d",
+    "a",
+    "d",
+    "a",
+    "b",
+    "d",
+    "a",
+    "c",
+    "d",
+    "d",
+    "a"
+  ],
+  "panda": [
+    "a",
+    "d",
+    "a",
+    "c",
+    "a",
+    "d",
+    "c",
+    "a",
+    "a",
+    "c",
+    "b",
+    "a",
+    "b",
+    "a"
+  ],
+  "orso": [
+    "b",
+    "a",
+    "c",
+    "d",
+    "b",
+    "d",
+    "a",
+    "b",
+    "c",
+    "a",
+    "b",
+    "a",
+    "c",
+    "a"
+  ],
+  "anguille": [
+    "b",
+    "a",
+    "b",
+    "d",
+    "c",
+    "a",
+    "b",
+    "c",
+    "d",
+    "c"
+  ],
   "_fasce_mt": {
     "_legenda": "CCRD/PSD/RAD/RIDI in base al numero di risposte corrette; soglie = minimo della fascia (RIDI = tutto ciò che sta sotto RAD)",
-    "tappeto": {"CCRD": 10, "PSD": 7, "RAD": 5},
-    "volpe e boscaiolo": {"CCRD": 10, "PSD": 8, "RAD": 5},
-    "sbadiglio": {"CCRD": 10, "PSD": 6, "RAD": 4},
-    "gatta": {"CCRD": 12, "PSD": 10, "RAD": 8},
-    "delfino": {"CCRD": 13, "PSD": 10, "RAD": 8},
-    "panda": {"CCRD": 12, "PSD": 8, "RAD": 6},
-    "anguille": {"CCRD": 10, "PSD": 8, "RAD": 5},
-    "orso": {"CCRD": 13, "PSD": 9, "RAD": 7}
-  }
+    "tappeto": {
+      "CCRD": 10,
+      "PSD": 7,
+      "RAD": 5
+    },
+    "volpe e boscaiolo": {
+      "CCRD": 10,
+      "PSD": 8,
+      "RAD": 5
+    },
+    "sbadiglio": {
+      "CCRD": 10,
+      "PSD": 6,
+      "RAD": 4
+    },
+    "gatta": {
+      "CCRD": 12,
+      "PSD": 10,
+      "RAD": 8
+    },
+    "delfino": {
+      "CCRD": 13,
+      "PSD": 10,
+      "RAD": 8
+    },
+    "panda": {
+      "CCRD": 12,
+      "PSD": 8,
+      "RAD": 6
+    },
+    "anguille": {
+      "CCRD": 10,
+      "PSD": 8,
+      "RAD": 5
+    },
+    "orso": {
+      "CCRD": 13,
+      "PSD": 9,
+      "RAD": 7
+    }
+  },
+  "_nota_sbadiglio": "Q2/Q3: il foglio adattato stampa Q3 sopra Q2; la trascrizione in test.xlsx segue ordine visivo, quindi le colonne 2-3 corrispondono alla numerazione MT (2=sorellina->b, 3=donna->a). Verificato empiricamente: con la numerazione stampata p=0.00 su entrambe, con quella MT p=0.80/0.60."
 }

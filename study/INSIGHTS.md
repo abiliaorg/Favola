@@ -6,7 +6,7 @@
 
 ## A. Effetti sperimentali
 
-- **I-01 [NS] La modalità delle caption (text vs images) non ha effetto sulla comprensione.** Confronto appaiato entro bambino (n=48): images−text = **+1.0 pt** (sd 24.2, t(47)=0.28). 21 bambini meglio con images, 19 con text, 8 pari. Decomposizione del disegno incrociato: effetto modalità puro **m = +0.4 pt (t≈0.12)**. Robusto all'esclusione di B5/TI05 (+1.0 pt). È il risultato principale dello studio allo stato attuale.
+- **I-01 [NS] La modalità delle caption (text vs images) non ha effetto sulla comprensione.** Confronto appaiato entro bambino (n=48, chiave post-correzione I-34): images−text = **+1.6 pt** (sd 24.1, t(47)=0.46). 22 bambini meglio con images, 18 con text, 8 pari. Decomposizione del disegno incrociato: effetto modalità puro **m = +0.9 pt (t≈0.25)**. Robusto all'esclusione di B5/TI05. Formalizzato dal TOST (I-46): equivalenza entro ±7.5 pt. È il risultato principale dello studio.
 
 - **I-02 [ESP] Interazione modalità × sesso: i maschi rendono meglio col testo, le femmine con le immagini.** Diff appaiata images−text: maschi **−7.0 pt** (n=25, t=−1.42), femmine **+9.6 pt** (n=23, t=2.22); interazione ≈ 16.6 pt (t≈2.5). Spiegherebbe perché l'effetto medio (I-01) è nullo. Cautela: analisi esplorativa, n piccoli, nessuna correzione per confronti multipli, e il gruppo F femmine è leggermente sbilanciato verso TI (14 TI vs 9 IT). **Ipotesi da verificare con l'analisi AOI del gaze** (guardano cose diverse?).
 
@@ -66,11 +66,45 @@
 
 - **I-30 [MET] Dataset puntuale costruito.** 90 domande puntuali con finestra temporale dell'informazione per variante (`question_windows.json`, 218 finestre, match ≥0.94; orso Q12 recuperata: "pinnipede" riconosciuto come "pesce" ma frase presente e ancorata). 989 osservazioni soggetto×domanda, 920 incluse (soglia ≥5 campioni in finestra); bianche = errate (tempo illimitato); padding primario −1.0/+1.5 s con sensitivity −0.5/+1.0 e −2.0/+3.0 (risultati identici su tutti e tre).
 
-- **I-31 [NS] Guardare le parole-ancora nel momento dell'informazione NON predice la correttezza della risposta.** Quota-ancora nelle risposte corrette 28.6% vs errate 31.4% (diff −2.8 pt, t=−1.59); aggregato per soggetto −1.6 pt (t=−0.88, n=46); "ancora guardata almeno una volta" OR=0.95. Robusto al padding. Il canale uditivo sembra sufficiente: chi non guarda la caption nel momento chiave non risponde peggio.
+- **I-31 [NS] Guardare le parole-ancora nel momento dell'informazione NON predice la correttezza della risposta.** Quota-ancora nelle risposte corrette 28.5% vs errate 31.6% (diff −3.1 pt, t=−1.72); aggregato per soggetto n.s.; "ancora guardata almeno una volta" OR≈0.95. Robusto al padding e confermato dal GEE con cluster per soggetto (I-47). Il canale uditivo sembra sufficiente: chi non guarda la caption nel momento chiave non risponde peggio.
 
-- **I-32 [ESP] (attenzione all'interpretazione) In modalità text l'associazione negativa osservata a livello di domanda (corrette 26.4% vs errate 32.3% di quota-ancora, t=−2.43; OR=0.65) NON regge al controllo entro-soggetto (−0.3 pt, t=−0.19, n=37).** È quindi un effetto tra-soggetti: i bambini che in text fissano di più le parole-caption nei momenti chiave tendono a sbagliare di più in generale (possibile marcatore di lettori/ascoltatori più deboli che si aggrappano al testo), non un danno momento-per-momento.
+- **I-32 [ESP] (attenzione all'interpretazione) In modalità text l'associazione negativa osservata a livello di domanda (corrette 26.5% vs errate 32.1% di quota-ancora, t=−2.26) NON regge al controllo entro-soggetto (−0.5 pt, t=−0.31, n=37).** È quindi un effetto tra-soggetti: i bambini che in text fissano di più le parole-caption nei momenti chiave tendono a sbagliare di più in generale (possibile marcatore di lettori/ascoltatori più deboli che si aggrappano al testo), non un danno momento-per-momento.
 
 - **I-33 [ESP] In modalità images, tendenze deboli ma coerenti con I-27:** guardare l'ancora non danneggia (OR=1.35, n.s.; entro-soggetto +1.2 pt, t=+0.55) e guardare il **volto** nel momento dell'informazione si associa a più errori (9.9% nelle corrette vs 13.4% nelle errate, t=−1.76, n.s.).
+
+## G. Analisi estese (10 luglio 2026 — scripts: temporal_word_analysis, question_extra, subject_profiles, stats_robustness, aoi_sensitivity)
+
+- **I-34 [MET] Correzione chiave Sbadiglio Q2/Q3 (ordine di trascrizione).** L'item analysis ha rivelato p=0.00 su entrambe con la chiave "a numerazione stampata": il foglio adattato stampa la Q3 sopra la Q2 e la trascrizione in test.xlsx segue l'ordine visivo, quindi le colonne 2/3 corrispondono alla numerazione MT (2=sorellina→b, 3=donna→a). Chiave e finestre corrette e pipeline rilanciata: i risultati principali non cambiano (I-01 passa da +1.0 a +1.6 pt, sempre n.s.).
+
+- **I-35 [SIG] L'attenzione alle caption non si esaurisce col tempo — con le immagini cresce.** Time-course per quartile del video (solo registrazioni buone): text ≈ stabile (48→51%), images cresce (Q1 62.9% → Q4 69.8%; Q4−Q1 entro bambino **+6.9 pt, t=+2.87**). Il volto ha un picco nel primo quartile (novità: text 35%, images 23.5%) e poi cala. Le immagini non sono una novità che stanca: reggono per tutto il video.
+
+- **I-36 [SIG] Le parole-immagine vengono guardate molto più spesso delle parole-testo.** Quota di parole guardate almeno una volta: **56%** delle parole-immagine vs 32% delle parole-testo (in images) e 35% (in text). La latenza della prima occhiata è simile (mediana 0.6–0.8 s). È il meccanismo dietro I-25: le immagini non attirano più in fretta, attirano più spesso.
+
+- **I-37 [NS] Le immagini non causano "ping-pong" attentivo.** Switch volto↔caption: text 15.9/min vs images 13.1/min (appaiato −3.3/min, t=−1.65): semmai con le immagini lo sguardo è più stabile.
+
+- **I-38 [DES] Reading-along in text**: il 48.9% del tempo-caption è speso vicino all'ultima parola comparsa (sd 19, n=40 registrazioni) — circa metà dei bambini "insegue" la scrittura mentre ascolta; grande variabilità individuale, potenziale proxy dell'abilità di lettura.
+
+- **I-39 [DES] Densità di parole-immagine e resa della storia**: r=+0.53 tra % di parole-immagine e punteggio in modalità images (n=8 storie, puramente descrittivo). L'orso — la storia con meno immagini (15.6%) — è l'unica con svantaggio images netto (−10.7 pt).
+
+- **I-40 [NS] Nessuna interazione modalità × tipo di domanda (esplicite vs inferenziali).** Classificazione MT-template sulle 4 storie a 10 domande (da verificare sul manuale): entro bambino, esplicite +3.8 pt con images (t=0.67), inferenziali −2.5 (t=−0.50).
+
+- **I-41 [ESP] Congruenza video→foglio, direzione giusta ma non conclusiva.** Le domande con opzioni a immagini sul testsheet vanno meglio se la storia era stata vista in images (+5.7 pt entro bambino, t=1.09), quelle con opzioni testuali no (−1.9, t=−0.36). Ipotesi originale da ritestare con più potenza.
+
+- **I-42 [NS] La posizione dell'informazione nella storia non conta**: r=−0.04 con la correttezza (n=989); inizio 69.9%, centro 68.3%, fine 67.8%. Nessun effetto primacy/recency rilevabile.
+
+- **I-43 [MET] Item analysis (`item_analysis.csv`, 94 item)**: molti item segnalati derivano da n minuscoli (4–7 bambini). Due casi strutturali: **gatta Q1** (p=0.20: i bambini scelgono lo chalet innevato — l'illustrazione della neve fuorvia rispetto a "casa di campagna" narrato) e **orso Q11 (p=0.00: TUTTI rispondono "va a caccia di pesci" perché il video dice/mostra "pesce" al posto di "pinnipede" — item invalido rispetto allo stimolo reale; decidere se escluderlo o accettare anche "c")**.
+
+- **I-44 [DES] Il profilo attentivo è un tratto moderatamente stabile**: r=+0.43 per la quota-volto tra le due storie dello stesso bambino (modalità diverse!). Cluster k=3 a livello di registrazione: "lettori di caption" (n=58, score 71.4%), "guardatori di volto" (n=26, prevalentemente text, score 64.2% — coerente con I-32), "fuori-AOI" (n=12, 82% none ma score 78.8%: quasi certamente artefatto di calibrazione, non disattenzione).
+
+- **I-45 [DES] Durata del test cartaceo** (intervallo tra le due registrazioni): mediana 6.6 min (range 2.9–14.8). Nessuna correlazione col punteggio (r=+0.13) né con la classe (r=−0.08).
+
+- **I-46 [SIG] TOST: l'assenza di effetto modalità è formalmente dimostrabile.** IC90% della differenza appaiata = [−4.2, +7.4] pt: equivalenza entro **±7.5 pt (p=.048)** e ±10 pt (p=.010); non concludente solo sotto ±5. Si può affermare che un eventuale effetto della modalità è comunque inferiore a ~7.5 punti percentuali.
+
+- **I-47 [NS] GEE logistico (cluster per soggetto) sull'analisi puntuale**: quota-ancora n.s. (β=−0.073 per +10 pt, p=.19), interazione con la modalità nulla (p=.76). Conferma formale di I-31/I-32 (non modellato il cluster per domanda).
+
+- **I-48 [SIG] Lo shift attentivo (I-25) è robusto ai parametri AOI**: con i box originali (alpha=1) lo shift caption è +16.3 pt (t=+3.48) e quello volto −9.5 (t=−3.56) — identico in sostanza ai parametri concordati.
+
+- **I-49 [MET] Power per lo studio con bambini sordi** (sd osservate qui): con disegno appaiato servono **n=48 per rilevare 10 pt**, n=23 per 15 pt, n=14 per 20 pt (80% power); a 90%: 63/30/18. Confronto tra gruppi (sordi vs udenti stessa modalità): n=88/40/23 per gruppo per 10/15/20 pt.
 
 ## D. Ipotesi aperte per le prossime analisi
 

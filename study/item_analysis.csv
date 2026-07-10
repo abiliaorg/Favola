@@ -1,0 +1,95 @@
+storia,q,n,p,disc,chiave,distrattore_top,opzioni_img
+volpe e boscaiolo,1,32,0.5,0.51,b,(bianco),0
+volpe e boscaiolo,2,32,0.81,0.58,a,b,1
+volpe e boscaiolo,3,32,0.59,0.55,b,a,1
+volpe e boscaiolo,4,32,0.94,0.56,b,c,1
+volpe e boscaiolo,5,32,0.78,0.38,c,b,1
+volpe e boscaiolo,6,32,0.72,0.25,a,b,1
+volpe e boscaiolo,7,32,0.47,0.45,c,b,0
+volpe e boscaiolo,8,32,0.53,0.37,b,c,0
+volpe e boscaiolo,9,32,0.78,0.48,a,b,0
+volpe e boscaiolo,10,32,0.69,0.59,b,c,0
+tappeto,1,32,0.75,0.23,c,b,0
+tappeto,2,32,0.88,0.53,b,a,1
+tappeto,3,32,0.84,0.35,b,(bianco),0
+tappeto,4,32,0.69,0.54,b,a,1
+tappeto,5,32,0.94,0.55,c,b,1
+tappeto,6,32,0.56,0.31,c,b,0
+tappeto,7,32,0.78,0.52,b,c,1
+tappeto,8,32,0.88,0.12,c,(bianco),0
+tappeto,9,32,0.94,0.41,b,c,1
+tappeto,10,32,0.75,0.48,a,c,0
+gatta,1,5,0.2,-0.44,a,b,1
+gatta,2,5,0.8,0.69,b,d,1
+gatta,3,5,1.0,,c,,0
+gatta,4,5,1.0,,c,,0
+gatta,5,5,0.6,-0.04,b,d,0
+gatta,6,5,0.6,0.45,a,d,0
+gatta,7,5,0.8,0.05,b,c,0
+gatta,8,5,0.8,0.05,d,b,0
+gatta,9,5,0.6,0.76,a,c,0
+gatta,10,5,0.4,-0.44,b,c,0
+gatta,11,5,0.8,0.69,c,a,0
+gatta,12,5,0.4,0.76,a,c,0
+sbadiglio,1,5,1.0,,c,,1
+sbadiglio,2,5,0.8,-0.69,b,d,0
+sbadiglio,3,5,0.6,0.61,a,d,1
+sbadiglio,4,5,0.8,-0.69,c,a,0
+sbadiglio,5,5,1.0,,b,,0
+sbadiglio,6,5,0.2,-0.13,c,b,1
+sbadiglio,7,5,0.6,-0.22,a,b,1
+sbadiglio,8,5,0.8,-0.69,b,c,1
+sbadiglio,9,5,0.8,-0.25,c,a,0
+sbadiglio,10,5,0.8,0.61,b,a,0
+delfino,1,7,0.57,-0.13,c,b,0
+delfino,2,7,0.43,0.55,a,b,0
+delfino,3,7,0.71,0.6,d,c,0
+delfino,4,7,0.29,0.03,d,c,0
+delfino,5,7,0.86,0.04,a,b,0
+delfino,6,7,0.71,-0.43,d,b,0
+delfino,7,7,0.29,0.15,a,b,0
+delfino,8,7,0.57,0.29,b,a,0
+delfino,9,7,0.43,0.43,d,a,0
+delfino,10,7,0.86,0.85,a,(bianco),0
+delfino,11,7,0.57,0.53,c,a,0
+delfino,12,7,0.57,0.41,d,c,0
+delfino,13,7,0.43,0.55,d,c,0
+delfino,14,7,0.86,0.85,a,(bianco),0
+panda,1,7,0.43,0.25,a,b,0
+panda,2,7,0.43,-0.39,d,c,0
+panda,3,7,0.57,-0.27,a,c,0
+panda,4,7,0.43,0.35,c,b,0
+panda,5,7,0.43,0.35,a,b,0
+panda,6,7,0.57,0.39,d,c,0
+panda,7,7,0.57,0.73,c,d,0
+panda,8,7,0.71,0.4,a,c,0
+panda,9,7,0.43,0.68,a,d,0
+panda,10,7,0.57,0.5,c,d,0
+panda,11,7,0.43,0.56,b,c,0
+panda,12,7,0.29,0.48,a,b,0
+panda,13,7,0.86,0.66,b,(bianco),0
+panda,14,7,0.86,0.66,a,(bianco),0
+orso,1,4,0.75,0.77,b,a,0
+orso,2,4,0.75,-0.19,a,b,0
+orso,3,4,0.5,0.19,c,a,0
+orso,4,4,1.0,,d,,0
+orso,5,4,0.75,0.77,b,d,0
+orso,6,4,1.0,,d,,0
+orso,7,4,0.5,0.69,a,b,0
+orso,8,4,0.5,-0.46,b,c,0
+orso,9,4,0.25,0.0,c,a,0
+orso,10,4,0.25,-0.93,a,b,0
+orso,11,4,0.0,,b,c,0
+orso,12,4,0.25,-0.37,a,c,0
+orso,13,4,0.25,-0.37,c,b,0
+orso,14,4,0.5,0.69,a,d,0
+anguille,1,4,1.0,,b,,0
+anguille,2,4,0.75,-0.52,a,c,0
+anguille,3,4,1.0,,b,,0
+anguille,4,4,1.0,,d,,0
+anguille,5,4,0.75,0.33,c,d,0
+anguille,6,4,1.0,,a,,0
+anguille,7,4,0.75,0.33,b,d,0
+anguille,8,4,0.25,-0.93,c,b,0
+anguille,9,4,0.75,-0.52,d,a,0
+anguille,10,4,0.75,0.33,c,(bianco),0

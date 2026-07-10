@@ -77,9 +77,12 @@ ANCHORS = {
   12: "misi tutta la famiglia in una cassetta collana e la portai al riparo nei ripostiglio della legna",
 },
 "sbadiglio": {
+  # NB: numerazione MT (= ordine visivo del foglio adattato e delle colonne in
+  # test.xlsx): 2 = sorellina, 3 = donna. Il foglio adattato stampa "3." sopra
+  # "2." ma la trascrizione delle risposte segue l'ordine visivo.
   1: "portò a passeggio la sorellina nel passeggino",
-  2: "La donna del negozio di cappelli La vide e subito sbadigliò anche lei",
-  3: "La sorellina era stanca e sbadigliò",
+  2: "La sorellina era stanca e sbadigliò",
+  3: "La donna del negozio di cappelli La vide e subito sbadigliò anche lei",
   4: "il manovratore vedendo tutte quelle bocche aperte cominciò a sbadigliare e sbadigliare e non riusciva a ripartire",
   5: "il vigile voleva suonare il fischietto perché tutti si decidessero a rimettersi in moto ma non riuscì a fischiare perché aveva voglia di sbadigliare",
   6: "un camionista che voleva sapere perché il tram stesse fermo per tanto tempo si sporse dal finestrino e subito lo sbadiglio colse anche lui",

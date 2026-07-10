@@ -2525,6 +2525,44 @@
   },
   "2": {
    "type": "puntuale",
+   "anchor": "La sorellina era stanca e sbadigliò",
+   "windows": {
+    "3_text": {
+     "t0": 11.26,
+     "t1": 16.66,
+     "t_first_word": 12.26,
+     "t_last_word": 15.16,
+     "word_ids": [
+      "24",
+      "27",
+      "28",
+      "29",
+      "30",
+      "34"
+     ],
+     "matched_text": "La sorellina era stanca e sbadigliò",
+     "match_ratio": 1.0
+    },
+    "3_images": {
+     "t0": 11.28,
+     "t1": 16.71,
+     "t_first_word": 12.28,
+     "t_last_word": 15.21,
+     "word_ids": [
+      "24",
+      "27",
+      "28",
+      "29",
+      "30",
+      "34"
+     ],
+     "matched_text": "La sorellina era stanca e sbadigliò",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "3": {
+   "type": "puntuale",
    "anchor": "La donna del negozio di cappelli La vide e subito sbadigliò anche lei",
    "windows": {
     "3_text": {
@@ -2571,44 +2609,6 @@
       "64"
      ],
      "matched_text": "La donna del negozio di cappelli La vide e subito sbadigliò anche lei",
-     "match_ratio": 1.0
-    }
-   }
-  },
-  "3": {
-   "type": "puntuale",
-   "anchor": "La sorellina era stanca e sbadigliò",
-   "windows": {
-    "3_text": {
-     "t0": 11.26,
-     "t1": 16.66,
-     "t_first_word": 12.26,
-     "t_last_word": 15.16,
-     "word_ids": [
-      "24",
-      "27",
-      "28",
-      "29",
-      "30",
-      "34"
-     ],
-     "matched_text": "La sorellina era stanca e sbadigliò",
-     "match_ratio": 1.0
-    },
-    "3_images": {
-     "t0": 11.28,
-     "t1": 16.71,
-     "t_first_word": 12.28,
-     "t_last_word": 15.21,
-     "word_ids": [
-      "24",
-      "27",
-      "28",
-      "29",
-      "30",
-      "34"
-     ],
-     "matched_text": "La sorellina era stanca e sbadigliò",
      "match_ratio": 1.0
     }
    }

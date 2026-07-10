@@ -7,7 +7,7 @@ Risposte corrette ricavate **in modo indipendente** leggendo i testsheet PDF (`s
 Il foglio "Risposte" di test.xlsx è la **trascrizione fedele delle chiavi MT ufficiali** (Guide rapide alla correzione: Prove 1-2 p.68; Prove 3-4-5 p.96/98/100 del PDF) — nessun errore di trascrizione. Le differenze rispetto a questa chiave derivata nascono dai **fogli adattati** consegnati ai bambini:
 
 - **Volpe Q4** e **Tappeto Q2, Q4, Q5, Q7, Q9**: l'ordine delle opzioni illustrate è stato cambiato rispetto all'MT originale (verificato su MT: es. Q4 tappeto "mercato" è C nell'MT e B nel foglio adattato; Q4 volpe "taglialegna con ascia" è A nell'MT e B nell'adattato). Contenuto della risposta identico, lettera diversa.
-- **Sbadiglio Q2 ↔ Q3**: nel foglio adattato le due domande sono state scambiate di numero rispetto all'MT (MT: 2=sorellina sbadiglia, 3=cosa vende la donna). Le lettere MT restano valide, ma vanno riferite alla numerazione dell'adattato: Q2(donna)=a, Q3(stanchezza)=b.
+- **Sbadiglio Q2 ↔ Q3**: nel foglio adattato le due domande hanno numeri scambiati rispetto all'MT, ma il layout stampa la "3." sopra la "2."; **la trascrizione in test.xlsx segue l'ordine visivo**, quindi le colonne Domanda 2/3 corrispondono di fatto alla numerazione MT (2=sorellina→b, 3=donna→a). Verificato empiricamente sull'item analysis: con la numerazione stampata entrambe le domande davano p=0.00 (nessun bambino corretto), con quella MT p=0.80/0.60. La chiave e le finestre temporali usano la numerazione MT.
 - **Sbadiglio Q6**: l'ordine delle immagini nell'adattato è identico all'MT, che ha didascalie esplicite: la risposta ufficiale è C = "Quando mette la testa fuori dal finestrino del camion". La derivazione iniziale (b) era errata: **corretta in c** (tabella già aggiornata).
 
 **Per lo scoring dei test dei bambini va usata questa chiave** (che riflette i fogli realmente somministrati), non le lettere del foglio "Risposte" di test.xlsx.
@@ -83,8 +83,8 @@ Legenda: ✏ = opzioni testuali, 🖼 = opzioni a immagini (descritta l'immagine
 | # | Domanda | Risposta | Giustificazione |
 |---|---|---|---|
 | 1 | 🖼 Come porta a passeggio la sorellina | **c** (nel passeggino) | "portò a passeggio la sorellina nel passeggino" |
-| 2 | 🖼 Cosa vende la donna | **a** (cappelli) | "la donna del negozio di cappelli"; B=stoffe/vestiti, C=torte, D=giornali |
-| 3 | ✏ Perché sbadiglia la sorellina | **b** (per la stanchezza) | "la sorellina era stanca e sbadigliò" |
+| 2 | ✏ Perché sbadiglia la sorellina (numerazione MT/colonne excel) | **b** (per la stanchezza) | "la sorellina era stanca e sbadigliò" |
+| 3 | 🖼 Cosa vende la donna (numerazione MT/colonne excel) | **a** (cappelli) | "la donna del negozio di cappelli"; B=stoffe/vestiti, C=torte, D=giornali |
 | 4 | ✏ Perché il tram non riparte | **c** (guidatore impegnato a sbadigliare) | "cominciò a sbadigliare... e non riusciva a ripartire" |
 | 5 | ✏ Cosa succede al vigile | **b** (non riesce a fischiare) | "non riuscì a fischiare perché aveva voglia di sbadigliare" |
 | 6 | 🖼 Quando comincia il camionista | **c** (quando mette la testa fuori dal finestrino) | "si sporse dal finestrino e subito lo sbadiglio colse anche lui"; didascalia MT ufficiale: C = "Quando mette la testa fuori dal finestrino del camion" |
