@@ -1,29 +1,16 @@
 # Chiave di risposta derivata dai transcript
 
-Risposte corrette ricavate **in modo indipendente** leggendo i testsheet PDF (`study/testsheets/`)
-e confrontando ogni domanda con il testo effettivamente narrato nei video
-(`study/transcripts/*_text.txt`). Da usare per verificare il foglio "Risposte" di `test.xlsx`.
+Risposte corrette ricavate **in modo indipendente** leggendo i testsheet PDF (`study/testsheets/`) e confrontando ogni domanda con il testo effettivamente narrato nei video (`study/transcripts/*_text.txt`). Da usare per verificare il foglio "Risposte" di `test.xlsx`.
 
 ## Validazione con le prove MT ufficiali (study/tests/)
 
-Il foglio "Risposte" di test.xlsx è la **trascrizione fedele delle chiavi MT ufficiali**
-(Guide rapide alla correzione: Prove 1-2 p.68; Prove 3-4-5 p.96/98/100 del PDF) — nessun
-errore di trascrizione. Le differenze rispetto a questa chiave derivata nascono dai
-**fogli adattati** consegnati ai bambini:
+Il foglio "Risposte" di test.xlsx è la **trascrizione fedele delle chiavi MT ufficiali** (Guide rapide alla correzione: Prove 1-2 p.68; Prove 3-4-5 p.96/98/100 del PDF) — nessun errore di trascrizione. Le differenze rispetto a questa chiave derivata nascono dai **fogli adattati** consegnati ai bambini:
 
-- **Volpe Q4** e **Tappeto Q2, Q4, Q5, Q7, Q9**: l'ordine delle opzioni illustrate è stato
-  cambiato rispetto all'MT originale (verificato su MT: es. Q4 tappeto "mercato" è C
-  nell'MT e B nel foglio adattato; Q4 volpe "taglialegna con ascia" è A nell'MT e B
-  nell'adattato). Contenuto della risposta identico, lettera diversa.
-- **Sbadiglio Q2 ↔ Q3**: nel foglio adattato le due domande sono state scambiate di numero
-  rispetto all'MT (MT: 2=sorellina sbadiglia, 3=cosa vende la donna). Le lettere MT
-  restano valide, ma vanno riferite alla numerazione dell'adattato: Q2(donna)=a, Q3(stanchezza)=b.
-- **Sbadiglio Q6**: l'ordine delle immagini nell'adattato è identico all'MT, che ha didascalie
-  esplicite: la risposta ufficiale è C = "Quando mette la testa fuori dal finestrino del camion".
-  La derivazione iniziale (b) era errata: **corretta in c** (tabella già aggiornata).
+- **Volpe Q4** e **Tappeto Q2, Q4, Q5, Q7, Q9**: l'ordine delle opzioni illustrate è stato cambiato rispetto all'MT originale (verificato su MT: es. Q4 tappeto "mercato" è C nell'MT e B nel foglio adattato; Q4 volpe "taglialegna con ascia" è A nell'MT e B nell'adattato). Contenuto della risposta identico, lettera diversa.
+- **Sbadiglio Q2 ↔ Q3**: nel foglio adattato le due domande sono state scambiate di numero rispetto all'MT (MT: 2=sorellina sbadiglia, 3=cosa vende la donna). Le lettere MT restano valide, ma vanno riferite alla numerazione dell'adattato: Q2(donna)=a, Q3(stanchezza)=b.
+- **Sbadiglio Q6**: l'ordine delle immagini nell'adattato è identico all'MT, che ha didascalie esplicite: la risposta ufficiale è C = "Quando mette la testa fuori dal finestrino del camion". La derivazione iniziale (b) era errata: **corretta in c** (tabella già aggiornata).
 
-**Per lo scoring dei test dei bambini va usata questa chiave** (che riflette i fogli
-realmente somministrati), non le lettere del foglio "Risposte" di test.xlsx.
+**Per lo scoring dei test dei bambini va usata questa chiave** (che riflette i fogli realmente somministrati), non le lettere del foglio "Risposte" di test.xlsx.
 
 ### Fasce di prestazione MT (per numero di risposte corrette)
 
@@ -38,15 +25,9 @@ realmente somministrati), non le lettere del foglio "Risposte" di test.xlsx.
 | Anguille (5ª ingresso) | 10 | 9–8 | 7–5 | ≤4 |
 | Orso (5ª indagine appr.) | 14–13 | 12–9 | 8–7 | ≤6 |
 
-CCRD = criterio completamente raggiunto · PSD = prestazione sufficiente ·
-RAD = richiesta di attenzione · RIDI = richiesta di intervento immediato.
+CCRD = criterio completamente raggiunto · PSD = prestazione sufficiente · RAD = richiesta di attenzione · RIDI = richiesta di intervento immediato.
 
-**Scelta metodologica dello studio** (da riportare nella descrizione del test e dei
-risultati): le prove MT sono state applicate per tutti i bambini **all'uscita** (fine
-anno scolastico) e non nel momento MT previsto (ingresso/intermedia/indagine), perché
-la somministrazione è comunque non standard: avere un testo davanti da leggere è
-diverso dall'ascoltare una storia narrata e leggere le caption. Le fasce MT vanno
-quindi intese come riferimento descrittivo, non come standardizzazione normativa.
+**Scelta metodologica dello studio** (da riportare nella descrizione del test e dei risultati): le prove MT sono state applicate per tutti i bambini **all'uscita** (fine anno scolastico) e non nel momento MT previsto (ingresso/intermedia/indagine), perché la somministrazione è comunque non standard: avere un testo davanti da leggere è diverso dall'ascoltare una storia narrata e leggere le caption. Le fasce MT vanno quindi intese come riferimento descrittivo, non come standardizzazione normativa.
 
 Legenda: ✏ = opzioni testuali, 🖼 = opzioni a immagini (descritta l'immagine corretta).
 

@@ -1,7 +1,6 @@
 # Transcript delle storie
 
-Estratti da `data/01_record/*.json` (parole definitive, senza risultati interim del riconoscimento vocale).
-Nei file `*_images.txt` le parole tra [parentesi] erano mostrate come immagini nel video.
+Estratti da `data/01_record/*.json` (parole definitive, senza risultati interim del riconoscimento vocale). Nei file `*_images.txt` le parole tra [parentesi] erano mostrate come immagini nel video.
 
 | File | Parole | Di cui immagini |
 |---|---|---|
