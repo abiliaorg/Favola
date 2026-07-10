@@ -131,12 +131,13 @@ parziale) → ordine non verificabile; **F4** (entrambe le storie in images) e
 **F35** (entrambe in text) → somministrazione anomala; B19 (assente).
 
 **Anomalie note da tenere presenti**:
-- **F4 ha il gaze ma non compare in test.xlsx** (fogli non trascritti?).
+- **F4 ha il gaze ma non compare né in test.xlsx né in demo.csv** (fogli non trascritti?).
 - B5 (TI05): fox text incompleta (61s/75, 130 campioni) e carpet images abortita a
   50.8s/67 — dati gaze di bassa qualità (i risultati non cambiano escludendolo).
 - F10: tracking quasi assente (78 campioni in 67s).
 - F3: bear text durata 167s (probabile riavvio del video).
-- Colonne classe/età/genere di test.xlsx vuote (età e genere non disponibili).
+- Età e sesso in `study/demo.csv` (tab-separated; F35 compare due volte con valori
+  identici — innocuo). Copertura completa dei 48 soggetti validi.
 
 ## 6. Scoring e risultati (`study/risultati_test.xlsx`)
 
@@ -179,6 +180,20 @@ Bilanciamento buono in 1ª, 4ª, 5ª; sbilanciate 2ª e 3ª (in 3ª pesa F12 pas
 - Sessione (mattina/pomeriggio) e PC di somministrazione: differenze piccole e
   confuse con la composizione delle classi; nessun segnale.
 
+### Demografia (da `demo.csv`)
+
+- Bilanciamento TI/IT buono anche su età e sesso: TI 13M/14F, età media 7.8;
+  IT 12M/9F, età media 7.7 (range 6–11 in entrambi).
+- Sesso: M 74.1% vs F 64.8% (+9.2 pt, t=1.58, n.s.).
+- **Interazione modalità × sesso (esplorativa, il segnale più interessante)**:
+  nei maschi images−text = **−7.0 pt** (t=−1.42), nelle femmine **+9.6 pt**
+  (t=2.22) — i maschi rendono meglio col testo, le femmine con le immagini;
+  interazione ≈17 pt (t≈2.5). Da trattare con cautela (analisi esplorativa,
+  n piccoli, nessuna correzione per confronti multipli) ma da tenere d'occhio
+  nell'analisi AOI.
+- Età: nessuna relazione lineare col punteggio (r=−0.13; l'età coincide quasi
+  con la classe, quindi è confusa con la prova).
+
 **Conclusione allo stato attuale**: con 48 coppie appaiate non emerge alcuna
 differenza di comprensione tra caption text e caption images; l'effetto più forte
 nei dati è la diversa difficoltà delle storie all'interno della stessa classe.
@@ -199,7 +214,9 @@ secondo la classificazione MT), qualità del tracking come covariata.
 | File/cartella | Contenuto |
 |---|---|
 | `README.md` | questo documento |
+| `INSIGHTS.md` | lista viva di tutti gli insights (anche non significativi), con id citabili I-nn |
 | `test.xlsx` | risposte dei bambini (foglio PROVE) + chiavi MT originali (foglio Risposte — non valide per i fogli adattati) |
+| `demo.csv` | età e sesso dei soggetti (tab-separated, ID originali) |
 | `chiave_derivata.md` / `.json` | chiave di correzione dei fogli somministrati, validata su MT, + fasce |
 | `mappatura_soggetti.xlsx` / `.json` | mappatura ID originale → TI/IT + esclusi con motivo |
 | `ordine_soggetti.xlsx` | sequenza oraria completa per soggetto (storia, modalità, postazione) |

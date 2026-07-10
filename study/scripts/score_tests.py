@@ -27,6 +27,16 @@ FASCE = data["_fasce_mt"]
 _map = json.loads((STUDY / "mappatura_soggetti.json").read_text(encoding="utf-8"))
 MAPPING, EXCLUDED = _map["mapping"], _map["excluded"]
 
+# demografia (ID, AGE, SEX) — eventuali righe duplicate vengono ignorate
+DEMO = {}
+import csv
+with open(STUDY / "demo.csv", newline="", encoding="utf-8-sig") as fh:
+    for row in csv.DictReader(fh, delimiter="\t"):
+        pid = row["ID"].strip().upper()
+        if pid in DEMO and (DEMO[pid]["age"] != int(row["AGE"]) or DEMO[pid]["sex"] != row["SEX"].strip().upper()):
+            print(f"ATTENZIONE: demo.csv ha righe contrastanti per {pid}")
+        DEMO[pid] = {"age": int(row["AGE"]), "sex": row["SEX"].strip().upper()}
+
 EN2IT = {"fox": "volpe e boscaiolo", "carpet": "tappeto", "cats": "gatta", "yawn": "sbadiglio",
          "dolphin": "delfino", "panda": "panda", "bear": "orso", "eels": "anguille"}
 FIRST_STORIES = {"volpe e boscaiolo", "gatta", "delfino", "anguille"}
@@ -93,6 +103,7 @@ for r in rows[1:]:
     records.append({
         "pid": pid, "newid": MAPPING.get(pid),
         "escluso": None if pid in MAPPING else EXCLUDED.get(pid, "non in mappatura"),
+        "age": DEMO.get(pid, {}).get("age"), "sex": DEMO.get(pid, {}).get("sex"),
         "track": pid[0], "classe": gaze_cls.get(pid, ""),
         "storia": storia, "mod": mod, "mod_src": mod_src,
         "pos": 1 if storia in FIRST_STORIES else 2,
@@ -109,23 +120,23 @@ records = [r for r in records if not r["escluso"]]
 out = openpyxl.Workbook()
 ws1 = out.active
 ws1.title = "Punteggi"
-hdr = ["ID nuovo", "ID orig.", "Gruppo", "Classe", "Storia", "Modalità", "Fonte modalità",
-       "Posizione", "N domande", "Corrette", "Sbagliate", "In bianco", "Doppie/invalide",
-       "Punteggio %", "Fascia MT"]
+hdr = ["ID nuovo", "ID orig.", "Gruppo", "Classe", "Età", "Sesso", "Storia", "Modalità",
+       "Fonte modalità", "Posizione", "N domande", "Corrette", "Sbagliate", "In bianco",
+       "Doppie/invalide", "Punteggio %", "Fascia MT"]
 ws1.append(hdr)
 FILL = {"CCRD": "C6EFCE", "PSD": "DDEBF7", "RAD": "FFEB9C", "RIDI": "FFC7CE"}
 for c in ws1[1]:
     c.font = Font(bold=True, color="FFFFFF")
     c.fill = PatternFill("solid", fgColor="4472C4")
 for r in sorted(records, key=lambda r: (r["newid"][:2], int(r["newid"][2:]), r["pos"])):
-    ws1.append([r["newid"], r["pid"], r["newid"][:2], r["classe"], r["storia"], r["mod"],
-                r["mod_src"], r["pos"], r["n"], r["correct"], r["wrong"], r["blank"],
-                r["invalid"], r["pct"], r["fascia"]])
-    ws1.cell(ws1.max_row, 15).fill = PatternFill("solid", fgColor=FILL[r["fascia"]])
-for col, w in zip("ABCDEFGHIJKLMNO", [9, 8, 8, 8, 18, 10, 14, 10, 11, 9, 10, 10, 14, 12, 10]):
+    ws1.append([r["newid"], r["pid"], r["newid"][:2], r["classe"], r["age"], r["sex"],
+                r["storia"], r["mod"], r["mod_src"], r["pos"], r["n"], r["correct"],
+                r["wrong"], r["blank"], r["invalid"], r["pct"], r["fascia"]])
+    ws1.cell(ws1.max_row, 17).fill = PatternFill("solid", fgColor=FILL[r["fascia"]])
+for col, w in zip("ABCDEFGHIJKLMNOPQ", [9, 8, 8, 8, 6, 7, 18, 10, 14, 10, 11, 9, 10, 10, 14, 12, 10]):
     ws1.column_dimensions[col].width = w
 ws1.freeze_panes = "A2"
-ws1.auto_filter.ref = f"A1:O{ws1.max_row}"
+ws1.auto_filter.ref = f"A1:Q{ws1.max_row}"
 
 wsE = out.create_sheet("Esclusi")
 wsE.append(["ID orig.", "Storia", "Punteggio %", "Motivo esclusione"])
@@ -144,6 +155,8 @@ def sd(xs):
         return float("nan")
     m = mean(xs)
     return (sum((x - m) ** 2 for x in xs) / (len(xs) - 1)) ** 0.5
+def tstat(xs):
+    return mean(xs) / (sd(xs) / len(xs) ** 0.5) if len(xs) > 1 and sd(xs) > 0 else float("nan")
 
 ws2 = out.create_sheet("Riepilogo")
 def w2(*vals, bold=False):
@@ -238,6 +251,65 @@ for m in ["text", "images"]:
     w2(m, cnt["CCRD"], cnt["PSD"], cnt["RAD"], cnt["RIDI"])
     tot = sum(cnt.values())
     report(f"  {m:6}: " + "  ".join(f"{f}={cnt[f]} ({cnt[f]/tot*100:.0f}%)" for f in cnt))
+
+# --- demografia ---
+kids = {}
+for r in records:
+    kids.setdefault(r["newid"], {"grp": r["newid"][:2], "age": r["age"], "sex": r["sex"],
+                                 "pcts": []})["pcts"].append(r["pct"])
+for k in kids.values():
+    k["score"] = mean(k["pcts"])
+
+report("\n=== Demografia e bilanciamento TI/IT ===")
+w2()
+w2("DEMOGRAFIA (soggetti validi)", bold=True)
+w2("Gruppo", "n", "M", "F", "età media", "età min-max")
+for grp in ["TI", "IT"]:
+    ks = [k for k in kids.values() if k["grp"] == grp]
+    ages = [k["age"] for k in ks if k["age"] is not None]
+    nm = sum(1 for k in ks if k["sex"] == "M")
+    nf = sum(1 for k in ks if k["sex"] == "F")
+    w2(grp, len(ks), nm, nf, round(mean(ages), 1), f"{min(ages)}-{max(ages)}")
+    report(f"  {grp}: n={len(ks)}  M={nm} F={nf}  età media={mean(ages):.1f} (range {min(ages)}-{max(ages)})")
+missing_demo = sorted({r["pid"] for r in records if r["age"] is None})
+if missing_demo:
+    report(f"  senza dati demografici: {', '.join(missing_demo)}")
+
+report("\n=== Punteggio per sesso (media dei 2 test per bambino) ===")
+w2()
+w2("PUNTEGGIO PER SESSO", bold=True)
+w2("Sesso", "n", "media %", "sd")
+for sx in ["M", "F"]:
+    xs = [k["score"] for k in kids.values() if k["sex"] == sx]
+    w2(sx, len(xs), round(mean(xs), 1), round(sd(xs), 1))
+    report(f"  {sx}: n={len(xs):2}  media={mean(xs):5.1f}%  sd={sd(xs):4.1f}")
+xm = [k["score"] for k in kids.values() if k["sex"] == "M"]
+xf = [k["score"] for k in kids.values() if k["sex"] == "F"]
+tw = (mean(xm) - mean(xf)) / (sd(xm) ** 2 / len(xm) + sd(xf) ** 2 / len(xf)) ** 0.5
+report(f"  diff (M-F)={mean(xm)-mean(xf):+.1f} pt  t(Welch)={tw:.2f}")
+
+report("\n=== Modalità per sesso (diff appaiata images-text) ===")
+for sx in ["M", "F"]:
+    ds = []
+    for nid, k in kids.items():
+        if k["sex"] != sx:
+            continue
+        rt = next((r["pct"] for r in records if r["newid"] == nid and r["mod"] == "text"), None)
+        ri = next((r["pct"] for r in records if r["newid"] == nid and r["mod"] == "images"), None)
+        if rt is not None and ri is not None:
+            ds.append(ri - rt)
+    report(f"  {sx}: n={len(ds):2}  diff media={mean(ds):+.1f} pt  t={tstat(ds) if len(ds)>1 else float('nan'):.2f}")
+
+report("\n=== Età e punteggio ===")
+pts = [(k["age"], k["score"]) for k in kids.values() if k["age"] is not None]
+ma, ms = mean([a for a, _ in pts]), mean([s for _, s in pts])
+cov = sum((a - ma) * (s - ms) for a, s in pts) / (len(pts) - 1)
+r_as = cov / (sd([a for a, _ in pts]) * sd([s for _, s in pts]))
+report(f"  correlazione età-punteggio (tutti, n={len(pts)}): r={r_as:+.2f}  "
+       f"(NB: l'età è quasi coincidente con la classe, quindi confusa con la prova)")
+for age in sorted({a for a, _ in pts}):
+    xs = [s for a, s in pts if a == age]
+    report(f"    {age} anni: n={len(xs):2}  media={mean(xs):5.1f}%")
 
 w2()
 w2("Nota metodologica: prove MT applicate per tutti all'uscita (fine anno); somministrazione",)
