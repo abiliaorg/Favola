@@ -155,3 +155,6 @@ data/02_gaze/*
 # render temporanei dei PDF (rigenerabili dagli script)
 study/testsheets/_pages/
 study/tests/_sheets/
+
+# repo separato del paper (commit indipendenti)
+paper/
