@@ -1,0 +1,5678 @@
+{
+ "_meta": {
+  "_pad_before_s": 1.0,
+  "_pad_after_s": 1.5,
+  "_nota": "t0/t1 = finestra con padding; t_first/last_word = comparsa parole ancora. Chiavi finestra = {classe}_{tipologia} (le due riprese hanno tempi diversi)."
+ },
+ "volpe e boscaiolo": {
+  "1": {
+   "type": "puntuale",
+   "anchor": "per pietà nascondimi chiese al taglialegna",
+   "windows": {
+    "1_text": {
+     "t0": 12.09,
+     "t1": 17.38,
+     "t_first_word": 13.09,
+     "t_last_word": 15.88,
+     "word_ids": [
+      "28",
+      "30",
+      "33",
+      "35",
+      "36",
+      "39"
+     ],
+     "matched_text": "per pietà nascondimi chiese al taglialegna",
+     "match_ratio": 1.0
+    },
+    "1_images": {
+     "t0": 11.46,
+     "t1": 17.37,
+     "t_first_word": 12.46,
+     "t_last_word": 15.87,
+     "word_ids": [
+      "28",
+      "30",
+      "33",
+      "35",
+      "36",
+      "39"
+     ],
+     "matched_text": "per pietà nascondimi chiese al taglialegna",
+     "match_ratio": 1.0
+    },
+    "2_text": {
+     "t0": 12.09,
+     "t1": 17.38,
+     "t_first_word": 13.09,
+     "t_last_word": 15.88,
+     "word_ids": [
+      "28",
+      "30",
+      "33",
+      "35",
+      "36",
+      "39"
+     ],
+     "matched_text": "per pietà nascondimi chiese al taglialegna",
+     "match_ratio": 1.0
+    },
+    "2_images": {
+     "t0": 11.46,
+     "t1": 17.37,
+     "t_first_word": 12.46,
+     "t_last_word": 15.87,
+     "word_ids": [
+      "28",
+      "30",
+      "33",
+      "35",
+      "36",
+      "39"
+     ],
+     "matched_text": "per pietà nascondimi chiese al taglialegna",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "2": {
+   "type": "puntuale",
+   "anchor": "Pochi istanti dopo arrivarono i cacciatori e domandarono al taglialegna",
+   "windows": {
+    "1_text": {
+     "t0": 20.77,
+     "t1": 28.27,
+     "t_first_word": 21.77,
+     "t_last_word": 26.77,
+     "word_ids": [
+      "56",
+      "57",
+      "58",
+      "60",
+      "61",
+      "63",
+      "64",
+      "66",
+      "67",
+      "70"
+     ],
+     "matched_text": "Pochi istanti dopo arrivarono i cacciatori e domandarono al taglialegna",
+     "match_ratio": 1.0
+    },
+    "1_images": {
+     "t0": 20.8,
+     "t1": 28.52,
+     "t_first_word": 21.8,
+     "t_last_word": 27.02,
+     "word_ids": [
+      "56",
+      "57",
+      "58",
+      "60",
+      "61",
+      "63",
+      "64",
+      "66",
+      "67",
+      "70"
+     ],
+     "matched_text": "Pochi istanti dopo arrivarono i cacciatori e domandarono al taglialegna",
+     "match_ratio": 1.0
+    },
+    "2_text": {
+     "t0": 20.77,
+     "t1": 28.27,
+     "t_first_word": 21.77,
+     "t_last_word": 26.77,
+     "word_ids": [
+      "56",
+      "57",
+      "58",
+      "60",
+      "61",
+      "63",
+      "64",
+      "66",
+      "67",
+      "70"
+     ],
+     "matched_text": "Pochi istanti dopo arrivarono i cacciatori e domandarono al taglialegna",
+     "match_ratio": 1.0
+    },
+    "2_images": {
+     "t0": 20.8,
+     "t1": 28.52,
+     "t_first_word": 21.8,
+     "t_last_word": 27.02,
+     "word_ids": [
+      "56",
+      "57",
+      "58",
+      "60",
+      "61",
+      "63",
+      "64",
+      "66",
+      "67",
+      "70"
+     ],
+     "matched_text": "Pochi istanti dopo arrivarono i cacciatori e domandarono al taglialegna",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "3": {
+   "type": "puntuale",
+   "anchor": "giunse alla Capanna di un taglialegna",
+   "windows": {
+    "1_text": {
+     "t0": 9.56,
+     "t1": 14.06,
+     "t_first_word": 10.56,
+     "t_last_word": 12.56,
+     "word_ids": [
+      "19",
+      "20",
+      "22",
+      "23",
+      "24",
+      "27"
+     ],
+     "matched_text": "giunse alla Capanna di un taglialegna",
+     "match_ratio": 1.0
+    },
+    "1_images": {
+     "t0": 8.62,
+     "t1": 13.32,
+     "t_first_word": 9.62,
+     "t_last_word": 11.82,
+     "word_ids": [
+      "19",
+      "20",
+      "22",
+      "23",
+      "24",
+      "27"
+     ],
+     "matched_text": "giunse alla Capanna di un taglialegna",
+     "match_ratio": 1.0
+    },
+    "2_text": {
+     "t0": 9.56,
+     "t1": 14.06,
+     "t_first_word": 10.56,
+     "t_last_word": 12.56,
+     "word_ids": [
+      "19",
+      "20",
+      "22",
+      "23",
+      "24",
+      "27"
+     ],
+     "matched_text": "giunse alla Capanna di un taglialegna",
+     "match_ratio": 1.0
+    },
+    "2_images": {
+     "t0": 8.62,
+     "t1": 13.32,
+     "t_first_word": 9.62,
+     "t_last_word": 11.82,
+     "word_ids": [
+      "19",
+      "20",
+      "22",
+      "23",
+      "24",
+      "27"
+     ],
+     "matched_text": "giunse alla Capanna di un taglialegna",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "4": {
+   "type": "puntuale",
+   "anchor": "giunse alla Capanna di un taglialegna per pietà nascondimi chiese al taglialegna",
+   "windows": {
+    "1_text": {
+     "t0": 9.56,
+     "t1": 17.38,
+     "t_first_word": 10.56,
+     "t_last_word": 15.88,
+     "word_ids": [
+      "19",
+      "20",
+      "22",
+      "23",
+      "24",
+      "27",
+      "28",
+      "30",
+      "33",
+      "35",
+      "36",
+      "39"
+     ],
+     "matched_text": "giunse alla Capanna di un taglialegna per pietà nascondimi chiese al taglialegna",
+     "match_ratio": 1.0
+    },
+    "1_images": {
+     "t0": 8.62,
+     "t1": 17.37,
+     "t_first_word": 9.62,
+     "t_last_word": 15.87,
+     "word_ids": [
+      "19",
+      "20",
+      "22",
+      "23",
+      "24",
+      "27",
+      "28",
+      "30",
+      "33",
+      "35",
+      "36",
+      "39"
+     ],
+     "matched_text": "giunse alla Capanna di un taglialegna per pietà nascondimi chiese al taglialegna",
+     "match_ratio": 1.0
+    },
+    "2_text": {
+     "t0": 9.56,
+     "t1": 17.38,
+     "t_first_word": 10.56,
+     "t_last_word": 15.88,
+     "word_ids": [
+      "19",
+      "20",
+      "22",
+      "23",
+      "24",
+      "27",
+      "28",
+      "30",
+      "33",
+      "35",
+      "36",
+      "39"
+     ],
+     "matched_text": "giunse alla Capanna di un taglialegna per pietà nascondimi chiese al taglialegna",
+     "match_ratio": 1.0
+    },
+    "2_images": {
+     "t0": 8.62,
+     "t1": 17.37,
+     "t_first_word": 9.62,
+     "t_last_word": 15.87,
+     "word_ids": [
+      "19",
+      "20",
+      "22",
+      "23",
+      "24",
+      "27",
+      "28",
+      "30",
+      "33",
+      "35",
+      "36",
+      "39"
+     ],
+     "matched_text": "giunse alla Capanna di un taglialegna per pietà nascondimi chiese al taglialegna",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "5": {
+   "type": "puntuale",
+   "anchor": "entra nella mia capanna disse L'uomo nasconditi in quel Cantuccio",
+   "windows": {
+    "1_text": {
+     "t0": 15.45,
+     "t1": 22.32,
+     "t_first_word": 16.45,
+     "t_last_word": 20.82,
+     "word_ids": [
+      "40",
+      "41",
+      "42",
+      "44",
+      "46",
+      "47",
+      "50",
+      "51",
+      "52",
+      "55"
+     ],
+     "matched_text": "entra nella mia capanna disse L'uomo nasconditi in quel Cantuccio",
+     "match_ratio": 1.0
+    },
+    "1_images": {
+     "t0": 15.46,
+     "t1": 22.32,
+     "t_first_word": 16.46,
+     "t_last_word": 20.82,
+     "word_ids": [
+      "40",
+      "41",
+      "42",
+      "44",
+      "46",
+      "47",
+      "50",
+      "51",
+      "52",
+      "55"
+     ],
+     "matched_text": "entra nella mia capanna disse L'uomo nasconditi in quel Cantuccio",
+     "match_ratio": 1.0
+    },
+    "2_text": {
+     "t0": 15.45,
+     "t1": 22.32,
+     "t_first_word": 16.45,
+     "t_last_word": 20.82,
+     "word_ids": [
+      "40",
+      "41",
+      "42",
+      "44",
+      "46",
+      "47",
+      "50",
+      "51",
+      "52",
+      "55"
+     ],
+     "matched_text": "entra nella mia capanna disse L'uomo nasconditi in quel Cantuccio",
+     "match_ratio": 1.0
+    },
+    "2_images": {
+     "t0": 15.46,
+     "t1": 22.32,
+     "t_first_word": 16.46,
+     "t_last_word": 20.82,
+     "word_ids": [
+      "40",
+      "41",
+      "42",
+      "44",
+      "46",
+      "47",
+      "50",
+      "51",
+      "52",
+      "55"
+     ],
+     "matched_text": "entra nella mia capanna disse L'uomo nasconditi in quel Cantuccio",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "6": {
+   "type": "puntuale",
+   "anchor": "e intanto con la mano faceva segno che sì la l'aveva volpe vista e anzi era lì in quel calduccio della Capanna",
+   "windows": {
+    "1_text": {
+     "t0": 34.66,
+     "t1": 44.94,
+     "t_first_word": 35.66,
+     "t_last_word": 43.44,
+     "word_ids": [
+      "98",
+      "99",
+      "100",
+      "101",
+      "102",
+      "103",
+      "104",
+      "105",
+      "106",
+      "107",
+      "112",
+      "113",
+      "114",
+      "115",
+      "116",
+      "117",
+      "118",
+      "119",
+      "120",
+      "123",
+      "124",
+      "126"
+     ],
+     "matched_text": "e intanto con la mano faceva segno che sì la l'aveva volpe vista e anzi era lì in quel calduccio della Capanna",
+     "match_ratio": 1.0
+    },
+    "1_images": {
+     "t0": 34.76,
+     "t1": 45.51,
+     "t_first_word": 35.76,
+     "t_last_word": 44.01,
+     "word_ids": [
+      "98",
+      "99",
+      "100",
+      "101",
+      "102",
+      "103",
+      "104",
+      "105",
+      "106",
+      "107",
+      "112",
+      "113",
+      "114",
+      "115",
+      "116",
+      "117",
+      "118",
+      "119",
+      "120",
+      "123",
+      "124",
+      "126"
+     ],
+     "matched_text": "e intanto con la mano faceva segno che sì la l'aveva volpe vista e anzi era lì in quel calduccio della Capanna",
+     "match_ratio": 1.0
+    },
+    "2_text": {
+     "t0": 34.66,
+     "t1": 44.94,
+     "t_first_word": 35.66,
+     "t_last_word": 43.44,
+     "word_ids": [
+      "98",
+      "99",
+      "100",
+      "101",
+      "102",
+      "103",
+      "104",
+      "105",
+      "106",
+      "107",
+      "112",
+      "113",
+      "114",
+      "115",
+      "116",
+      "117",
+      "118",
+      "119",
+      "120",
+      "123",
+      "124",
+      "126"
+     ],
+     "matched_text": "e intanto con la mano faceva segno che sì la l'aveva volpe vista e anzi era lì in quel calduccio della Capanna",
+     "match_ratio": 1.0
+    },
+    "2_images": {
+     "t0": 34.76,
+     "t1": 45.51,
+     "t_first_word": 35.76,
+     "t_last_word": 44.01,
+     "word_ids": [
+      "98",
+      "99",
+      "100",
+      "101",
+      "102",
+      "103",
+      "104",
+      "105",
+      "106",
+      "107",
+      "112",
+      "113",
+      "114",
+      "115",
+      "116",
+      "117",
+      "118",
+      "119",
+      "120",
+      "123",
+      "124",
+      "126"
+     ],
+     "matched_text": "e intanto con la mano faceva segno che sì la l'aveva volpe vista e anzi era lì in quel calduccio della Capanna",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "7": {
+   "type": "puntuale",
+   "anchor": "Ma i cacciatori mandarono solo alle sue parole e non ai gesti e si allontanarono a grandi passi",
+   "windows": {
+    "1_text": {
+     "t0": 43.87,
+     "t1": 52.63,
+     "t_first_word": 44.87,
+     "t_last_word": 51.13,
+     "word_ids": [
+      "127",
+      "129",
+      "131",
+      "133",
+      "134",
+      "135",
+      "136",
+      "137",
+      "138",
+      "139",
+      "140",
+      "141",
+      "142",
+      "143",
+      "145",
+      "146",
+      "147",
+      "148"
+     ],
+     "matched_text": "Ma i cacciatori mandarono solo alle sue parole e non ai gesti e si allontanarono a grandi passi",
+     "match_ratio": 1.0
+    },
+    "1_images": {
+     "t0": 43.62,
+     "t1": 53.7,
+     "t_first_word": 44.62,
+     "t_last_word": 52.2,
+     "word_ids": [
+      "127",
+      "129",
+      "131",
+      "133",
+      "134",
+      "135",
+      "136",
+      "137",
+      "138",
+      "139",
+      "140",
+      "141",
+      "142",
+      "143",
+      "145",
+      "146",
+      "147",
+      "148"
+     ],
+     "matched_text": "Ma i cacciatori mandarono solo alle sue parole e non ai gesti e si allontanarono a grandi passi",
+     "match_ratio": 1.0
+    },
+    "2_text": {
+     "t0": 43.87,
+     "t1": 52.63,
+     "t_first_word": 44.87,
+     "t_last_word": 51.13,
+     "word_ids": [
+      "127",
+      "129",
+      "131",
+      "133",
+      "134",
+      "135",
+      "136",
+      "137",
+      "138",
+      "139",
+      "140",
+      "141",
+      "142",
+      "143",
+      "145",
+      "146",
+      "147",
+      "148"
+     ],
+     "matched_text": "Ma i cacciatori mandarono solo alle sue parole e non ai gesti e si allontanarono a grandi passi",
+     "match_ratio": 1.0
+    },
+    "2_images": {
+     "t0": 43.62,
+     "t1": 53.7,
+     "t_first_word": 44.62,
+     "t_last_word": 52.2,
+     "word_ids": [
+      "127",
+      "129",
+      "131",
+      "133",
+      "134",
+      "135",
+      "136",
+      "137",
+      "138",
+      "139",
+      "140",
+      "141",
+      "142",
+      "143",
+      "145",
+      "146",
+      "147",
+      "148"
+     ],
+     "matched_text": "Ma i cacciatori mandarono solo alle sue parole e non ai gesti e si allontanarono a grandi passi",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "8": {
+   "type": "puntuale",
+   "anchor": "poi uscì anch'essa e si avviò dalla parte opposta l'uomo fece l'offeso Ma come ti ho salvato e tu te ne vai senza nemmeno dire grazie Ti ringrazierei rispose la volpe",
+   "windows": {
+    "1_text": {
+     "t0": 52.93,
+     "t1": 67.33,
+     "t_first_word": 53.93,
+     "t_last_word": 65.83,
+     "word_ids": [
+      "156",
+      "159",
+      "161",
+      "162",
+      "163",
+      "165",
+      "166",
+      "167",
+      "169",
+      "170",
+      "171",
+      "175",
+      "176",
+      "177",
+      "178",
+      "179",
+      "180",
+      "181",
+      "182",
+      "183",
+      "184",
+      "185",
+      "186",
+      "187",
+      "188",
+      "189",
+      "190",
+      "193",
+      "195",
+      "196",
+      "197"
+     ],
+     "matched_text": "poi uscì anch'essa e si avviò dalla parte opposta l'uomo fece l’offeso Ma come ti ho salvato e tu te ne vai senza nemmeno dire grazie Ti ringrazierei rispose la volpe",
+     "match_ratio": 1.0
+    },
+    "1_images": {
+     "t0": 54.79,
+     "t1": 68.57,
+     "t_first_word": 55.79,
+     "t_last_word": 67.07,
+     "word_ids": [
+      "156",
+      "159",
+      "161",
+      "162",
+      "163",
+      "165",
+      "166",
+      "167",
+      "169",
+      "170",
+      "171",
+      "175",
+      "176",
+      "177",
+      "178",
+      "179",
+      "180",
+      "181",
+      "182",
+      "183",
+      "184",
+      "185",
+      "186",
+      "187",
+      "188",
+      "189",
+      "190",
+      "193",
+      "195",
+      "196",
+      "197"
+     ],
+     "matched_text": "poi uscì anch'essa e si avviò dalla parte opposta l'uomo fece l’offeso Ma come ti ho salvato e tu te ne vai senza nemmeno dire grazie Ti ringrazierei rispose la volpe",
+     "match_ratio": 1.0
+    },
+    "2_text": {
+     "t0": 52.93,
+     "t1": 67.33,
+     "t_first_word": 53.93,
+     "t_last_word": 65.83,
+     "word_ids": [
+      "156",
+      "159",
+      "161",
+      "162",
+      "163",
+      "165",
+      "166",
+      "167",
+      "169",
+      "170",
+      "171",
+      "175",
+      "176",
+      "177",
+      "178",
+      "179",
+      "180",
+      "181",
+      "182",
+      "183",
+      "184",
+      "185",
+      "186",
+      "187",
+      "188",
+      "189",
+      "190",
+      "193",
+      "195",
+      "196",
+      "197"
+     ],
+     "matched_text": "poi uscì anch'essa e si avviò dalla parte opposta l'uomo fece l’offeso Ma come ti ho salvato e tu te ne vai senza nemmeno dire grazie Ti ringrazierei rispose la volpe",
+     "match_ratio": 1.0
+    },
+    "2_images": {
+     "t0": 54.79,
+     "t1": 68.57,
+     "t_first_word": 55.79,
+     "t_last_word": 67.07,
+     "word_ids": [
+      "156",
+      "159",
+      "161",
+      "162",
+      "163",
+      "165",
+      "166",
+      "167",
+      "169",
+      "170",
+      "171",
+      "175",
+      "176",
+      "177",
+      "178",
+      "179",
+      "180",
+      "181",
+      "182",
+      "183",
+      "184",
+      "185",
+      "186",
+      "187",
+      "188",
+      "189",
+      "190",
+      "193",
+      "195",
+      "196",
+      "197"
+     ],
+     "matched_text": "poi uscì anch'essa e si avviò dalla parte opposta l'uomo fece l’offeso Ma come ti ho salvato e tu te ne vai senza nemmeno dire grazie Ti ringrazierei rispose la volpe",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "9": {
+   "type": "globale",
+   "anchor": null,
+   "windows": {}
+  },
+  "10": {
+   "type": "puntuale",
+   "anchor": "l'uomo fece l'offeso Ma come ti ho salvato e tu te ne vai senza nemmeno dire grazie",
+   "windows": {
+    "1_text": {
+     "t0": 56.85,
+     "t1": 65.11,
+     "t_first_word": 57.85,
+     "t_last_word": 63.61,
+     "word_ids": [
+      "170",
+      "171",
+      "175",
+      "176",
+      "177",
+      "178",
+      "179",
+      "180",
+      "181",
+      "182",
+      "183",
+      "184",
+      "185",
+      "186",
+      "187",
+      "188",
+      "189"
+     ],
+     "matched_text": "l'uomo fece l’offeso Ma come ti ho salvato e tu te ne vai senza nemmeno dire grazie",
+     "match_ratio": 1.0
+    },
+    "1_images": {
+     "t0": 58.66,
+     "t1": 66.54,
+     "t_first_word": 59.66,
+     "t_last_word": 65.04,
+     "word_ids": [
+      "170",
+      "171",
+      "175",
+      "176",
+      "177",
+      "178",
+      "179",
+      "180",
+      "181",
+      "182",
+      "183",
+      "184",
+      "185",
+      "186",
+      "187",
+      "188",
+      "189"
+     ],
+     "matched_text": "l'uomo fece l’offeso Ma come ti ho salvato e tu te ne vai senza nemmeno dire grazie",
+     "match_ratio": 1.0
+    },
+    "2_text": {
+     "t0": 56.85,
+     "t1": 65.11,
+     "t_first_word": 57.85,
+     "t_last_word": 63.61,
+     "word_ids": [
+      "170",
+      "171",
+      "175",
+      "176",
+      "177",
+      "178",
+      "179",
+      "180",
+      "181",
+      "182",
+      "183",
+      "184",
+      "185",
+      "186",
+      "187",
+      "188",
+      "189"
+     ],
+     "matched_text": "l'uomo fece l’offeso Ma come ti ho salvato e tu te ne vai senza nemmeno dire grazie",
+     "match_ratio": 1.0
+    },
+    "2_images": {
+     "t0": 58.66,
+     "t1": 66.54,
+     "t_first_word": 59.66,
+     "t_last_word": 65.04,
+     "word_ids": [
+      "170",
+      "171",
+      "175",
+      "176",
+      "177",
+      "178",
+      "179",
+      "180",
+      "181",
+      "182",
+      "183",
+      "184",
+      "185",
+      "186",
+      "187",
+      "188",
+      "189"
+     ],
+     "matched_text": "l'uomo fece l’offeso Ma come ti ho salvato e tu te ne vai senza nemmeno dire grazie",
+     "match_ratio": 1.0
+    }
+   }
+  }
+ },
+ "tappeto": {
+  "1": {
+   "type": "puntuale",
+   "anchor": "non ha più visto in mezzo alla folla né il suo papà né la sua mamma",
+   "windows": {
+    "1_text": {
+     "t0": 13.39,
+     "t1": 20.22,
+     "t_first_word": 14.39,
+     "t_last_word": 18.72,
+     "word_ids": [
+      "29",
+      "30",
+      "31",
+      "32",
+      "33",
+      "34",
+      "35",
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44",
+      "45"
+     ],
+     "matched_text": "non ha più visto in mezzo alla folla né il suo papà né la sua mamma",
+     "match_ratio": 1.0
+    },
+    "1_images": {
+     "t0": 13.45,
+     "t1": 20.28,
+     "t_first_word": 14.45,
+     "t_last_word": 18.78,
+     "word_ids": [
+      "27",
+      "28",
+      "29",
+      "30",
+      "31",
+      "32",
+      "33",
+      "35",
+      "36",
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43"
+     ],
+     "matched_text": "non ha più visto in mezzo alla folla né il suo papà né la sua mamma",
+     "match_ratio": 1.0
+    },
+    "2_text": {
+     "t0": 13.39,
+     "t1": 20.22,
+     "t_first_word": 14.39,
+     "t_last_word": 18.72,
+     "word_ids": [
+      "29",
+      "30",
+      "31",
+      "32",
+      "33",
+      "34",
+      "35",
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44",
+      "45"
+     ],
+     "matched_text": "non ha più visto in mezzo alla folla né il suo papà né la sua mamma",
+     "match_ratio": 1.0
+    },
+    "2_images": {
+     "t0": 13.45,
+     "t1": 20.28,
+     "t_first_word": 14.45,
+     "t_last_word": 18.78,
+     "word_ids": [
+      "27",
+      "28",
+      "29",
+      "30",
+      "31",
+      "32",
+      "33",
+      "35",
+      "36",
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43"
+     ],
+     "matched_text": "non ha più visto in mezzo alla folla né il suo papà né la sua mamma",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "2": {
+   "type": "puntuale",
+   "anchor": "è andato a guardare una scimmia",
+   "windows": {
+    "1_text": {
+     "t0": 9.38,
+     "t1": 13.18,
+     "t_first_word": 10.38,
+     "t_last_word": 11.68,
+     "word_ids": [
+      "16",
+      "17",
+      "18",
+      "19",
+      "20",
+      "21"
+     ],
+     "matched_text": "è andato a guardare una scimmia",
+     "match_ratio": 1.0
+    },
+    "1_images": {
+     "t0": 9.42,
+     "t1": 13.2,
+     "t_first_word": 10.42,
+     "t_last_word": 11.7,
+     "word_ids": [
+      "16",
+      "17",
+      "18",
+      "19",
+      "20",
+      "21"
+     ],
+     "matched_text": "è andato a guardare una scimmia",
+     "match_ratio": 1.0
+    },
+    "2_text": {
+     "t0": 9.38,
+     "t1": 13.18,
+     "t_first_word": 10.38,
+     "t_last_word": 11.68,
+     "word_ids": [
+      "16",
+      "17",
+      "18",
+      "19",
+      "20",
+      "21"
+     ],
+     "matched_text": "è andato a guardare una scimmia",
+     "match_ratio": 1.0
+    },
+    "2_images": {
+     "t0": 9.42,
+     "t1": 13.2,
+     "t_first_word": 10.42,
+     "t_last_word": 11.7,
+     "word_ids": [
+      "16",
+      "17",
+      "18",
+      "19",
+      "20",
+      "21"
+     ],
+     "matched_text": "è andato a guardare una scimmia",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "3": {
+   "type": "puntuale",
+   "anchor": "Allora si mise a piangere perché piangi gli ha chiesto allora un vecchio che vendeva tappeti Il bambino ha risposto che si era perduto",
+   "windows": {
+    "1_text": {
+     "t0": 21.96,
+     "t1": 34.05,
+     "t_first_word": 22.96,
+     "t_last_word": 32.55,
+     "word_ids": [
+      "56",
+      "57",
+      "59",
+      "60",
+      "61",
+      "63",
+      "65",
+      "66",
+      "67",
+      "68",
+      "69",
+      "70",
+      "71",
+      "72",
+      "74",
+      "76",
+      "77",
+      "78",
+      "79",
+      "80",
+      "81",
+      "82",
+      "83",
+      "85"
+     ],
+     "matched_text": "Allora si mise a piangere perché piangi gli ha chiesto allora un vecchio che vendeva tappeti Il bambino ha risposto che si era perduto",
+     "match_ratio": 1.0
+    },
+    "1_images": {
+     "t0": 22.07,
+     "t1": 34.2,
+     "t_first_word": 23.07,
+     "t_last_word": 32.7,
+     "word_ids": [
+      "54",
+      "55",
+      "57",
+      "58",
+      "59",
+      "60",
+      "62",
+      "63",
+      "64",
+      "65",
+      "66",
+      "67",
+      "68",
+      "69",
+      "71",
+      "73",
+      "74",
+      "75",
+      "76",
+      "77",
+      "78",
+      "79",
+      "80",
+      "82"
+     ],
+     "matched_text": "Allora si mise a piangere perché piangi gli ha chiesto allora un vecchio che vendeva tappeti Il bambino ha risposto che si era perduto",
+     "match_ratio": 1.0
+    },
+    "2_text": {
+     "t0": 21.96,
+     "t1": 34.05,
+     "t_first_word": 22.96,
+     "t_last_word": 32.55,
+     "word_ids": [
+      "56",
+      "57",
+      "59",
+      "60",
+      "61",
+      "63",
+      "65",
+      "66",
+      "67",
+      "68",
+      "69",
+      "70",
+      "71",
+      "72",
+      "74",
+      "76",
+      "77",
+      "78",
+      "79",
+      "80",
+      "81",
+      "82",
+      "83",
+      "85"
+     ],
+     "matched_text": "Allora si mise a piangere perché piangi gli ha chiesto allora un vecchio che vendeva tappeti Il bambino ha risposto che si era perduto",
+     "match_ratio": 1.0
+    },
+    "2_images": {
+     "t0": 22.07,
+     "t1": 34.2,
+     "t_first_word": 23.07,
+     "t_last_word": 32.7,
+     "word_ids": [
+      "54",
+      "55",
+      "57",
+      "58",
+      "59",
+      "60",
+      "62",
+      "63",
+      "64",
+      "65",
+      "66",
+      "67",
+      "68",
+      "69",
+      "71",
+      "73",
+      "74",
+      "75",
+      "76",
+      "77",
+      "78",
+      "79",
+      "80",
+      "82"
+     ],
+     "matched_text": "Allora si mise a piangere perché piangi gli ha chiesto allora un vecchio che vendeva tappeti Il bambino ha risposto che si era perduto",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "4": {
+   "type": "puntuale",
+   "anchor": "il tappeto che era magico si è alzato sopra il mercato",
+   "windows": {
+    "1_text": {
+     "t0": 42.38,
+     "t1": 48.49,
+     "t_first_word": 43.38,
+     "t_last_word": 46.99,
+     "word_ids": [
+      "114",
+      "116",
+      "117",
+      "118",
+      "120",
+      "121",
+      "122",
+      "124",
+      "125",
+      "126",
+      "127"
+     ],
+     "matched_text": "il tappeto che era magico si è alzato sopra il mercato",
+     "match_ratio": 1.0
+    },
+    "1_images": {
+     "t0": 42.53,
+     "t1": 48.65,
+     "t_first_word": 43.53,
+     "t_last_word": 47.15,
+     "word_ids": [
+      "112",
+      "114",
+      "115",
+      "116",
+      "118",
+      "119",
+      "120",
+      "122",
+      "123",
+      "124",
+      "125"
+     ],
+     "matched_text": "il tappeto che era magico si è alzato sopra il mercato",
+     "match_ratio": 1.0
+    },
+    "2_text": {
+     "t0": 42.38,
+     "t1": 48.49,
+     "t_first_word": 43.38,
+     "t_last_word": 46.99,
+     "word_ids": [
+      "114",
+      "116",
+      "117",
+      "118",
+      "120",
+      "121",
+      "122",
+      "124",
+      "125",
+      "126",
+      "127"
+     ],
+     "matched_text": "il tappeto che era magico si è alzato sopra il mercato",
+     "match_ratio": 1.0
+    },
+    "2_images": {
+     "t0": 42.53,
+     "t1": 48.65,
+     "t_first_word": 43.53,
+     "t_last_word": 47.15,
+     "word_ids": [
+      "112",
+      "114",
+      "115",
+      "116",
+      "118",
+      "119",
+      "120",
+      "122",
+      "123",
+      "124",
+      "125"
+     ],
+     "matched_text": "il tappeto che era magico si è alzato sopra il mercato",
+     "match_ratio": 1.0
+    }
+   },
+   "note": "informazione indiretta: il mercato è esplicito solo al decollo del tappeto"
+  },
+  "5": {
+   "type": "puntuale",
+   "anchor": "perché piangi gli ha chiesto allora un vecchio che vendeva tappeti",
+   "windows": {
+    "1_text": {
+     "t0": 24.75,
+     "t1": 30.93,
+     "t_first_word": 25.75,
+     "t_last_word": 29.43,
+     "word_ids": [
+      "63",
+      "65",
+      "66",
+      "67",
+      "68",
+      "69",
+      "70",
+      "71",
+      "72",
+      "74",
+      "76"
+     ],
+     "matched_text": "perché piangi gli ha chiesto allora un vecchio che vendeva tappeti",
+     "match_ratio": 1.0
+    },
+    "1_images": {
+     "t0": 24.73,
+     "t1": 31.07,
+     "t_first_word": 25.73,
+     "t_last_word": 29.57,
+     "word_ids": [
+      "60",
+      "62",
+      "63",
+      "64",
+      "65",
+      "66",
+      "67",
+      "68",
+      "69",
+      "71",
+      "73"
+     ],
+     "matched_text": "perché piangi gli ha chiesto allora un vecchio che vendeva tappeti",
+     "match_ratio": 1.0
+    },
+    "2_text": {
+     "t0": 24.75,
+     "t1": 30.93,
+     "t_first_word": 25.75,
+     "t_last_word": 29.43,
+     "word_ids": [
+      "63",
+      "65",
+      "66",
+      "67",
+      "68",
+      "69",
+      "70",
+      "71",
+      "72",
+      "74",
+      "76"
+     ],
+     "matched_text": "perché piangi gli ha chiesto allora un vecchio che vendeva tappeti",
+     "match_ratio": 1.0
+    },
+    "2_images": {
+     "t0": 24.73,
+     "t1": 31.07,
+     "t_first_word": 25.73,
+     "t_last_word": 29.57,
+     "word_ids": [
+      "60",
+      "62",
+      "63",
+      "64",
+      "65",
+      "66",
+      "67",
+      "68",
+      "69",
+      "71",
+      "73"
+     ],
+     "matched_text": "perché piangi gli ha chiesto allora un vecchio che vendeva tappeti",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "6": {
+   "type": "puntuale",
+   "anchor": "tornare a casa siediti su questo tappeto è un tappeto speciale che non vendo a nessuno",
+   "windows": {
+    "1_text": {
+     "t0": 33.18,
+     "t1": 41.69,
+     "t_first_word": 34.18,
+     "t_last_word": 40.19,
+     "word_ids": [
+      "87",
+      "88",
+      "89",
+      "92",
+      "93",
+      "94",
+      "96",
+      "97",
+      "98",
+      "100",
+      "101",
+      "102",
+      "103",
+      "105",
+      "106",
+      "107"
+     ],
+     "matched_text": "tornare a casa siediti su questo tappeto è un tappeto speciale che non vendo a nessuno",
+     "match_ratio": 1.0
+    },
+    "1_images": {
+     "t0": 33.29,
+     "t1": 41.84,
+     "t_first_word": 34.29,
+     "t_last_word": 40.34,
+     "word_ids": [
+      "85",
+      "86",
+      "87",
+      "90",
+      "91",
+      "92",
+      "94",
+      "95",
+      "96",
+      "98",
+      "99",
+      "100",
+      "101",
+      "103",
+      "104",
+      "105"
+     ],
+     "matched_text": "tornare a casa siediti su questo tappeto è un tappeto speciale che non vendo a nessuno",
+     "match_ratio": 1.0
+    },
+    "2_text": {
+     "t0": 33.18,
+     "t1": 41.69,
+     "t_first_word": 34.18,
+     "t_last_word": 40.19,
+     "word_ids": [
+      "87",
+      "88",
+      "89",
+      "92",
+      "93",
+      "94",
+      "96",
+      "97",
+      "98",
+      "100",
+      "101",
+      "102",
+      "103",
+      "105",
+      "106",
+      "107"
+     ],
+     "matched_text": "tornare a casa siediti su questo tappeto è un tappeto speciale che non vendo a nessuno",
+     "match_ratio": 1.0
+    },
+    "2_images": {
+     "t0": 33.29,
+     "t1": 41.84,
+     "t_first_word": 34.29,
+     "t_last_word": 40.34,
+     "word_ids": [
+      "85",
+      "86",
+      "87",
+      "90",
+      "91",
+      "92",
+      "94",
+      "95",
+      "96",
+      "98",
+      "99",
+      "100",
+      "101",
+      "103",
+      "104",
+      "105"
+     ],
+     "matched_text": "tornare a casa siediti su questo tappeto è un tappeto speciale che non vendo a nessuno",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "7": {
+   "type": "puntuale",
+   "anchor": "si è alzato sopra il mercato sopra la città e i campi",
+   "windows": {
+    "1_text": {
+     "t0": 44.79,
+     "t1": 50.77,
+     "t_first_word": 45.79,
+     "t_last_word": 49.27,
+     "word_ids": [
+      "121",
+      "122",
+      "124",
+      "125",
+      "126",
+      "127",
+      "128",
+      "129",
+      "130",
+      "131",
+      "132",
+      "133"
+     ],
+     "matched_text": "si è alzato sopra il mercato sopra la città e i campi",
+     "match_ratio": 1.0
+    },
+    "1_images": {
+     "t0": 44.89,
+     "t1": 50.97,
+     "t_first_word": 45.89,
+     "t_last_word": 49.47,
+     "word_ids": [
+      "119",
+      "120",
+      "122",
+      "123",
+      "124",
+      "125",
+      "126",
+      "127",
+      "128",
+      "129",
+      "130",
+      "131"
+     ],
+     "matched_text": "si è alzato sopra il mercato sopra la città e i campi",
+     "match_ratio": 1.0
+    },
+    "2_text": {
+     "t0": 44.79,
+     "t1": 50.77,
+     "t_first_word": 45.79,
+     "t_last_word": 49.27,
+     "word_ids": [
+      "121",
+      "122",
+      "124",
+      "125",
+      "126",
+      "127",
+      "128",
+      "129",
+      "130",
+      "131",
+      "132",
+      "133"
+     ],
+     "matched_text": "si è alzato sopra il mercato sopra la città e i campi",
+     "match_ratio": 1.0
+    },
+    "2_images": {
+     "t0": 44.89,
+     "t1": 50.97,
+     "t_first_word": 45.89,
+     "t_last_word": 49.47,
+     "word_ids": [
+      "119",
+      "120",
+      "122",
+      "123",
+      "124",
+      "125",
+      "126",
+      "127",
+      "128",
+      "129",
+      "130",
+      "131"
+     ],
+     "matched_text": "si è alzato sopra il mercato sopra la città e i campi",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "8": {
+   "type": "puntuale",
+   "anchor": "ed è atterrato proprio davanti alla sua casa",
+   "windows": {
+    "1_text": {
+     "t0": 49.35,
+     "t1": 53.8,
+     "t_first_word": 50.35,
+     "t_last_word": 52.3,
+     "word_ids": [
+      "134",
+      "135",
+      "137",
+      "138",
+      "139",
+      "140",
+      "141",
+      "142"
+     ],
+     "matched_text": "ed è atterrato proprio davanti alla sua casa",
+     "match_ratio": 1.0
+    },
+    "1_images": {
+     "t0": 49.48,
+     "t1": 54.1,
+     "t_first_word": 50.48,
+     "t_last_word": 52.6,
+     "word_ids": [
+      "132",
+      "133",
+      "135",
+      "136",
+      "137",
+      "138",
+      "139",
+      "140"
+     ],
+     "matched_text": "ed è atterrato proprio davanti alla sua casa",
+     "match_ratio": 1.0
+    },
+    "2_text": {
+     "t0": 49.35,
+     "t1": 53.8,
+     "t_first_word": 50.35,
+     "t_last_word": 52.3,
+     "word_ids": [
+      "134",
+      "135",
+      "137",
+      "138",
+      "139",
+      "140",
+      "141",
+      "142"
+     ],
+     "matched_text": "ed è atterrato proprio davanti alla sua casa",
+     "match_ratio": 1.0
+    },
+    "2_images": {
+     "t0": 49.48,
+     "t1": 54.1,
+     "t_first_word": 50.48,
+     "t_last_word": 52.6,
+     "word_ids": [
+      "132",
+      "133",
+      "135",
+      "136",
+      "137",
+      "138",
+      "139",
+      "140"
+     ],
+     "matched_text": "ed è atterrato proprio davanti alla sua casa",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "9": {
+   "type": "puntuale",
+   "anchor": "il bambino è sceso felice",
+   "windows": {
+    "1_text": {
+     "t0": 53.01,
+     "t1": 56.69,
+     "t_first_word": 54.01,
+     "t_last_word": 55.19,
+     "word_ids": [
+      "144",
+      "145",
+      "146",
+      "148",
+      "149"
+     ],
+     "matched_text": "il bambino è sceso felice",
+     "match_ratio": 1.0
+    },
+    "1_images": {
+     "t0": 53.18,
+     "t1": 56.89,
+     "t_first_word": 54.18,
+     "t_last_word": 55.39,
+     "word_ids": [
+      "142",
+      "143",
+      "144",
+      "146",
+      "147"
+     ],
+     "matched_text": "il bambino è sceso felice",
+     "match_ratio": 1.0
+    },
+    "2_text": {
+     "t0": 53.01,
+     "t1": 56.69,
+     "t_first_word": 54.01,
+     "t_last_word": 55.19,
+     "word_ids": [
+      "144",
+      "145",
+      "146",
+      "148",
+      "149"
+     ],
+     "matched_text": "il bambino è sceso felice",
+     "match_ratio": 1.0
+    },
+    "2_images": {
+     "t0": 53.18,
+     "t1": 56.89,
+     "t_first_word": 54.18,
+     "t_last_word": 55.39,
+     "word_ids": [
+      "142",
+      "143",
+      "144",
+      "146",
+      "147"
+     ],
+     "matched_text": "il bambino è sceso felice",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "10": {
+   "type": "puntuale",
+   "anchor": "il tappeto tornava dal suo padrone",
+   "windows": {
+    "1_text": {
+     "t0": 62.23,
+     "t1": 66.61,
+     "t_first_word": 63.23,
+     "t_last_word": 65.11,
+     "word_ids": [
+      "174",
+      "176",
+      "178",
+      "179",
+      "180",
+      "181"
+     ],
+     "matched_text": "il tappeto tornava dal suo padrone",
+     "match_ratio": 1.0
+    },
+    "1_images": {
+     "t0": 62.35,
+     "t1": 66.82,
+     "t_first_word": 63.35,
+     "t_last_word": 65.32,
+     "word_ids": [
+      "169",
+      "171",
+      "173",
+      "174",
+      "175",
+      "176"
+     ],
+     "matched_text": "il tappeto tornava dal suo padrone",
+     "match_ratio": 1.0
+    },
+    "2_text": {
+     "t0": 62.23,
+     "t1": 66.61,
+     "t_first_word": 63.23,
+     "t_last_word": 65.11,
+     "word_ids": [
+      "174",
+      "176",
+      "178",
+      "179",
+      "180",
+      "181"
+     ],
+     "matched_text": "il tappeto tornava dal suo padrone",
+     "match_ratio": 1.0
+    },
+    "2_images": {
+     "t0": 62.35,
+     "t1": 66.82,
+     "t_first_word": 63.35,
+     "t_last_word": 65.32,
+     "word_ids": [
+      "169",
+      "171",
+      "173",
+      "174",
+      "175",
+      "176"
+     ],
+     "matched_text": "il tappeto tornava dal suo padrone",
+     "match_ratio": 1.0
+    }
+   }
+  }
+ },
+ "gatta": {
+  "1": {
+   "type": "puntuale",
+   "anchor": "nel giardino della mia casa di campagna",
+   "windows": {
+    "3_text": {
+     "t0": 10.3,
+     "t1": 14.92,
+     "t_first_word": 11.3,
+     "t_last_word": 13.42,
+     "word_ids": [
+      "18",
+      "19",
+      "20",
+      "21",
+      "22",
+      "23",
+      "24"
+     ],
+     "matched_text": "nel giardino della mia casa di campagna",
+     "match_ratio": 1.0
+    },
+    "3_images": {
+     "t0": 10.3,
+     "t1": 14.89,
+     "t_first_word": 11.3,
+     "t_last_word": 13.39,
+     "word_ids": [
+      "18",
+      "19",
+      "20",
+      "21",
+      "22",
+      "23",
+      "24"
+     ],
+     "matched_text": "nel giardino della mia casa di campagna",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "2": {
+   "type": "puntuale",
+   "anchor": "mentre cadevano fiocchi di neve nel giardino della mia casa di campagna apparve una gatta",
+   "windows": {
+    "3_text": {
+     "t0": 7.77,
+     "t1": 17.36,
+     "t_first_word": 8.77,
+     "t_last_word": 15.86,
+     "word_ids": [
+      "11",
+      "13",
+      "15",
+      "16",
+      "17",
+      "18",
+      "19",
+      "20",
+      "21",
+      "22",
+      "23",
+      "24",
+      "26",
+      "27",
+      "29"
+     ],
+     "matched_text": "mentre cadevano fiocchi di neve nel giardino della mia casa di campagna apparve una gatta",
+     "match_ratio": 1.0
+    },
+    "3_images": {
+     "t0": 7.77,
+     "t1": 17.37,
+     "t_first_word": 8.77,
+     "t_last_word": 15.87,
+     "word_ids": [
+      "11",
+      "13",
+      "15",
+      "16",
+      "17",
+      "18",
+      "19",
+      "20",
+      "21",
+      "22",
+      "23",
+      "24",
+      "26",
+      "27",
+      "29"
+     ],
+     "matched_text": "mentre cadevano fiocchi di neve nel giardino della mia casa di campagna apparve una gatta",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "3": {
+   "type": "puntuale",
+   "anchor": "apparve una gatta bianca e nera che zoppicava",
+   "windows": {
+    "3_text": {
+     "t0": 14.02,
+     "t1": 20.69,
+     "t_first_word": 15.02,
+     "t_last_word": 19.19,
+     "word_ids": [
+      "26",
+      "27",
+      "29",
+      "30",
+      "31",
+      "32",
+      "33",
+      "37"
+     ],
+     "matched_text": "apparve una gatta bianca e nera che zoppicava",
+     "match_ratio": 1.0
+    },
+    "3_images": {
+     "t0": 14.03,
+     "t1": 20.66,
+     "t_first_word": 15.03,
+     "t_last_word": 19.16,
+     "word_ids": [
+      "26",
+      "27",
+      "29",
+      "30",
+      "31",
+      "32",
+      "33",
+      "37"
+     ],
+     "matched_text": "apparve una gatta bianca e nera che zoppicava",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "4": {
+   "type": "puntuale",
+   "anchor": "ebbi con passione di quella povera gatta e Le un po' di latte caldo e un pezzetto di carne di pollo",
+   "windows": {
+    "3_text": {
+     "t0": 34.03,
+     "t1": 43.12,
+     "t_first_word": 35.03,
+     "t_last_word": 41.62,
+     "word_ids": [
+      "86",
+      "87",
+      "88",
+      "89",
+      "90",
+      "92",
+      "94",
+      "95",
+      "96",
+      "100",
+      "102",
+      "103",
+      "104",
+      "105",
+      "106",
+      "107",
+      "109",
+      "110",
+      "111",
+      "112",
+      "113"
+     ],
+     "matched_text": "ebbi con passione di quella povera gatta e Le un po' di latte caldo e un pezzetto di carne di pollo",
+     "match_ratio": 1.0
+    },
+    "3_images": {
+     "t0": 33.8,
+     "t1": 43.18,
+     "t_first_word": 34.8,
+     "t_last_word": 41.68,
+     "word_ids": [
+      "83",
+      "84",
+      "85",
+      "86",
+      "87",
+      "89",
+      "91",
+      "92",
+      "93",
+      "96",
+      "98",
+      "99",
+      "100",
+      "101",
+      "102",
+      "103",
+      "105",
+      "106",
+      "107",
+      "108",
+      "109"
+     ],
+     "matched_text": "ebbi con passione di quella povera gatta e Le un po' di latte caldo e un pezzetto di carne di pollo",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "5": {
+   "type": "puntuale",
+   "anchor": "Io rimasi a guardare la neve che imbiancava il prato",
+   "windows": {
+    "3_text": {
+     "t0": 45.0,
+     "t1": 50.24,
+     "t_first_word": 46.0,
+     "t_last_word": 48.74,
+     "word_ids": [
+      "120",
+      "122",
+      "123",
+      "124",
+      "125",
+      "126",
+      "127",
+      "131",
+      "132",
+      "133"
+     ],
+     "matched_text": "Io rimasi a guardare la neve che imbiancava il prato",
+     "match_ratio": 1.0
+    },
+    "3_images": {
+     "t0": 45.04,
+     "t1": 50.37,
+     "t_first_word": 46.04,
+     "t_last_word": 48.87,
+     "word_ids": [
+      "116",
+      "118",
+      "119",
+      "120",
+      "121",
+      "122",
+      "123",
+      "127",
+      "128",
+      "129"
+     ],
+     "matched_text": "Io rimasi a guardare la neve che imbiancava il prato",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "6": {
+   "type": "puntuale",
+   "anchor": "non passarono neanche tre minuti che la gatta zoppicando ricomparve",
+   "windows": {
+    "3_text": {
+     "t0": 49.34,
+     "t1": 56.93,
+     "t_first_word": 50.34,
+     "t_last_word": 55.43,
+     "word_ids": [
+      "135",
+      "137",
+      "138",
+      "139",
+      "140",
+      "141",
+      "142",
+      "144",
+      "147",
+      "150"
+     ],
+     "matched_text": "non passarono neanche tre minuti che la gatta zoppicando ricomparve",
+     "match_ratio": 1.0
+    },
+    "3_images": {
+     "t0": 49.38,
+     "t1": 57.05,
+     "t_first_word": 50.38,
+     "t_last_word": 55.55,
+     "word_ids": [
+      "131",
+      "133",
+      "134",
+      "135",
+      "136",
+      "137",
+      "138",
+      "140",
+      "143",
+      "146"
+     ],
+     "matched_text": "non passarono neanche tre minuti che la gatta zoppicando ricomparve",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "7": {
+   "type": "puntuale",
+   "anchor": "ricomparve da dietro l'angolo della casa con gli occhi mestie",
+   "windows": {
+    "3_text": {
+     "t0": 54.43,
+     "t1": 60.77,
+     "t_first_word": 55.43,
+     "t_last_word": 59.27,
+     "word_ids": [
+      "150",
+      "151",
+      "152",
+      "153",
+      "154",
+      "155",
+      "156",
+      "157",
+      "158",
+      "161"
+     ],
+     "matched_text": "ricomparve da dietro l'angolo della casa con gli occhi mestie",
+     "match_ratio": 1.0
+    },
+    "3_images": {
+     "t0": 54.55,
+     "t1": 60.83,
+     "t_first_word": 55.55,
+     "t_last_word": 59.33,
+     "word_ids": [
+      "146",
+      "147",
+      "148",
+      "149",
+      "150",
+      "151",
+      "152",
+      "153",
+      "154",
+      "157"
+     ],
+     "matched_text": "ricomparve da dietro l'angolo della casa con gli occhi mestie",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "8": {
+   "type": "puntuale",
+   "anchor": "poi tornò indietro come per cercare qualcosa ricomparve con tre piccoli gattini infreddoliti uno dietro l'altro gli portò vicino a me",
+   "windows": {
+    "3_text": {
+     "t0": 64.63,
+     "t1": 78.5,
+     "t_first_word": 65.63,
+     "t_last_word": 77.0,
+     "word_ids": [
+      "180",
+      "181",
+      "182",
+      "183",
+      "184",
+      "185",
+      "186",
+      "189",
+      "190",
+      "191",
+      "192",
+      "194",
+      "199",
+      "200",
+      "201",
+      "202",
+      "203",
+      "205",
+      "206",
+      "207",
+      "208"
+     ],
+     "matched_text": "poi tornò indietro come per cercare qualcosa ricomparve con tre piccoli gattini infreddoliti uno dietro l'altro gli portò vicino a me",
+     "match_ratio": 1.0
+    },
+    "3_images": {
+     "t0": 64.62,
+     "t1": 78.71,
+     "t_first_word": 65.62,
+     "t_last_word": 77.21,
+     "word_ids": [
+      "176",
+      "177",
+      "178",
+      "179",
+      "180",
+      "181",
+      "182",
+      "185",
+      "186",
+      "187",
+      "188",
+      "190",
+      "195",
+      "196",
+      "197",
+      "198",
+      "199",
+      "201",
+      "202",
+      "203",
+      "204"
+     ],
+     "matched_text": "poi tornò indietro come per cercare qualcosa ricomparve con tre piccoli gattini infreddoliti uno dietro l'altro gli portò vicino a me",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "9": {
+   "type": "puntuale",
+   "anchor": "ricomparve con tre piccoli gattini infreddoliti",
+   "windows": {
+    "3_text": {
+     "t0": 69.51,
+     "t1": 74.71,
+     "t_first_word": 70.51,
+     "t_last_word": 73.21,
+     "word_ids": [
+      "189",
+      "190",
+      "191",
+      "192",
+      "194",
+      "199"
+     ],
+     "matched_text": "ricomparve con tre piccoli gattini infreddoliti",
+     "match_ratio": 1.0
+    },
+    "3_images": {
+     "t0": 69.68,
+     "t1": 75.07,
+     "t_first_word": 70.68,
+     "t_last_word": 73.57,
+     "word_ids": [
+      "185",
+      "186",
+      "187",
+      "188",
+      "190",
+      "195"
+     ],
+     "matched_text": "ricomparve con tre piccoli gattini infreddoliti",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "10": {
+   "type": "puntuale",
+   "anchor": "avevano freddo e fame e diede a loro il latte e la carne",
+   "windows": {
+    "3_text": {
+     "t0": 79.12,
+     "t1": 86.06,
+     "t_first_word": 80.12,
+     "t_last_word": 84.56,
+     "word_ids": [
+      "217",
+      "218",
+      "219",
+      "220",
+      "221",
+      "223",
+      "224",
+      "225",
+      "226",
+      "227",
+      "228",
+      "229",
+      "230"
+     ],
+     "matched_text": "avevano freddo e fame e diede a loro il latte e la carne",
+     "match_ratio": 1.0
+    },
+    "3_images": {
+     "t0": 79.21,
+     "t1": 86.3,
+     "t_first_word": 80.21,
+     "t_last_word": 84.8,
+     "word_ids": [
+      "213",
+      "214",
+      "215",
+      "216",
+      "217",
+      "219",
+      "220",
+      "221",
+      "222",
+      "223",
+      "224",
+      "225",
+      "226"
+     ],
+     "matched_text": "avevano freddo e fame e diede a loro il latte e la carne",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "11": {
+   "type": "puntuale",
+   "anchor": "mentre la mamma felice li leccava per pulirli",
+   "windows": {
+    "3_text": {
+     "t0": 84.39,
+     "t1": 90.41,
+     "t_first_word": 85.39,
+     "t_last_word": 88.91,
+     "word_ids": [
+      "231",
+      "232",
+      "233",
+      "234",
+      "235",
+      "238",
+      "239",
+      "241"
+     ],
+     "matched_text": "mentre la mamma felice li leccava per pulirli",
+     "match_ratio": 1.0
+    },
+    "3_images": {
+     "t0": 84.57,
+     "t1": 90.68,
+     "t_first_word": 85.57,
+     "t_last_word": 89.18,
+     "word_ids": [
+      "227",
+      "228",
+      "229",
+      "230",
+      "231",
+      "234",
+      "235",
+      "237"
+     ],
+     "matched_text": "mentre la mamma felice li leccava per pulirli",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "12": {
+   "type": "puntuale",
+   "anchor": "misi tutta la famiglia in una cassetta collana e la portai al riparo nei ripostiglio della legna",
+   "windows": {
+    "3_text": {
+     "t0": 90.9,
+     "t1": 100.0,
+     "t_first_word": 91.9,
+     "t_last_word": 98.5,
+     "word_ids": [
+      "243",
+      "244",
+      "245",
+      "246",
+      "247",
+      "248",
+      "250",
+      "251",
+      "252",
+      "253",
+      "255",
+      "256",
+      "258",
+      "261",
+      "264",
+      "265",
+      "266"
+     ],
+     "matched_text": "misi tutta la famiglia in una cassetta collana e la portai al riparo nei ripostiglio della legna",
+     "match_ratio": 1.0
+    },
+    "3_images": {
+     "t0": 91.03,
+     "t1": 100.75,
+     "t_first_word": 92.03,
+     "t_last_word": 99.25,
+     "word_ids": [
+      "239",
+      "240",
+      "241",
+      "242",
+      "243",
+      "244",
+      "246",
+      "247",
+      "248",
+      "249",
+      "253",
+      "254",
+      "256",
+      "259",
+      "262",
+      "263",
+      "264"
+     ],
+     "matched_text": "misi tutta la famiglia in una cassetta collana e la portai al riparo nei ripostiglio della legna",
+     "match_ratio": 1.0
+    }
+   }
+  }
+ },
+ "sbadiglio": {
+  "1": {
+   "type": "puntuale",
+   "anchor": "portò a passeggio la sorellina nel passeggino",
+   "windows": {
+    "3_text": {
+     "t0": 7.42,
+     "t1": 12.57,
+     "t_first_word": 8.42,
+     "t_last_word": 11.07,
+     "word_ids": [
+      "13",
+      "14",
+      "16",
+      "17",
+      "20",
+      "21",
+      "23"
+     ],
+     "matched_text": "portò a passeggio la sorellina nel passeggino",
+     "match_ratio": 1.0
+    },
+    "3_images": {
+     "t0": 7.45,
+     "t1": 12.59,
+     "t_first_word": 8.45,
+     "t_last_word": 11.09,
+     "word_ids": [
+      "13",
+      "14",
+      "16",
+      "17",
+      "20",
+      "21",
+      "23"
+     ],
+     "matched_text": "portò a passeggio la sorellina nel passeggino",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "2": {
+   "type": "puntuale",
+   "anchor": "La donna del negozio di cappelli La vide e subito sbadigliò anche lei",
+   "windows": {
+    "3_text": {
+     "t0": 20.03,
+     "t1": 27.45,
+     "t_first_word": 21.03,
+     "t_last_word": 25.95,
+     "word_ids": [
+      "47",
+      "48",
+      "49",
+      "50",
+      "51",
+      "53",
+      "54",
+      "56",
+      "57",
+      "58",
+      "62",
+      "63",
+      "64"
+     ],
+     "matched_text": "La donna del negozio di cappelli La vide e subito sbadigliò anche lei",
+     "match_ratio": 1.0
+    },
+    "3_images": {
+     "t0": 20.08,
+     "t1": 27.47,
+     "t_first_word": 21.08,
+     "t_last_word": 25.97,
+     "word_ids": [
+      "47",
+      "48",
+      "49",
+      "50",
+      "51",
+      "53",
+      "54",
+      "56",
+      "57",
+      "58",
+      "62",
+      "63",
+      "64"
+     ],
+     "matched_text": "La donna del negozio di cappelli La vide e subito sbadigliò anche lei",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "3": {
+   "type": "puntuale",
+   "anchor": "La sorellina era stanca e sbadigliò",
+   "windows": {
+    "3_text": {
+     "t0": 11.26,
+     "t1": 16.66,
+     "t_first_word": 12.26,
+     "t_last_word": 15.16,
+     "word_ids": [
+      "24",
+      "27",
+      "28",
+      "29",
+      "30",
+      "34"
+     ],
+     "matched_text": "La sorellina era stanca e sbadigliò",
+     "match_ratio": 1.0
+    },
+    "3_images": {
+     "t0": 11.28,
+     "t1": 16.71,
+     "t_first_word": 12.28,
+     "t_last_word": 15.21,
+     "word_ids": [
+      "24",
+      "27",
+      "28",
+      "29",
+      "30",
+      "34"
+     ],
+     "matched_text": "La sorellina era stanca e sbadigliò",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "4": {
+   "type": "puntuale",
+   "anchor": "il manovratore vedendo tutte quelle bocche aperte cominciò a sbadigliare e sbadigliare e non riusciva a ripartire",
+   "windows": {
+    "3_text": {
+     "t0": 35.75,
+     "t1": 47.05,
+     "t_first_word": 36.75,
+     "t_last_word": 45.55,
+     "word_ids": [
+      "98",
+      "101",
+      "102",
+      "103",
+      "104",
+      "106",
+      "107",
+      "109",
+      "110",
+      "114",
+      "115",
+      "118",
+      "119",
+      "120",
+      "122",
+      "123",
+      "125"
+     ],
+     "matched_text": "il manovratore vedendo tutte quelle bocche aperte cominciò a sbadigliare e sbadigliare e non riusciva a ripartire",
+     "match_ratio": 1.0
+    },
+    "3_images": {
+     "t0": 35.85,
+     "t1": 47.6,
+     "t_first_word": 36.85,
+     "t_last_word": 46.1,
+     "word_ids": [
+      "98",
+      "101",
+      "102",
+      "103",
+      "104",
+      "106",
+      "107",
+      "109",
+      "110",
+      "114",
+      "115",
+      "118",
+      "119",
+      "120",
+      "122",
+      "123",
+      "125"
+     ],
+     "matched_text": "il manovratore vedendo tutte quelle bocche aperte cominciò a sbadigliare e sbadigliare e non riusciva a ripartire",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "5": {
+   "type": "puntuale",
+   "anchor": "il vigile voleva suonare il fischietto perché tutti si decidessero a rimettersi in moto ma non riuscì a fischiare perché aveva voglia di sbadigliare",
+   "windows": {
+    "3_text": {
+     "t0": 64.64,
+     "t1": 77.94,
+     "t_first_word": 65.64,
+     "t_last_word": 76.44,
+     "word_ids": [
+      "176",
+      "178",
+      "179",
+      "180",
+      "181",
+      "184",
+      "185",
+      "186",
+      "187",
+      "189",
+      "190",
+      "192",
+      "193",
+      "194",
+      "195",
+      "196",
+      "199",
+      "200",
+      "202",
+      "203",
+      "204",
+      "205",
+      "206",
+      "210"
+     ],
+     "matched_text": "il vigile voleva suonare il fischietto perché tutti si decidessero a rimettersi in moto ma non riuscì a fischiare perché aveva voglia di sbadigliare",
+     "match_ratio": 1.0
+    },
+    "3_images": {
+     "t0": 64.73,
+     "t1": 78.41,
+     "t_first_word": 65.73,
+     "t_last_word": 76.91,
+     "word_ids": [
+      "176",
+      "178",
+      "179",
+      "180",
+      "181",
+      "184",
+      "185",
+      "186",
+      "187",
+      "189",
+      "190",
+      "192",
+      "193",
+      "194",
+      "195",
+      "196",
+      "199",
+      "200",
+      "202",
+      "203",
+      "204",
+      "205",
+      "206",
+      "210"
+     ],
+     "matched_text": "il vigile voleva suonare il fischietto perché tutti si decidessero a rimettersi in moto ma non riuscì a fischiare perché aveva voglia di sbadigliare",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "6": {
+   "type": "puntuale",
+   "anchor": "un camionista che voleva sapere perché il tram stesse fermo per tanto tempo si sporse dal finestrino e subito lo sbadiglio colse anche lui",
+   "windows": {
+    "3_text": {
+     "t0": 45.31,
+     "t1": 58.85,
+     "t_first_word": 46.31,
+     "t_last_word": 57.35,
+     "word_ids": [
+      "126",
+      "129",
+      "130",
+      "131",
+      "132",
+      "133",
+      "134",
+      "136",
+      "137",
+      "138",
+      "139",
+      "140",
+      "141",
+      "142",
+      "144",
+      "145",
+      "147",
+      "148",
+      "149",
+      "150",
+      "153",
+      "155",
+      "156",
+      "157"
+     ],
+     "matched_text": "un camionista che voleva sapere perché il tram stesse fermo per tanto tempo si sporse dal finestrino e subito lo sbadiglio colse anche lui",
+     "match_ratio": 1.0
+    },
+    "3_images": {
+     "t0": 45.83,
+     "t1": 58.99,
+     "t_first_word": 46.83,
+     "t_last_word": 57.49,
+     "word_ids": [
+      "126",
+      "129",
+      "130",
+      "131",
+      "132",
+      "133",
+      "134",
+      "136",
+      "137",
+      "138",
+      "139",
+      "140",
+      "141",
+      "142",
+      "144",
+      "145",
+      "147",
+      "148",
+      "149",
+      "150",
+      "153",
+      "155",
+      "156",
+      "157"
+     ],
+     "matched_text": "un camionista che voleva sapere perché il tram stesse fermo per tanto tempo si sporse dal finestrino e subito lo sbadiglio colse anche lui",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "7": {
+   "type": "puntuale",
+   "anchor": "e il giornalaio il ciclista tutti si misero a sbadigliare",
+   "windows": {
+    "3_text": {
+     "t0": 28.3,
+     "t1": 35.12,
+     "t_first_word": 29.3,
+     "t_last_word": 33.62,
+     "word_ids": [
+      "74",
+      "75",
+      "78",
+      "79",
+      "81",
+      "82",
+      "83",
+      "86",
+      "87",
+      "91"
+     ],
+     "matched_text": "e il giornalaio il ciclista tutti si misero a sbadigliare",
+     "match_ratio": 1.0
+    },
+    "3_images": {
+     "t0": 28.34,
+     "t1": 35.44,
+     "t_first_word": 29.34,
+     "t_last_word": 33.94,
+     "word_ids": [
+      "74",
+      "75",
+      "78",
+      "79",
+      "81",
+      "82",
+      "83",
+      "86",
+      "87",
+      "91"
+     ],
+     "matched_text": "e il giornalaio il ciclista tutti si misero a sbadigliare",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "8": {
+   "type": "puntuale",
+   "anchor": "anche lo spazzacamino sul tetto",
+   "windows": {
+    "3_text": {
+     "t0": 84.27,
+     "t1": 88.6,
+     "t_first_word": 85.27,
+     "t_last_word": 87.1,
+     "word_ids": [
+      "238",
+      "239",
+      "243",
+      "244",
+      "245"
+     ],
+     "matched_text": "anche lo spazzacamino sul tetto",
+     "match_ratio": 1.0
+    },
+    "3_images": {
+     "t0": 85.54,
+     "t1": 89.76,
+     "t_first_word": 86.54,
+     "t_last_word": 88.26,
+     "word_ids": [
+      "238",
+      "239",
+      "243",
+      "244",
+      "245"
+     ],
+     "matched_text": "anche lo spazzacamino sul tetto",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "9": {
+   "type": "puntuale",
+   "anchor": "tutta la gente tutti i cani e i gatti della città si a sbadigliare anche lo spazzacamino sul tetto e persino I lombrichi nella terra",
+   "windows": {
+    "3_text": {
+     "t0": 78.75,
+     "t1": 91.46,
+     "t_first_word": 79.75,
+     "t_last_word": 89.96,
+     "word_ids": [
+      "216",
+      "217",
+      "218",
+      "219",
+      "220",
+      "221",
+      "222",
+      "225",
+      "226",
+      "227",
+      "228",
+      "229",
+      "233",
+      "237",
+      "238",
+      "239",
+      "243",
+      "244",
+      "245",
+      "246",
+      "248",
+      "249",
+      "252",
+      "253",
+      "254"
+     ],
+     "matched_text": "tutta la gente tutti i cani e i gatti della città si a sbadigliare anche lo spazzacamino sul tetto e persino I lombrichi nella terra",
+     "match_ratio": 1.0
+    },
+    "3_images": {
+     "t0": 79.04,
+     "t1": 92.45,
+     "t_first_word": 80.04,
+     "t_last_word": 90.95,
+     "word_ids": [
+      "216",
+      "217",
+      "218",
+      "219",
+      "220",
+      "221",
+      "222",
+      "225",
+      "226",
+      "227",
+      "228",
+      "229",
+      "233",
+      "237",
+      "238",
+      "239",
+      "243",
+      "244",
+      "245",
+      "246",
+      "248",
+      "249",
+      "252",
+      "253",
+      "254"
+     ],
+     "matched_text": "tutta la gente tutti i cani e i gatti della città si a sbadigliare anche lo spazzacamino sul tetto e persino I lombrichi nella terra",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "10": {
+   "type": "puntuale",
+   "anchor": "per fortuna fu presto sera e tutti andarono a dormire di buon'ora",
+   "windows": {
+    "3_text": {
+     "t0": 90.45,
+     "t1": 97.68,
+     "t_first_word": 91.45,
+     "t_last_word": 96.18,
+     "word_ids": [
+      "255",
+      "256",
+      "257",
+      "258",
+      "259",
+      "260",
+      "261",
+      "263",
+      "264",
+      "265",
+      "266",
+      "268"
+     ],
+     "matched_text": "per fortuna fu presto sera e tutti andarono a dormire di buon'ora",
+     "match_ratio": 1.0
+    },
+    "3_images": {
+     "t0": 90.9,
+     "t1": 98.51,
+     "t_first_word": 91.9,
+     "t_last_word": 97.01,
+     "word_ids": [
+      "255",
+      "256",
+      "257",
+      "258",
+      "259",
+      "260",
+      "261",
+      "263",
+      "264",
+      "265",
+      "266",
+      "268"
+     ],
+     "matched_text": "per fortuna fu presto sera e tutti andarono a dormire di buon'ora",
+     "match_ratio": 1.0
+    }
+   }
+  }
+ },
+ "delfino": {
+  "1": {
+   "type": "puntuale",
+   "anchor": "era un giorno bellissimo di fine luglio",
+   "windows": {
+    "4_text": {
+     "t0": 4.82,
+     "t1": 9.56,
+     "t_first_word": 5.82,
+     "t_last_word": 8.06,
+     "word_ids": [
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10"
+     ],
+     "matched_text": "era un giorno bellissimo di fine luglio",
+     "match_ratio": 1.0
+    },
+    "4_images": {
+     "t0": 4.68,
+     "t1": 9.69,
+     "t_first_word": 5.68,
+     "t_last_word": 8.19,
+     "word_ids": [
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10"
+     ],
+     "matched_text": "era un giorno bellissimo di fine luglio",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "2": {
+   "type": "puntuale",
+   "anchor": "il mare mi accarezzava E cantava un canto lieve tenue come una linea da bambini",
+   "windows": {
+    "4_text": {
+     "t0": 29.59,
+     "t1": 38.61,
+     "t_first_word": 30.59,
+     "t_last_word": 37.11,
+     "word_ids": [
+      "63",
+      "64",
+      "65",
+      "68",
+      "69",
+      "71",
+      "72",
+      "73",
+      "76",
+      "79",
+      "80",
+      "81",
+      "83",
+      "84",
+      "85"
+     ],
+     "matched_text": "il mare mi accarezzava E cantava un canto lieve tenue come una linea da bambini",
+     "match_ratio": 1.0
+    },
+    "4_images": {
+     "t0": 29.66,
+     "t1": 38.75,
+     "t_first_word": 30.66,
+     "t_last_word": 37.25,
+     "word_ids": [
+      "63",
+      "64",
+      "65",
+      "68",
+      "69",
+      "71",
+      "72",
+      "73",
+      "76",
+      "79",
+      "80",
+      "81",
+      "83",
+      "84",
+      "85"
+     ],
+     "matched_text": "il mare mi accarezzava E cantava un canto lieve tenue come una linea da bambini",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "3": {
+   "type": "puntuale",
+   "anchor": "di tanto in tanto mi lasciavo trasportare inerte dalle onde il mare mi accarezzava",
+   "windows": {
+    "4_text": {
+     "t0": 24.4,
+     "t1": 33.43,
+     "t_first_word": 25.4,
+     "t_last_word": 31.93,
+     "word_ids": [
+      "48",
+      "49",
+      "50",
+      "51",
+      "52",
+      "54",
+      "56",
+      "59",
+      "60",
+      "62",
+      "63",
+      "64",
+      "65",
+      "68"
+     ],
+     "matched_text": "di tanto in tanto mi lasciavo trasportare inerte dalle onde il mare mi accarezzava",
+     "match_ratio": 1.0
+    },
+    "4_images": {
+     "t0": 24.49,
+     "t1": 33.5,
+     "t_first_word": 25.49,
+     "t_last_word": 32.0,
+     "word_ids": [
+      "48",
+      "49",
+      "50",
+      "51",
+      "52",
+      "54",
+      "56",
+      "59",
+      "60",
+      "62",
+      "63",
+      "64",
+      "65",
+      "68"
+     ],
+     "matched_text": "di tanto in tanto mi lasciavo trasportare inerte dalle onde il mare mi accarezzava",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "4": {
+   "type": "puntuale",
+   "anchor": "vidi lontano un sommovimento di acque e un triangolo nero avanzare",
+   "windows": {
+    "4_text": {
+     "t0": 38.84,
+     "t1": 46.79,
+     "t_first_word": 39.84,
+     "t_last_word": 45.29,
+     "word_ids": [
+      "90",
+      "91",
+      "92",
+      "95",
+      "96",
+      "98",
+      "99",
+      "100",
+      "101",
+      "102",
+      "104"
+     ],
+     "matched_text": "vidi lontano un sommovimento di acque e un triangolo nero avanzare",
+     "match_ratio": 1.0
+    },
+    "4_images": {
+     "t0": 39.07,
+     "t1": 46.82,
+     "t_first_word": 40.07,
+     "t_last_word": 45.32,
+     "word_ids": [
+      "90",
+      "91",
+      "92",
+      "95",
+      "96",
+      "98",
+      "99",
+      "100",
+      "101",
+      "102",
+      "104"
+     ],
+     "matched_text": "vidi lontano un sommovimento di acque e un triangolo nero avanzare",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "5": {
+   "type": "puntuale",
+   "anchor": "tanto Fra poco sarò fra le sue zanne",
+   "windows": {
+    "4_text": {
+     "t0": 53.32,
+     "t1": 58.41,
+     "t_first_word": 54.32,
+     "t_last_word": 56.91,
+     "word_ids": [
+      "126",
+      "127",
+      "128",
+      "129",
+      "130",
+      "131",
+      "132",
+      "135"
+     ],
+     "matched_text": "tanto Fra poco sarò fra le sue zanne",
+     "match_ratio": 1.0
+    },
+    "4_images": {
+     "t0": 53.39,
+     "t1": 58.64,
+     "t_first_word": 54.39,
+     "t_last_word": 57.14,
+     "word_ids": [
+      "126",
+      "127",
+      "128",
+      "129",
+      "130",
+      "131",
+      "132",
+      "135"
+     ],
+     "matched_text": "tanto Fra poco sarò fra le sue zanne",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "6": {
+   "type": "puntuale",
+   "anchor": "decisi di tornare indietro e come nulla fosse vi diressi verso la lontana Riva",
+   "windows": {
+    "4_text": {
+     "t0": 59.99,
+     "t1": 68.0,
+     "t_first_word": 60.99,
+     "t_last_word": 66.5,
+     "word_ids": [
+      "143",
+      "144",
+      "145",
+      "146",
+      "147",
+      "148",
+      "149",
+      "150",
+      "151",
+      "153",
+      "154",
+      "155",
+      "157",
+      "159"
+     ],
+     "matched_text": "decisi di tornare indietro e come nulla fosse vi diressi verso la lontana Riva",
+     "match_ratio": 1.0
+    },
+    "4_images": {
+     "t0": 60.14,
+     "t1": 68.15,
+     "t_first_word": 61.14,
+     "t_last_word": 66.65,
+     "word_ids": [
+      "143",
+      "144",
+      "145",
+      "146",
+      "147",
+      "148",
+      "149",
+      "150",
+      "151",
+      "153",
+      "154",
+      "155",
+      "157",
+      "159"
+     ],
+     "matched_text": "decisi di tornare indietro e come nulla fosse vi diressi verso la lontana Riva",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "7": {
+   "type": "puntuale",
+   "anchor": "Se era uno squalo è inutile affannarsi tanto Fra poco sarò fra le sue zanne se non lo è tanto meglio",
+   "windows": {
+    "4_text": {
+     "t0": 49.96,
+     "t1": 60.65,
+     "t_first_word": 50.96,
+     "t_last_word": 59.15,
+     "word_ids": [
+      "116",
+      "117",
+      "118",
+      "119",
+      "120",
+      "121",
+      "125",
+      "126",
+      "127",
+      "128",
+      "129",
+      "130",
+      "131",
+      "132",
+      "135",
+      "136",
+      "137",
+      "138",
+      "139",
+      "140",
+      "141"
+     ],
+     "matched_text": "Se era uno squalo è inutile affannarsi tanto Fra poco sarò fra le sue zanne se non lo è tanto meglio",
+     "match_ratio": 1.0
+    },
+    "4_images": {
+     "t0": 50.05,
+     "t1": 60.74,
+     "t_first_word": 51.05,
+     "t_last_word": 59.24,
+     "word_ids": [
+      "116",
+      "117",
+      "118",
+      "119",
+      "120",
+      "121",
+      "125",
+      "126",
+      "127",
+      "128",
+      "129",
+      "130",
+      "131",
+      "132",
+      "135",
+      "136",
+      "137",
+      "138",
+      "139",
+      "140",
+      "141"
+     ],
+     "matched_text": "Se era uno squalo è inutile affannarsi tanto Fra poco sarò fra le sue zanne se non lo è tanto meglio",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "8": {
+   "type": "puntuale",
+   "anchor": "non era uno squalo era un grosso delfino e aveva voglia di giocare",
+   "windows": {
+    "4_text": {
+     "t0": 74.03,
+     "t1": 77.66,
+     "t_first_word": 75.03,
+     "t_last_word": 76.16,
+     "word_ids": [
+      "184",
+      "185",
+      "186",
+      "187",
+      "188",
+      "189",
+      "190",
+      "191",
+      "192",
+      "193",
+      "194",
+      "195",
+      "196"
+     ],
+     "matched_text": "non era uno squalo era un grosso delfino e aveva voglia di giocare",
+     "match_ratio": 1.0
+    },
+    "4_images": {
+     "t0": 73.98,
+     "t1": 77.82,
+     "t_first_word": 74.98,
+     "t_last_word": 76.32,
+     "word_ids": [
+      "184",
+      "185",
+      "186",
+      "187",
+      "188",
+      "189",
+      "190",
+      "191",
+      "192",
+      "193",
+      "194",
+      "195",
+      "196"
+     ],
+     "matched_text": "non era uno squalo era un grosso delfino e aveva voglia di giocare",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "9": {
+   "type": "puntuale",
+   "anchor": "si mise a fare intorno a me giri vorticosi Poi salti fuori dalle onde Così che vedevo ne tutto il grande e bellissimo corpo poi scomparve passo un po' di tempo",
+   "windows": {
+    "4_text": {
+     "t0": 77.45,
+     "t1": 94.46,
+     "t_first_word": 78.45,
+     "t_last_word": 92.96,
+     "word_ids": [
+      "201",
+      "203",
+      "204",
+      "205",
+      "206",
+      "207",
+      "208",
+      "209",
+      "213",
+      "214",
+      "216",
+      "217",
+      "218",
+      "220",
+      "221",
+      "222",
+      "226",
+      "227",
+      "228",
+      "229",
+      "230",
+      "231",
+      "232",
+      "233",
+      "234",
+      "236",
+      "237",
+      "238",
+      "239",
+      "240",
+      "241"
+     ],
+     "matched_text": "si mise a fare intorno a me giri vorticosi Poi salti fuori dalle onde Così che vedevo ne tutto il grande e bellissimo corpo poi scomparve passo un po' di tempo",
+     "match_ratio": 1.0
+    },
+    "4_images": {
+     "t0": 77.52,
+     "t1": 94.59,
+     "t_first_word": 78.52,
+     "t_last_word": 93.09,
+     "word_ids": [
+      "201",
+      "203",
+      "204",
+      "205",
+      "206",
+      "207",
+      "208",
+      "209",
+      "213",
+      "214",
+      "216",
+      "217",
+      "218",
+      "220",
+      "221",
+      "222",
+      "226",
+      "227",
+      "228",
+      "229",
+      "230",
+      "231",
+      "232",
+      "233",
+      "234",
+      "236",
+      "237",
+      "238",
+      "239",
+      "240",
+      "241"
+     ],
+     "matched_text": "si mise a fare intorno a me giri vorticosi Poi salti fuori dalle onde Così che vedevo ne tutto il grande e bellissimo corpo poi scomparve passo un po' di tempo",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "10": {
+   "type": "puntuale",
+   "anchor": "si era posto con la schiena proprio sotto di me",
+   "windows": {
+    "4_text": {
+     "t0": 102.12,
+     "t1": 107.64,
+     "t_first_word": 103.12,
+     "t_last_word": 106.14,
+     "word_ids": [
+      "263",
+      "264",
+      "265",
+      "266",
+      "267",
+      "268",
+      "269",
+      "270",
+      "271",
+      "272"
+     ],
+     "matched_text": "si era posto con la schiena proprio sotto di me",
+     "match_ratio": 1.0
+    },
+    "4_images": {
+     "t0": 102.18,
+     "t1": 107.86,
+     "t_first_word": 103.18,
+     "t_last_word": 106.36,
+     "word_ids": [
+      "263",
+      "264",
+      "265",
+      "266",
+      "267",
+      "268",
+      "269",
+      "270",
+      "271",
+      "272"
+     ],
+     "matched_text": "si era posto con la schiena proprio sotto di me",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "11": {
+   "type": "puntuale",
+   "anchor": "alla fine stanco di saltare e di giocare il delfino scomparve",
+   "windows": {
+    "4_text": {
+     "t0": 124.29,
+     "t1": 131.85,
+     "t_first_word": 125.29,
+     "t_last_word": 130.35,
+     "word_ids": [
+      "319",
+      "320",
+      "321",
+      "322",
+      "323",
+      "324",
+      "325",
+      "326",
+      "327",
+      "329",
+      "331"
+     ],
+     "matched_text": "alla fine stanco di saltare e di giocare il delfino scomparve",
+     "match_ratio": 1.0
+    },
+    "4_images": {
+     "t0": 124.37,
+     "t1": 131.99,
+     "t_first_word": 125.37,
+     "t_last_word": 130.49,
+     "word_ids": [
+      "319",
+      "320",
+      "321",
+      "322",
+      "323",
+      "324",
+      "325",
+      "326",
+      "327",
+      "329",
+      "331"
+     ],
+     "matched_text": "alla fine stanco di saltare e di giocare il delfino scomparve",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "12": {
+   "type": "puntuale",
+   "anchor": "e io lentamente tornai arriva",
+   "windows": {
+    "4_text": {
+     "t0": 135.36,
+     "t1": 140.65,
+     "t_first_word": 136.36,
+     "t_last_word": 139.15,
+     "word_ids": [
+      "342",
+      "343",
+      "345",
+      "347",
+      "355"
+     ],
+     "matched_text": "e io lentamente tornai arriva",
+     "match_ratio": 1.0
+    },
+    "4_images": {
+     "t0": 135.43,
+     "t1": 140.76,
+     "t_first_word": 136.43,
+     "t_last_word": 139.26,
+     "word_ids": [
+      "342",
+      "343",
+      "345",
+      "347",
+      "355"
+     ],
+     "matched_text": "e io lentamente tornai arriva",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "13": {
+   "type": "puntuale",
+   "anchor": "mi dimenticai delle bandiere rosse e presi in largo",
+   "windows": {
+    "4_text": {
+     "t0": 15.78,
+     "t1": 22.17,
+     "t_first_word": 16.78,
+     "t_last_word": 20.67,
+     "word_ids": [
+      "27",
+      "29",
+      "30",
+      "32",
+      "33",
+      "34",
+      "36",
+      "37",
+      "39"
+     ],
+     "matched_text": "mi dimenticai delle bandiere rosse e presi in largo",
+     "match_ratio": 1.0
+    },
+    "4_images": {
+     "t0": 15.86,
+     "t1": 22.31,
+     "t_first_word": 16.86,
+     "t_last_word": 20.81,
+     "word_ids": [
+      "27",
+      "29",
+      "30",
+      "32",
+      "33",
+      "34",
+      "36",
+      "37",
+      "39"
+     ],
+     "matched_text": "mi dimenticai delle bandiere rosse e presi in largo",
+     "match_ratio": 1.0
+    }
+   },
+   "note": "informazione all'inizio del brano, risposta inferenziale"
+  },
+  "14": {
+   "type": "globale",
+   "anchor": null,
+   "windows": {}
+  }
+ },
+ "panda": {
+  "1": {
+   "type": "puntuale",
+   "anchor": "è un buffo timido simpatico orso di abitudini ritirate",
+   "windows": {
+    "4_text": {
+     "t0": 5.34,
+     "t1": 12.95,
+     "t_first_word": 6.34,
+     "t_last_word": 11.45,
+     "word_ids": [
+      "5",
+      "6",
+      "7",
+      "10",
+      "11",
+      "12",
+      "13",
+      "14",
+      "16"
+     ],
+     "matched_text": "è un buffo timido simpatico orso di abitudini ritirate",
+     "match_ratio": 1.0
+    },
+    "4_images": {
+     "t0": 5.29,
+     "t1": 12.93,
+     "t_first_word": 6.29,
+     "t_last_word": 11.43,
+     "word_ids": [
+      "5",
+      "6",
+      "7",
+      "10",
+      "11",
+      "12",
+      "13",
+      "14",
+      "16"
+     ],
+     "matched_text": "è un buffo timido simpatico orso di abitudini ritirate",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "2": {
+   "type": "puntuale",
+   "anchor": "molto bravo ad arrampicarsi sugli alberi grazie alle sue dimensioni ridotte",
+   "windows": {
+    "4_text": {
+     "t0": 25.17,
+     "t1": 33.66,
+     "t_first_word": 26.17,
+     "t_last_word": 32.16,
+     "word_ids": [
+      "58",
+      "59",
+      "60",
+      "64",
+      "65",
+      "66",
+      "67",
+      "68",
+      "69",
+      "70",
+      "73"
+     ],
+     "matched_text": "molto bravo ad arrampicarsi sugli alberi grazie alle sue dimensioni ridotte",
+     "match_ratio": 1.0
+    },
+    "4_images": {
+     "t0": 25.04,
+     "t1": 33.62,
+     "t_first_word": 26.04,
+     "t_last_word": 32.12,
+     "word_ids": [
+      "58",
+      "59",
+      "60",
+      "64",
+      "65",
+      "66",
+      "67",
+      "68",
+      "69",
+      "70",
+      "73"
+     ],
+     "matched_text": "molto bravo ad arrampicarsi sugli alberi grazie alle sue dimensioni ridotte",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "3": {
+   "type": "puntuale",
+   "anchor": "della più grande Organizzazione Internazionale per la conservazione degli animali il fondo mondiale per la natura",
+   "windows": {
+    "4_text": {
+     "t0": 42.61,
+     "t1": 52.94,
+     "t_first_word": 43.61,
+     "t_last_word": 51.44,
+     "word_ids": [
+      "103",
+      "104",
+      "105",
+      "107",
+      "108",
+      "109",
+      "110",
+      "112",
+      "113",
+      "114",
+      "115",
+      "116",
+      "117",
+      "118",
+      "119",
+      "120"
+     ],
+     "matched_text": "della più grande Organizzazione Internazionale per la conservazione degli animali il fondo mondiale per la natura",
+     "match_ratio": 1.0
+    },
+    "4_images": {
+     "t0": 42.56,
+     "t1": 52.89,
+     "t_first_word": 43.56,
+     "t_last_word": 51.39,
+     "word_ids": [
+      "103",
+      "104",
+      "105",
+      "107",
+      "108",
+      "109",
+      "110",
+      "112",
+      "113",
+      "114",
+      "115",
+      "116",
+      "117",
+      "118",
+      "119",
+      "120"
+     ],
+     "matched_text": "della più grande Organizzazione Internazionale per la conservazione degli animali il fondo mondiale per la natura",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "4": {
+   "type": "puntuale",
+   "anchor": "tranne che allo zoo di Pechino non si è mai riusciti a far riprodurre in cattività",
+   "windows": {
+    "4_text": {
+     "t0": 52.04,
+     "t1": 59.78,
+     "t_first_word": 53.04,
+     "t_last_word": 58.28,
+     "word_ids": [
+      "121",
+      "122",
+      "123",
+      "124",
+      "125",
+      "127",
+      "128",
+      "129",
+      "130",
+      "131",
+      "132",
+      "133",
+      "134",
+      "135",
+      "136",
+      "138"
+     ],
+     "matched_text": "tranne che allo zoo di Pechino non si è mai riusciti a far riprodurre in cattività",
+     "match_ratio": 1.0
+    },
+    "4_images": {
+     "t0": 51.96,
+     "t1": 59.71,
+     "t_first_word": 52.96,
+     "t_last_word": 58.21,
+     "word_ids": [
+      "121",
+      "122",
+      "123",
+      "124",
+      "125",
+      "127",
+      "128",
+      "129",
+      "130",
+      "131",
+      "132",
+      "133",
+      "134",
+      "135",
+      "136",
+      "138"
+     ],
+     "matched_text": "tranne che allo zoo di Pechino non si è mai riusciti a far riprodurre in cattività",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "5": {
+   "type": "puntuale",
+   "anchor": "non si è mai riusciti a far riprodurre in cattività Questo graziosissimo animale",
+   "windows": {
+    "4_text": {
+     "t0": 53.79,
+     "t1": 62.63,
+     "t_first_word": 54.79,
+     "t_last_word": 61.13,
+     "word_ids": [
+      "128",
+      "129",
+      "130",
+      "131",
+      "132",
+      "133",
+      "134",
+      "135",
+      "136",
+      "138",
+      "139",
+      "143",
+      "144"
+     ],
+     "matched_text": "non si è mai riusciti a far riprodurre in cattività Questo graziosissimo animale",
+     "match_ratio": 1.0
+    },
+    "4_images": {
+     "t0": 53.78,
+     "t1": 62.57,
+     "t_first_word": 54.78,
+     "t_last_word": 61.07,
+     "word_ids": [
+      "128",
+      "129",
+      "130",
+      "131",
+      "132",
+      "133",
+      "134",
+      "135",
+      "136",
+      "138",
+      "139",
+      "143",
+      "144"
+     ],
+     "matched_text": "non si è mai riusciti a far riprodurre in cattività Questo graziosissimo animale",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "6": {
+   "type": "puntuale",
+   "anchor": "un po' per la sua rarità un po' per il suo aspetto grazioso",
+   "windows": {
+    "4_text": {
+     "t0": 32.24,
+     "t1": 38.77,
+     "t_first_word": 33.24,
+     "t_last_word": 37.27,
+     "word_ids": [
+      "74",
+      "75",
+      "76",
+      "77",
+      "78",
+      "80",
+      "81",
+      "82",
+      "83",
+      "84",
+      "85",
+      "86",
+      "89"
+     ],
+     "matched_text": "un po' per la sua rarità un po' per il suo aspetto grazioso",
+     "match_ratio": 1.0
+    },
+    "4_images": {
+     "t0": 32.17,
+     "t1": 38.77,
+     "t_first_word": 33.17,
+     "t_last_word": 37.27,
+     "word_ids": [
+      "74",
+      "75",
+      "76",
+      "77",
+      "78",
+      "80",
+      "81",
+      "82",
+      "83",
+      "84",
+      "85",
+      "86",
+      "89"
+     ],
+     "matched_text": "un po' per la sua rarità un po' per il suo aspetto grazioso",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "7": {
+   "type": "puntuale",
+   "anchor": "con gli orsi ha solo una lontana parentina perché appartiene alla stessa famiglia dei procioni",
+   "windows": {
+    "4_text": {
+     "t0": 64.78,
+     "t1": 74.12,
+     "t_first_word": 65.78,
+     "t_last_word": 72.62,
+     "word_ids": [
+      "154",
+      "155",
+      "156",
+      "157",
+      "158",
+      "159",
+      "161",
+      "165",
+      "166",
+      "167",
+      "168",
+      "169",
+      "170",
+      "171",
+      "174"
+     ],
+     "matched_text": "con gli orsi ha solo una lontana parentina perché appartiene alla stessa famiglia dei procioni",
+     "match_ratio": 1.0
+    },
+    "4_images": {
+     "t0": 64.78,
+     "t1": 74.1,
+     "t_first_word": 65.78,
+     "t_last_word": 72.6,
+     "word_ids": [
+      "154",
+      "155",
+      "156",
+      "157",
+      "158",
+      "159",
+      "161",
+      "165",
+      "166",
+      "167",
+      "168",
+      "169",
+      "170",
+      "171",
+      "174"
+     ],
+     "matched_text": "con gli orsi ha solo una lontana parentina perché appartiene alla stessa famiglia dei procioni",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "8": {
+   "type": "puntuale",
+   "anchor": "il panda si nutre esclusivamente di germogli di bambù",
+   "windows": {
+    "4_text": {
+     "t0": 73.28,
+     "t1": 79.9,
+     "t_first_word": 74.28,
+     "t_last_word": 78.4,
+     "word_ids": [
+      "175",
+      "176",
+      "177",
+      "179",
+      "180",
+      "181",
+      "184",
+      "185",
+      "188"
+     ],
+     "matched_text": "il panda si nutre esclusivamente di germogli di bambù",
+     "match_ratio": 1.0
+    },
+    "4_images": {
+     "t0": 73.19,
+     "t1": 79.92,
+     "t_first_word": 74.19,
+     "t_last_word": 78.42,
+     "word_ids": [
+      "175",
+      "176",
+      "177",
+      "179",
+      "180",
+      "181",
+      "184",
+      "185",
+      "188"
+     ],
+     "matched_text": "il panda si nutre esclusivamente di germogli di bambù",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "9": {
+   "type": "puntuale",
+   "anchor": "Infatti ne mangia all'incirca 12 kg al giorno",
+   "windows": {
+    "4_text": {
+     "t0": 84.54,
+     "t1": 91.09,
+     "t_first_word": 85.54,
+     "t_last_word": 89.59,
+     "word_ids": [
+      "205",
+      "206",
+      "207",
+      "210",
+      "211",
+      "212",
+      "213",
+      "214"
+     ],
+     "matched_text": "Infatti ne mangia all'incirca 12 kg al giorno",
+     "match_ratio": 1.0
+    },
+    "4_images": {
+     "t0": 84.51,
+     "t1": 91.09,
+     "t_first_word": 85.51,
+     "t_last_word": 89.59,
+     "word_ids": [
+      "205",
+      "206",
+      "207",
+      "210",
+      "211",
+      "212",
+      "213",
+      "214"
+     ],
+     "matched_text": "Infatti ne mangia all'incirca 12 kg al giorno",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "10": {
+   "type": "puntuale",
+   "anchor": "che mangia ingrossa quantità dato che si tratta di un alimento poco nutriente",
+   "windows": {
+    "4_text": {
+     "t0": 77.81,
+     "t1": 85.96,
+     "t_first_word": 78.81,
+     "t_last_word": 84.46,
+     "word_ids": [
+      "189",
+      "190",
+      "193",
+      "194",
+      "195",
+      "196",
+      "197",
+      "198",
+      "199",
+      "200",
+      "201",
+      "202",
+      "204"
+     ],
+     "matched_text": "che mangia ingrossa quantità dato che si tratta di un alimento poco nutriente",
+     "match_ratio": 1.0
+    },
+    "4_images": {
+     "t0": 77.81,
+     "t1": 85.87,
+     "t_first_word": 78.81,
+     "t_last_word": 84.37,
+     "word_ids": [
+      "189",
+      "190",
+      "193",
+      "194",
+      "195",
+      "196",
+      "197",
+      "198",
+      "199",
+      "200",
+      "201",
+      "202",
+      "204"
+     ],
+     "matched_text": "che mangia ingrossa quantità dato che si tratta di un alimento poco nutriente",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "11": {
+   "type": "puntuale",
+   "anchor": "abitatore delle foreste di bambù di alta montagna del Tibet orientale e della Cina meridionale",
+   "windows": {
+    "4_text": {
+     "t0": 11.61,
+     "t1": 21.35,
+     "t_first_word": 12.61,
+     "t_last_word": 19.85,
+     "word_ids": [
+      "19",
+      "20",
+      "22",
+      "23",
+      "26",
+      "27",
+      "28",
+      "29",
+      "30",
+      "33",
+      "35",
+      "36",
+      "37",
+      "39",
+      "42"
+     ],
+     "matched_text": "abitatore delle foreste di bambù di alta montagna del Tibet orientale e della Cina meridionale",
+     "match_ratio": 1.0
+    },
+    "4_images": {
+     "t0": 11.57,
+     "t1": 21.35,
+     "t_first_word": 12.57,
+     "t_last_word": 19.85,
+     "word_ids": [
+      "19",
+      "20",
+      "22",
+      "23",
+      "26",
+      "27",
+      "28",
+      "29",
+      "30",
+      "33",
+      "35",
+      "36",
+      "37",
+      "39",
+      "42"
+     ],
+     "matched_text": "abitatore delle foreste di bambù di alta montagna del Tibet orientale e della Cina meridionale",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "12": {
+   "type": "puntuale",
+   "anchor": "una specie di sesto udito gli permette di afferrare anche i pezzetti più piccoli",
+   "windows": {
+    "4_text": {
+     "t0": 96.05,
+     "t1": 104.1,
+     "t_first_word": 97.05,
+     "t_last_word": 102.6,
+     "word_ids": [
+      "231",
+      "232",
+      "233",
+      "234",
+      "236",
+      "237",
+      "238",
+      "239",
+      "241",
+      "242",
+      "243",
+      "245",
+      "246",
+      "247"
+     ],
+     "matched_text": "una specie di sesto udito gli permette di afferrare anche i pezzetti più piccoli",
+     "match_ratio": 1.0
+    },
+    "4_images": {
+     "t0": 95.99,
+     "t1": 104.0,
+     "t_first_word": 96.99,
+     "t_last_word": 102.5,
+     "word_ids": [
+      "231",
+      "232",
+      "233",
+      "234",
+      "236",
+      "237",
+      "238",
+      "239",
+      "241",
+      "242",
+      "243",
+      "245",
+      "246",
+      "247"
+     ],
+     "matched_text": "una specie di sesto udito gli permette di afferrare anche i pezzetti più piccoli",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "13": {
+   "type": "globale",
+   "anchor": null,
+   "windows": {}
+  },
+  "14": {
+   "type": "globale",
+   "anchor": null,
+   "windows": {}
+  }
+ },
+ "orso": {
+  "1": {
+   "type": "puntuale",
+   "anchor": "compie lunghe e migrazioni che lo portano anche migliaia di chilometri lontano dal punto di partenza Alla ricerca delle zone dove le foche Sono più numerosi",
+   "windows": {
+    "5_text": {
+     "t0": 15.26,
+     "t1": 30.72,
+     "t_first_word": 16.26,
+     "t_last_word": 29.22,
+     "word_ids": [
+      "26",
+      "27",
+      "30",
+      "33",
+      "34",
+      "35",
+      "36",
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44",
+      "45",
+      "46",
+      "47",
+      "49",
+      "50",
+      "51",
+      "52",
+      "54",
+      "55",
+      "56",
+      "58"
+     ],
+     "matched_text": "compie lunghe e migrazioni che lo portano anche migliaia di chilometri lontano dal punto di partenza Alla ricerca delle zone dove le foche Sono più numerosi",
+     "match_ratio": 1.0
+    },
+    "5_images": {
+     "t0": 15.27,
+     "t1": 30.77,
+     "t_first_word": 16.27,
+     "t_last_word": 29.27,
+     "word_ids": [
+      "26",
+      "27",
+      "30",
+      "33",
+      "34",
+      "35",
+      "36",
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44",
+      "45",
+      "46",
+      "47",
+      "49",
+      "50",
+      "51",
+      "52",
+      "54",
+      "55",
+      "56",
+      "58"
+     ],
+     "matched_text": "compie lunghe e migrazioni che lo portano anche migliaia di chilometri lontano dal punto di partenza Alla ricerca delle zone dove le foche Sono più numerosi",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "2": {
+   "type": "puntuale",
+   "anchor": "deve nutrirsi moltissimo per accumulare enormi quantità di grasso solo così potrà superare il lungo e rigido inverno",
+   "windows": {
+    "5_text": {
+     "t0": 33.24,
+     "t1": 47.45,
+     "t_first_word": 34.24,
+     "t_last_word": 45.95,
+     "word_ids": [
+      "70",
+      "72",
+      "73",
+      "74",
+      "76",
+      "79",
+      "80",
+      "81",
+      "82",
+      "83",
+      "84",
+      "85",
+      "86",
+      "87",
+      "88",
+      "89",
+      "92",
+      "94"
+     ],
+     "matched_text": "deve nutrirsi moltissimo per accumulare enormi quantità di grasso solo così potrà superare il lungo e rigido inverno",
+     "match_ratio": 1.0
+    },
+    "5_images": {
+     "t0": 33.24,
+     "t1": 47.71,
+     "t_first_word": 34.24,
+     "t_last_word": 46.21,
+     "word_ids": [
+      "70",
+      "72",
+      "73",
+      "74",
+      "76",
+      "79",
+      "80",
+      "81",
+      "82",
+      "83",
+      "84",
+      "85",
+      "86",
+      "87",
+      "88",
+      "89",
+      "92",
+      "94"
+     ],
+     "matched_text": "deve nutrirsi moltissimo per accumulare enormi quantità di grasso solo così potrà superare il lungo e rigido inverno",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "3": {
+   "type": "puntuale",
+   "anchor": "il lungo e rigido inverno durante il quale è praticamente impossibile trovare qualche preda",
+   "windows": {
+    "5_text": {
+     "t0": 43.02,
+     "t1": 59.06,
+     "t_first_word": 44.02,
+     "t_last_word": 57.56,
+     "word_ids": [
+      "87",
+      "88",
+      "89",
+      "92",
+      "94",
+      "95",
+      "96",
+      "97",
+      "98",
+      "99",
+      "100",
+      "101",
+      "102",
+      "114"
+     ],
+     "matched_text": "il lungo e rigido inverno durante il quale è praticamente impossibile trovare qualche preda",
+     "match_ratio": 1.0
+    },
+    "5_images": {
+     "t0": 43.05,
+     "t1": 55.64,
+     "t_first_word": 44.05,
+     "t_last_word": 54.14,
+     "word_ids": [
+      "87",
+      "88",
+      "89",
+      "92",
+      "94",
+      "95",
+      "96",
+      "97",
+      "98",
+      "99",
+      "100",
+      "101",
+      "102",
+      "112"
+     ],
+     "matched_text": "il lungo e rigido inverno durante il quale è praticamente impossibile trovare qualche preda…",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "4": {
+   "type": "puntuale",
+   "anchor": "durante il quale è praticamente impossibile trovare qualche preda",
+   "windows": {
+    "5_text": {
+     "t0": 45.83,
+     "t1": 59.06,
+     "t_first_word": 46.83,
+     "t_last_word": 57.56,
+     "word_ids": [
+      "95",
+      "96",
+      "97",
+      "98",
+      "99",
+      "100",
+      "101",
+      "102",
+      "114"
+     ],
+     "matched_text": "durante il quale è praticamente impossibile trovare qualche preda",
+     "match_ratio": 1.0
+    },
+    "5_images": {
+     "t0": 45.88,
+     "t1": 55.64,
+     "t_first_word": 46.88,
+     "t_last_word": 54.14,
+     "word_ids": [
+      "95",
+      "96",
+      "97",
+      "98",
+      "99",
+      "100",
+      "101",
+      "102",
+      "112"
+     ],
+     "matched_text": "durante il quale è praticamente impossibile trovare qualche preda…",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "5": {
+   "type": "puntuale",
+   "anchor": "la parte posteriore grossa e massiccia contrasta con quella anteriore meno tozza",
+   "windows": {
+    "5_text": {
+     "t0": 59.7,
+     "t1": 69.99,
+     "t_first_word": 60.7,
+     "t_last_word": 68.49,
+     "word_ids": [
+      "130",
+      "131",
+      "132",
+      "133",
+      "134",
+      "137",
+      "139",
+      "140",
+      "141",
+      "142",
+      "143",
+      "145"
+     ],
+     "matched_text": "la parte posteriore grossa e massiccia contrasta con quella anteriore meno tozza",
+     "match_ratio": 1.0
+    },
+    "5_images": {
+     "t0": 61.8,
+     "t1": 70.0,
+     "t_first_word": 62.8,
+     "t_last_word": 68.5,
+     "word_ids": [
+      "133",
+      "134",
+      "135",
+      "136",
+      "137",
+      "140",
+      "142",
+      "143",
+      "144",
+      "145",
+      "146",
+      "148"
+     ],
+     "matched_text": "la parte posteriore grossa e massiccia contrasta con quella anteriore meno tozza",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "6": {
+   "type": "puntuale",
+   "anchor": "le zampe sono piuttosto grandi adatte ad una vita sul ghiaccio e sulla neve",
+   "windows": {
+    "5_text": {
+     "t0": 73.93,
+     "t1": 81.87,
+     "t_first_word": 74.93,
+     "t_last_word": 80.37,
+     "word_ids": [
+      "158",
+      "159",
+      "161",
+      "162",
+      "163",
+      "165",
+      "166",
+      "167",
+      "168",
+      "169",
+      "170",
+      "171",
+      "172",
+      "173"
+     ],
+     "matched_text": "le zampe sono piuttosto grandi adatte ad una vita sul ghiaccio e sulla neve",
+     "match_ratio": 1.0
+    },
+    "5_images": {
+     "t0": 73.95,
+     "t1": 81.96,
+     "t_first_word": 74.95,
+     "t_last_word": 80.46,
+     "word_ids": [
+      "161",
+      "162",
+      "164",
+      "165",
+      "166",
+      "168",
+      "169",
+      "170",
+      "171",
+      "172",
+      "173",
+      "174",
+      "175",
+      "176"
+     ],
+     "matched_text": "le zampe sono piuttosto grandi adatte ad una vita sul ghiaccio e sulla neve",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "7": {
+   "type": "puntuale",
+   "anchor": "le dita sono unite da una membrana che gli facilita il nuoto",
+   "windows": {
+    "5_text": {
+     "t0": 83.14,
+     "t1": 89.82,
+     "t_first_word": 84.14,
+     "t_last_word": 88.32,
+     "word_ids": [
+      "179",
+      "181",
+      "182",
+      "184",
+      "185",
+      "186",
+      "188",
+      "189",
+      "190",
+      "192",
+      "193",
+      "195"
+     ],
+     "matched_text": "le dita sono unite da una membrana che gli facilita il nuoto",
+     "match_ratio": 1.0
+    },
+    "5_images": {
+     "t0": 83.14,
+     "t1": 90.27,
+     "t_first_word": 84.14,
+     "t_last_word": 88.77,
+     "word_ids": [
+      "182",
+      "184",
+      "185",
+      "187",
+      "188",
+      "189",
+      "191",
+      "192",
+      "193",
+      "195",
+      "196",
+      "198"
+     ],
+     "matched_text": "le dita sono unite da una membrana che gli facilita il nuoto",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "8": {
+   "type": "puntuale",
+   "anchor": "robusti e corti artigli rendono micidiali le poderosi zampe",
+   "windows": {
+    "5_text": {
+     "t0": 88.99,
+     "t1": 96.83,
+     "t_first_word": 89.99,
+     "t_last_word": 95.33,
+     "word_ids": [
+      "198",
+      "199",
+      "200",
+      "203",
+      "205",
+      "209",
+      "210",
+      "214",
+      "215"
+     ],
+     "matched_text": "robusti e corti artigli rendono micidiali le poderosi zampe",
+     "match_ratio": 1.0
+    },
+    "5_images": {
+     "t0": 89.06,
+     "t1": 96.94,
+     "t_first_word": 90.06,
+     "t_last_word": 95.44,
+     "word_ids": [
+      "201",
+      "202",
+      "203",
+      "205",
+      "207",
+      "211",
+      "212",
+      "216",
+      "217"
+     ],
+     "matched_text": "robusti e corti artigli rendono micidiali le poderosi zampe",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "9": {
+   "type": "puntuale",
+   "anchor": "il suo olfatto straordinario gli Segnala la presenza di prede anche apparecchi km di distanza",
+   "windows": {
+    "5_text": {
+     "t0": 105.73,
+     "t1": 115.94,
+     "t_first_word": 106.73,
+     "t_last_word": 114.44,
+     "word_ids": [
+      "238",
+      "239",
+      "242",
+      "243",
+      "244",
+      "245",
+      "246",
+      "247",
+      "248",
+      "250",
+      "251",
+      "257",
+      "258",
+      "259",
+      "260"
+     ],
+     "matched_text": "il suo olfatto straordinario gli Segnala la presenza di prede anche apparecchi km di distanza",
+     "match_ratio": 1.0
+    },
+    "5_images": {
+     "t0": 105.78,
+     "t1": 116.21,
+     "t_first_word": 106.78,
+     "t_last_word": 114.71,
+     "word_ids": [
+      "240",
+      "241",
+      "244",
+      "245",
+      "246",
+      "247",
+      "248",
+      "249",
+      "250",
+      "252",
+      "253",
+      "256",
+      "257",
+      "258",
+      "259",
+      "260"
+     ],
+     "matched_text": "il suo olfatto straordinario gli Segnala la presenza di prede anche a parecchi km di distanza",
+     "match_ratio": 0.989
+    }
+   }
+  },
+  "10": {
+   "type": "puntuale",
+   "anchor": "il grosso plantigrado si avvicina strisciando carponi giunto a distanza ravvicinata uccide la preda con una zampata",
+   "windows": {
+    "5_text": {
+     "t0": 117.25,
+     "t1": 131.91,
+     "t_first_word": 118.25,
+     "t_last_word": 130.41,
+     "word_ids": [
+      "266",
+      "267",
+      "271",
+      "272",
+      "273",
+      "275",
+      "278",
+      "280",
+      "281",
+      "282",
+      "285",
+      "287",
+      "288",
+      "290",
+      "291",
+      "292",
+      "295"
+     ],
+     "matched_text": "il grosso plantigrado si avvicina strisciando carponi giunto a distanza ravvicinata uccide la preda con una zampata",
+     "match_ratio": 1.0
+    },
+    "5_images": {
+     "t0": 117.35,
+     "t1": 132.11,
+     "t_first_word": 118.35,
+     "t_last_word": 130.61,
+     "word_ids": [
+      "267",
+      "268",
+      "273",
+      "274",
+      "276",
+      "279",
+      "281",
+      "282",
+      "283",
+      "286",
+      "288",
+      "289",
+      "291",
+      "292",
+      "293",
+      "296"
+     ],
+     "matched_text": "il grosso si avvicina strisciando carponi giunto a distanza ravvicinata uccide la preda con una zampata",
+     "match_ratio": 0.945
+    }
+   }
+  },
+  "11": {
+   "type": "puntuale",
+   "anchor": "a volte si spinge con in acqua e a nuoto si dirige verso il blocco di ghiaccio sul quale ha adocchiato un pesce",
+   "windows": {
+    "5_text": {
+     "t0": 131.97,
+     "t1": 144.79,
+     "t_first_word": 132.97,
+     "t_last_word": 143.29,
+     "word_ids": [
+      "301",
+      "302",
+      "303",
+      "304",
+      "305",
+      "311",
+      "314",
+      "316",
+      "317",
+      "319",
+      "320",
+      "323",
+      "324",
+      "325",
+      "326",
+      "327",
+      "328",
+      "329",
+      "330",
+      "331",
+      "334",
+      "335",
+      "336"
+     ],
+     "matched_text": "a volte si spinge con in acqua e a nuoto si dirige verso il blocco di ghiaccio sul quale ha adocchiato un pesce",
+     "match_ratio": 1.0
+    },
+    "5_images": {
+     "t0": 132.04,
+     "t1": 144.84,
+     "t_first_word": 133.04,
+     "t_last_word": 143.34,
+     "word_ids": [
+      "303",
+      "304",
+      "305",
+      "306",
+      "307",
+      "312",
+      "313",
+      "314",
+      "315",
+      "316",
+      "318",
+      "319",
+      "322",
+      "323",
+      "324",
+      "325",
+      "326",
+      "327",
+      "328",
+      "329",
+      "330",
+      "333",
+      "334",
+      "335"
+     ],
+     "matched_text": "a volte si spinge con cautela in acqua e a nuoto si dirige verso il blocco di ghiaccio sul quale ha adocchiato un pesce",
+     "match_ratio": 0.965
+    }
+   }
+  },
+  "12": {
+   "type": "puntuale",
+   "anchor": "il blocco di ghiaccio sul quale ha adocchiato un pesce emerge Quindi con un grande balzo",
+   "windows": {
+    "5_text": {
+     "t0": 138.4,
+     "t1": 148.68,
+     "t_first_word": 139.4,
+     "t_last_word": 147.18,
+     "word_ids": [
+      "325",
+      "326",
+      "327",
+      "328",
+      "329",
+      "330",
+      "331",
+      "334",
+      "335",
+      "336",
+      "337",
+      "338",
+      "339",
+      "340",
+      "341",
+      "343"
+     ],
+     "matched_text": "il blocco di ghiaccio sul quale ha adocchiato un pesce emerge Quindi con un grande balzo",
+     "match_ratio": 1.0
+    },
+    "5_images": {
+     "t0": 138.59,
+     "t1": 148.65,
+     "t_first_word": 139.59,
+     "t_last_word": 147.15,
+     "word_ids": [
+      "324",
+      "325",
+      "326",
+      "327",
+      "328",
+      "329",
+      "330",
+      "333",
+      "334",
+      "335",
+      "336",
+      "337",
+      "338",
+      "339",
+      "340",
+      "342"
+     ],
+     "matched_text": "il blocco di ghiaccio sul quale ha adocchiato un pesce emerge Quindi con un grande balzo",
+     "match_ratio": 1.0
+    }
+   },
+   "note": "la narratrice dice 'pinnipede' ma il riconoscimento ha scritto 'pesce' (ed è ciò che la caption mostrava; in images era un'immagine): finestra ancorata alla frase riconosciuta; risposta in parte inferenziale"
+  },
+  "13": {
+   "type": "puntuale",
+   "anchor": "a volte si spinge con in acqua e a nuoto si dirige verso il blocco di ghiaccio",
+   "windows": {
+    "5_text": {
+     "t0": 131.97,
+     "t1": 141.85,
+     "t_first_word": 132.97,
+     "t_last_word": 140.35,
+     "word_ids": [
+      "301",
+      "302",
+      "303",
+      "304",
+      "305",
+      "311",
+      "314",
+      "316",
+      "317",
+      "319",
+      "320",
+      "323",
+      "324",
+      "325",
+      "326",
+      "327",
+      "328"
+     ],
+     "matched_text": "a volte si spinge con in acqua e a nuoto si dirige verso il blocco di ghiaccio",
+     "match_ratio": 1.0
+    },
+    "5_images": {
+     "t0": 132.04,
+     "t1": 142.13,
+     "t_first_word": 133.04,
+     "t_last_word": 140.63,
+     "word_ids": [
+      "303",
+      "304",
+      "305",
+      "306",
+      "307",
+      "312",
+      "313",
+      "314",
+      "315",
+      "316",
+      "318",
+      "319",
+      "322",
+      "323",
+      "324",
+      "325",
+      "326",
+      "327"
+     ],
+     "matched_text": "a volte si spinge con cautela in acqua e a nuoto si dirige verso il blocco di ghiaccio",
+     "match_ratio": 0.951
+    }
+   }
+  },
+  "14": {
+   "type": "puntuale",
+   "anchor": "attende vicino ad un foro del ghiaccio che una foca emerga per respirare quando la vede subito la afferra e la uccide",
+   "windows": {
+    "5_text": {
+     "t0": 152.39,
+     "t1": 164.99,
+     "t_first_word": 153.39,
+     "t_last_word": 163.49,
+     "word_ids": [
+      "355",
+      "356",
+      "357",
+      "358",
+      "360",
+      "361",
+      "362",
+      "363",
+      "364",
+      "366",
+      "369",
+      "370",
+      "372",
+      "373",
+      "374",
+      "375",
+      "376",
+      "377",
+      "379",
+      "380",
+      "381",
+      "382"
+     ],
+     "matched_text": "attende vicino ad un foro del ghiaccio che una foca emerga per respirare quando la vede subito la afferra e la uccide",
+     "match_ratio": 1.0
+    },
+    "5_images": {
+     "t0": 152.41,
+     "t1": 165.21,
+     "t_first_word": 153.41,
+     "t_last_word": 163.71,
+     "word_ids": [
+      "353",
+      "354",
+      "355",
+      "356",
+      "358",
+      "359",
+      "360",
+      "361",
+      "362",
+      "364",
+      "367",
+      "368",
+      "370",
+      "371",
+      "372",
+      "373",
+      "374",
+      "375",
+      "377",
+      "378",
+      "379",
+      "381"
+     ],
+     "matched_text": "attende vicino ad un foro del ghiaccio che una foca emerga per respirare quando la vede subito la afferra e la uccide",
+     "match_ratio": 1.0
+    }
+   }
+  }
+ },
+ "anguille": {
+  "1": {
+   "type": "puntuale",
+   "anchor": "quando si avvicina il tempo di deporre le uova l'anguilla sente un grande bisogno di andare lungo la corrente di un fiume",
+   "windows": {
+    "5_text": {
+     "t0": 14.27,
+     "t1": 25.43,
+     "t_first_word": 15.27,
+     "t_last_word": 23.93,
+     "word_ids": [
+      "30",
+      "31",
+      "32",
+      "33",
+      "34",
+      "35",
+      "37",
+      "38",
+      "39",
+      "42",
+      "43",
+      "44",
+      "45",
+      "46",
+      "47",
+      "48",
+      "49",
+      "50",
+      "51",
+      "52",
+      "53",
+      "54"
+     ],
+     "matched_text": "quando si avvicina il tempo di deporre le uova l'anguilla sente un grande bisogno di andare lungo la corrente di un fiume",
+     "match_ratio": 1.0
+    },
+    "5_images": {
+     "t0": 14.24,
+     "t1": 25.66,
+     "t_first_word": 15.24,
+     "t_last_word": 24.16,
+     "word_ids": [
+      "31",
+      "32",
+      "33",
+      "34",
+      "35",
+      "36",
+      "38",
+      "39",
+      "40",
+      "43",
+      "44",
+      "45",
+      "46",
+      "47",
+      "48",
+      "49",
+      "50",
+      "51",
+      "52",
+      "53",
+      "54",
+      "55"
+     ],
+     "matched_text": "quando si avvicina il tempo di deporre le uova l'anguilla sente un grande bisogno di andare lungo la corrente di un fiume",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "2": {
+   "type": "puntuale",
+   "anchor": "passa per lo stretto di Gibilterra ed entra nell'Oceano Atlantico che attraversa quasi completamente",
+   "windows": {
+    "5_text": {
+     "t0": 45.05,
+     "t1": 52.6,
+     "t_first_word": 46.05,
+     "t_last_word": 51.1,
+     "word_ids": [
+      "106",
+      "107",
+      "108",
+      "109",
+      "110",
+      "113",
+      "114",
+      "115",
+      "118",
+      "121",
+      "122",
+      "123",
+      "124",
+      "125"
+     ],
+     "matched_text": "passa per lo stretto di Gibilterra ed entra nell'Oceano Atlantico che attraversa quasi completamente",
+     "match_ratio": 1.0
+    },
+    "5_images": {
+     "t0": 45.1,
+     "t1": 53.26,
+     "t_first_word": 46.1,
+     "t_last_word": 51.76,
+     "word_ids": [
+      "111",
+      "112",
+      "113",
+      "114",
+      "115",
+      "118",
+      "119",
+      "120",
+      "123",
+      "127",
+      "128",
+      "129",
+      "130",
+      "131"
+     ],
+     "matched_text": "passa per lo stretto di Gibilterra ed entra nell'Oceano Atlantico che attraversa quasi completamente",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "3": {
+   "type": "puntuale",
+   "anchor": "quando è giunta in una zona piena di alghe chiamata mar dei Sargassi",
+   "windows": {
+    "5_text": {
+     "t0": 51.79,
+     "t1": 58.99,
+     "t_first_word": 52.79,
+     "t_last_word": 57.49,
+     "word_ids": [
+      "126",
+      "127",
+      "129",
+      "130",
+      "131",
+      "132",
+      "133",
+      "134",
+      "136",
+      "137",
+      "138",
+      "139",
+      "142"
+     ],
+     "matched_text": "quando è giunta in una zona piena di alghe chiamata mar dei Sargassi",
+     "match_ratio": 1.0
+    },
+    "5_images": {
+     "t0": 51.87,
+     "t1": 59.1,
+     "t_first_word": 52.87,
+     "t_last_word": 57.6,
+     "word_ids": [
+      "132",
+      "133",
+      "135",
+      "136",
+      "137",
+      "138",
+      "139",
+      "140",
+      "142",
+      "143",
+      "144",
+      "145",
+      "148"
+     ],
+     "matched_text": "quando è giunta in una zona piena di alghe chiamata mar dei Sargassi",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "4": {
+   "type": "puntuale",
+   "anchor": "essa depone le uova e poi muore scomparendo nelle profondità marine",
+   "windows": {
+    "5_text": {
+     "t0": 57.35,
+     "t1": 65.49,
+     "t_first_word": 58.35,
+     "t_last_word": 63.99,
+     "word_ids": [
+      "144",
+      "146",
+      "147",
+      "148",
+      "149",
+      "150",
+      "152",
+      "154",
+      "155",
+      "156",
+      "158"
+     ],
+     "matched_text": "essa depone le uova e poi muore scomparendo nelle profondità marine",
+     "match_ratio": 1.0
+    },
+    "5_images": {
+     "t0": 57.38,
+     "t1": 64.94,
+     "t_first_word": 58.38,
+     "t_last_word": 63.44,
+     "word_ids": [
+      "150",
+      "152",
+      "153",
+      "154",
+      "155",
+      "156",
+      "158",
+      "161",
+      "162",
+      "163",
+      "165"
+     ],
+     "matched_text": "essa depone le uova e poi muore scomparendo nelle profondità marine",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "5": {
+   "type": "puntuale",
+   "anchor": "quando le uova si schiudono le piccole anguille lunghe solo qualche centimetro iniziano il viaggio di ritorno",
+   "windows": {
+    "5_text": {
+     "t0": 72.57,
+     "t1": 83.06,
+     "t_first_word": 73.57,
+     "t_last_word": 81.56,
+     "word_ids": [
+      "181",
+      "182",
+      "183",
+      "184",
+      "186",
+      "187",
+      "188",
+      "191",
+      "192",
+      "193",
+      "194",
+      "196",
+      "197",
+      "198",
+      "199",
+      "200",
+      "201"
+     ],
+     "matched_text": "quando le uova si schiudono le piccole anguille lunghe solo qualche centimetro iniziano il viaggio di ritorno",
+     "match_ratio": 1.0
+    },
+    "5_images": {
+     "t0": 72.61,
+     "t1": 82.97,
+     "t_first_word": 73.61,
+     "t_last_word": 81.47,
+     "word_ids": [
+      "187",
+      "188",
+      "189",
+      "190",
+      "194",
+      "195",
+      "196",
+      "199",
+      "200",
+      "201",
+      "202",
+      "204",
+      "205",
+      "206",
+      "207",
+      "208",
+      "209"
+     ],
+     "matched_text": "quando le uova si schiudono le piccole anguille lunghe solo qualche centimetro iniziano il viaggio di ritorno",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "6": {
+   "type": "puntuale",
+   "anchor": "quelli nati da anguille americane vanno verso l'America",
+   "windows": {
+    "5_text": {
+     "t0": 88.18,
+     "t1": 94.18,
+     "t_first_word": 89.18,
+     "t_last_word": 92.68,
+     "word_ids": [
+      "217",
+      "219",
+      "220",
+      "223",
+      "225",
+      "226",
+      "227",
+      "229"
+     ],
+     "matched_text": "quelli nati da anguille americane vanno verso l'America",
+     "match_ratio": 1.0
+    },
+    "5_images": {
+     "t0": 87.66,
+     "t1": 93.7,
+     "t_first_word": 88.66,
+     "t_last_word": 92.2,
+     "word_ids": [
+      "225",
+      "227",
+      "228",
+      "231",
+      "233",
+      "234",
+      "235",
+      "237"
+     ],
+     "matched_text": "quelli nati da anguille americane vanno verso l'America",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "7": {
+   "type": "puntuale",
+   "anchor": "il viaggio per queste ultime È lunghissimo dura tre anni",
+   "windows": {
+    "5_text": {
+     "t0": 99.71,
+     "t1": 105.28,
+     "t_first_word": 100.71,
+     "t_last_word": 103.78,
+     "word_ids": [
+      "247",
+      "248",
+      "249",
+      "250",
+      "251",
+      "252",
+      "254",
+      "255",
+      "256",
+      "257"
+     ],
+     "matched_text": "il viaggio per queste ultime È lunghissimo dura tre anni",
+     "match_ratio": 1.0
+    },
+    "5_images": {
+     "t0": 98.71,
+     "t1": 105.09,
+     "t_first_word": 99.71,
+     "t_last_word": 103.59,
+     "word_ids": [
+      "256",
+      "257",
+      "258",
+      "259",
+      "260",
+      "261",
+      "263",
+      "264",
+      "265",
+      "266"
+     ],
+     "matched_text": "il viaggio per queste ultime È lunghissimo dura tre anni",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "8": {
+   "type": "puntuale",
+   "anchor": "le piccole anguille lunghe solo qualche centimetro",
+   "windows": {
+    "5_text": {
+     "t0": 75.11,
+     "t1": 80.99,
+     "t_first_word": 76.11,
+     "t_last_word": 79.49,
+     "word_ids": [
+      "187",
+      "188",
+      "191",
+      "192",
+      "193",
+      "194",
+      "196"
+     ],
+     "matched_text": "le piccole anguille lunghe solo qualche centimetro",
+     "match_ratio": 1.0
+    },
+    "5_images": {
+     "t0": 75.17,
+     "t1": 81.0,
+     "t_first_word": 76.17,
+     "t_last_word": 79.5,
+     "word_ids": [
+      "195",
+      "196",
+      "199",
+      "200",
+      "201",
+      "202",
+      "204"
+     ],
+     "matched_text": "le piccole anguille lunghe solo qualche centimetro",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "9": {
+   "type": "puntuale",
+   "anchor": "in una zona piena di alghe chiamata mar dei Sargassi essa depone le uova",
+   "windows": {
+    "5_text": {
+     "t0": 52.79,
+     "t1": 60.78,
+     "t_first_word": 53.79,
+     "t_last_word": 59.28,
+     "word_ids": [
+      "130",
+      "131",
+      "132",
+      "133",
+      "134",
+      "136",
+      "137",
+      "138",
+      "139",
+      "142",
+      "144",
+      "146",
+      "147",
+      "148"
+     ],
+     "matched_text": "in una zona piena di alghe chiamata mar dei Sargassi essa depone le uova",
+     "match_ratio": 1.0
+    },
+    "5_images": {
+     "t0": 52.95,
+     "t1": 60.87,
+     "t_first_word": 53.95,
+     "t_last_word": 59.37,
+     "word_ids": [
+      "136",
+      "137",
+      "138",
+      "139",
+      "140",
+      "142",
+      "143",
+      "144",
+      "145",
+      "148",
+      "150",
+      "152",
+      "153",
+      "154"
+     ],
+     "matched_text": "in una zona piena di alghe chiamata mar dei Sargassi essa depone le uova",
+     "match_ratio": 1.0
+    }
+   }
+  },
+  "10": {
+   "type": "puntuale",
+   "anchor": "essa depone le uova e poi muore scomparendo nelle profondità marine",
+   "windows": {
+    "5_text": {
+     "t0": 57.35,
+     "t1": 65.49,
+     "t_first_word": 58.35,
+     "t_last_word": 63.99,
+     "word_ids": [
+      "144",
+      "146",
+      "147",
+      "148",
+      "149",
+      "150",
+      "152",
+      "154",
+      "155",
+      "156",
+      "158"
+     ],
+     "matched_text": "essa depone le uova e poi muore scomparendo nelle profondità marine",
+     "match_ratio": 1.0
+    },
+    "5_images": {
+     "t0": 57.38,
+     "t1": 64.94,
+     "t_first_word": 58.38,
+     "t_last_word": 63.44,
+     "word_ids": [
+      "150",
+      "152",
+      "153",
+      "154",
+      "155",
+      "156",
+      "158",
+      "161",
+      "162",
+      "163",
+      "165"
+     ],
+     "matched_text": "essa depone le uova e poi muore scomparendo nelle profondità marine",
+     "match_ratio": 1.0
+    }
+   }
+  }
+ }
+}

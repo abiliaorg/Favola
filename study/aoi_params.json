@@ -1,0 +1,16 @@
+{
+  "_nota": "Parametri AOI concordati per l'analisi gaze, replicano web/analysis (alphaByCat). Scala (w,h) attorno al centro del box; offset (dx,dy) in frazioni di frame. Tutti default tranne quelli indicati. Calibrazione a 5 punti: ATTIVA (nel tool web il default della checkbox è off, qui la adottiamo come default). gazePointerDy: 0 (default).",
+  "calibration": true,
+  "gazePointerDyPx": 0,
+  "alphaByCat": {
+    "image":    { "w": 1.20, "h": 1.10, "dx": 0.0, "dy": 0.0 },
+    "text":     { "w": 1.05, "h": 1.50, "dx": 0.0, "dy": 0.0 },
+    "face":     { "w": 2.00, "h": 1.60, "dx": 0.0, "dy": 0.0 },
+    "eyeLeft":  { "w": 2.20, "h": 4.00, "dx": 0.0, "dy": 0.0 },
+    "eyeRight": { "w": 2.20, "h": 4.00, "dx": 0.0, "dy": 0.0 },
+    "nose":     { "w": 0.85, "h": 0.50, "dx": 0.0, "dy": 0.0 },
+    "mouth":    { "w": 1.95, "h": 4.00, "dx": 0.0, "dy": 0.0 }
+  },
+  "priorita_hit": ["caption_specifica (word/image)", "face_part (mouth/nose/eyeLeft/eyeRight)", "face_intera", "caption_band", "none"],
+  "caption_band": "striscia a tutta larghezza dal y minimo di qualsiasi entry caption (su tutto il tracking) fino al fondo del frame; NON scalata dagli alpha"
+}

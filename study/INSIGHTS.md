@@ -41,13 +41,13 @@
   posizione).
 
 - **I-05 [SIG] Le due storie della stessa classe non sono equivalenti in
-  difficoltà.** Il dato più solido dello studio: in classe 1ª il tappeto è più
-  facile della volpe di **+12.0 pt** (n=25, t=2.48, p<.05); stesso segno in 2ª
+  difficoltà.** Sulla coorte valida (48): in classe 1ª il tappeto è più facile
+  della volpe di **+15.0 pt** (n=22, t=2.97, p<.01); stesso segno in 2ª
   (+5.0, t=0.89 [NS]). In classe 5ª l'orso è più difficile delle anguille di
-  **−19.1 pt** (n=5, t=−1.91, marginale). Classe 3ª: sbadiglio−gatta −6.7
-  (t=−0.62 [NS]); classe 4ª: panda−delfino −4.1 (t=−0.68 [NS]). Conseguenza:
-  ogni confronto di modalità DEVE essere appaiato entro bambino (com'è, per
-  costruzione del disegno).
+  **−28.2 pt** (n=4, t=−5.15, significativo pur col n minimo). Classe 3ª:
+  sbadiglio−gatta −6.7 (n=5, t=−0.62 [NS]); classe 4ª: panda−delfino −4.1
+  (n=7, t=−0.68 [NS]). Conseguenza: ogni confronto di modalità DEVE essere
+  appaiato entro bambino (com'è, per costruzione del disegno).
 
 - **I-06 [NS] Sesso (effetto principale): maschi 74.1% vs femmine 64.8%
   (+9.2 pt, t Welch=1.58).** Media dei due test per bambino (25 M, 23 F).
@@ -125,6 +125,67 @@
 - **I-20 [MET] Il paper trail non è completo**: F4 ha il gaze ma non compare né
   in test.xlsx né in demo.csv (fogli non trascritti?); F1/F6 viceversa hanno i
   test ma nessun gaze. demo.csv ha una riga duplicata (F35, valori identici).
+
+## E. Gaze / AOI (analisi aggregata, metodo web/analysis con parametri concordati in `aoi_params.json`)
+
+- **I-25 [SIG] La modalità images sposta massicciamente l'attenzione visiva.**
+  Confronto appaiato entro bambino (n=48): con le images la quota di tempo sulle
+  caption sale di **+15.9 pt** (t=3.43) e quella sul volto scende di **−12.1 pt**
+  (t=−4.51); cala il tempo sulle parole-testo (−11.4, t=−3.33), sulla bocca
+  (−3.5, t=−2.52) e sugli occhi (−3.6, t=−2.96); invariato il fuori-AOI (ns).
+  Medie: text → caption 51.4% / face 28.0% / none 20.7%; images → caption 67.2%
+  (di cui 22.5% sulle parole-immagine) / face 15.9% / none 16.9%. Lo shift è
+  simile nei due sessi (caption: M +13 pt, F +21 pt). **Insieme a I-01: la
+  modalità cambia moltissimo dove si guarda, ma non quanto si capisce.**
+
+- **I-26 [NS] Le AOI aggregate non predicono il punteggio.** Correlazioni
+  AOI→punteggio tutte ≈ 0 (|r|≤0.12, n=87 registrazioni di buona qualità;
+  identico su tutte le 96). Quanto tempo si passa su caption/volto/parole non
+  correla con la comprensione.
+
+- **I-27 [ESP] In modalità images, più tempo sul volto → punteggio leggermente
+  peggiore** (r=−0.24, n=43, t=−1.59, n.s.). Unico segnale sopra il rumore
+  nelle correlazioni aggregate; da riverificare nel lavoro puntuale.
+
+- **I-28 [ESP] Nelle femmine, più tempo sulle parole-immagine → punteggio
+  leggermente migliore** (r=+0.18, n=42, n.s.). Direzione coerente con I-02,
+  ma debole.
+
+- **I-29 [MET] 9 registrazioni gaze di bassa qualità** (freq <5 Hz o durata
+  <40s): TI05 ×2 (2.1/3.8 Hz), TI07 (3.9 Hz), IT18 (3.8 Hz), IT14 (2.4 Hz),
+  IT19 (troncata a 23s), TI16 sbadiglio/images e IT04 tappeto/text (troncate a
+  ~9s), e **TI22 tappeto/images con 1 solo campione (inutilizzabile)**.
+  I risultati I-25/I-26 non cambiano includendole o escludendole.
+
+## F. Analisi puntuale (sguardo nel momento dell'informazione — `question_gaze.csv`)
+
+- **I-30 [MET] Dataset puntuale costruito.** 90 domande puntuali con finestra
+  temporale dell'informazione per variante (`question_windows.json`, 218
+  finestre, match ≥0.94; orso Q12 recuperata: "pinnipede" riconosciuto come
+  "pesce" ma frase presente e ancorata). 989 osservazioni soggetto×domanda,
+  920 incluse (soglia ≥5 campioni in finestra); bianche = errate (tempo
+  illimitato); padding primario −1.0/+1.5 s con sensitivity −0.5/+1.0 e
+  −2.0/+3.0 (risultati identici su tutti e tre).
+
+- **I-31 [NS] Guardare le parole-ancora nel momento dell'informazione NON
+  predice la correttezza della risposta.** Quota-ancora nelle risposte
+  corrette 28.6% vs errate 31.4% (diff −2.8 pt, t=−1.59); aggregato per
+  soggetto −1.6 pt (t=−0.88, n=46); "ancora guardata almeno una volta"
+  OR=0.95. Robusto al padding. Il canale uditivo sembra sufficiente: chi non
+  guarda la caption nel momento chiave non risponde peggio.
+
+- **I-32 [ESP] (attenzione all'interpretazione) In modalità text l'associazione
+  negativa osservata a livello di domanda (corrette 26.4% vs errate 32.3% di
+  quota-ancora, t=−2.43; OR=0.65) NON regge al controllo entro-soggetto
+  (−0.3 pt, t=−0.19, n=37).** È quindi un effetto tra-soggetti: i bambini che
+  in text fissano di più le parole-caption nei momenti chiave tendono a
+  sbagliare di più in generale (possibile marcatore di lettori/ascoltatori più
+  deboli che si aggrappano al testo), non un danno momento-per-momento.
+
+- **I-33 [ESP] In modalità images, tendenze deboli ma coerenti con I-27:**
+  guardare l'ancora non danneggia (OR=1.35, n.s.; entro-soggetto +1.2 pt,
+  t=+0.55) e guardare il **volto** nel momento dell'informazione si associa a
+  più errori (9.9% nelle corrette vs 13.4% nelle errate, t=−1.76, n.s.).
 
 ## D. Ipotesi aperte per le prossime analisi
 

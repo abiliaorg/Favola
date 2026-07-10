@@ -221,6 +221,12 @@ secondo la classificazione MT), qualità del tracking come covariata.
 | `mappatura_soggetti.xlsx` / `.json` | mappatura ID originale → TI/IT + esclusi con motivo |
 | `ordine_soggetti.xlsx` | sequenza oraria completa per soggetto (storia, modalità, postazione) |
 | `risultati_test.xlsx` | punteggi e fasce MT per test (fogli Punteggi/Esclusi/Riepilogo) |
+| `aoi_params.json` | parametri AOI concordati (alpha per categoria, calibrazione attiva) — replica web/analysis |
+| `aoi_results.xlsx` / `.json` | AOI aggregate per registrazione (96), incl. conteggi per parola |
+| `aoi_scores.csv` | dataset unito AOI + punteggi + demografia (per notebook/correlazioni) |
+| `question_windows.json` / `.xlsx` | finestre temporali dell'informazione rilevante per ogni domanda (90 puntuali + 4 globali; orso Q12 ancorata alla frase riconosciuta "pesce"=pinnipede), per variante text/images; xlsx = tabella di revisione |
+| `question_gaze.csv` | analisi puntuale: una riga per soggetto×domanda con AOI in finestra, quota parole-ancora ed esito (soglia ≥5 campioni; bianche = errate) |
+| `notebooks/risultati.ipynb` | notebook interattivo di presentazione dei risultati (rigenerabile con `scripts/make_notebook.py`) |
 | `transcripts/` | transcript delle 20 registrazioni + README |
 | `testsheets/` | gli 8 test PDF somministrati; `scoring/` = docx sorgente con rubrica MT |
 | `tests/` | prove MT ufficiali (manuale, fascicoli, presentazione, mail con indicazioni fasce) |
@@ -233,8 +239,15 @@ nei campioni) · `fix_f4_and_regen.py` (fix refuso + rigenera excel) ·
 `make_transcripts.py` (transcript) · `_read_protocol.py` (dump protocollo/test.xlsx) ·
 `classify_order.py` (ordine reale TI/IT) · `make_mapping.py` (mappatura ID) ·
 `score_tests.py` (scoring MT + riepiloghi) · `analyze_balance.py` (bilanciamenti
-ed effetti).
+ed effetti) · `aoi_engine.py` (motore AOI, porting fedele di web/analysis) ·
+`aoi_correlations.py` (correlazioni AOI ↔ punteggi + export aoi_scores.csv) ·
+`make_question_windows.py` (finestre temporali dell'informazione per domanda,
+ancore testuali sui transcript con matching fuzzy; pad 1.0s prima / 1.5s dopo) ·
+`aoi_lib.py` (core AOI condiviso) · `question_gaze.py` (analisi puntuale
+sguardo-nel-momento-dell'informazione, con sensitivity sul padding) ·
+`make_notebook.py` (genera il notebook).
 
 Pipeline per riprodurre tutto da zero:
 `make_transcripts.py` → `classify_order.py` → `make_mapping.py` → `score_tests.py`
-→ `analyze_balance.py`.
+→ `analyze_balance.py` → `aoi_engine.py` → `aoi_correlations.py`
+→ `make_question_windows.py` → `question_gaze.py` → `make_notebook.py`.
