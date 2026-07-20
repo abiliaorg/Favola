@@ -106,12 +106,14 @@
 
 - **I-49 [MET] Power per lo studio con bambini sordi** (sd osservate qui): con disegno appaiato servono **n=48 per rilevare 10 pt**, n=23 per 15 pt, n=14 per 20 pt (80% power); a 90%: 63/30/18. Confronto tra gruppi (sordi vs udenti stessa modalità): n=88/40/23 per gruppo per 10/15/20 pt.
 
-## D. Ipotesi aperte per le prossime analisi
+## D. Ipotesi aperte per le prossime analisi — TUTTE AFFRONTATE
 
-- **I-21** L'interazione modalità × sesso (I-02) si riflette in pattern di sguardo diversi? (AOI: faccia/bocca vs testo vs immagini).
-- **I-22** Le domande inferenziali (classificazione MT) beneficiano o soffrono della modalità images più delle esplicite? (analisi per singola domanda).
-- **I-23** Il tempo passato sulle caption predice il punteggio, a parità di modalità? (AOI + regressione).
-- **I-24** La differenza di difficoltà tra storie (I-05) è spiegabile con la densità/posizione delle parole-immagine nelle varianti images?
+- **I-21 → risolta da I-50**: l'interazione modalità × sesso NON si riflette in pattern di sguardo diversi.
+- **I-22 → risolta da I-40**: nessuna interazione modalità × tipo di domanda (esplicite/inferenziali).
+- **I-23 → risolta da I-26**: il tempo sulle caption non predice il punteggio, in nessuna modalità.
+- **I-24 → risolta da I-39**: relazione descrittiva debole (r=+0.53 su 8 storie) tra densità di pittogrammi e resa in images; l'orso (densità minima) è l'unica storia con svantaggio images.
+
+- **I-50 [NS] Lo sguardo non spiega l'interazione sesso × modalità (I-02).** M e F hanno pattern AOI quasi identici in entrambe le modalità (caption text M 54.4% vs F 48.2%, t=0.72; images M 68.5% vs F 65.9%, t=0.34; pittogrammi M 23.5% vs F 21.3%, t=0.47; volto sempre |t|<0.8). E il beneficio individuale di comprensione (images−text) non segue lo shift attentivo individuale: r=−0.15 con lo shift-caption, r=−0.26 con lo shift-volto, r=−0.18 con il dwell sui pittogrammi (tutti n.s., semmai di segno negativo). Se l'interazione di I-02 è reale, il meccanismo non è nell'allocazione visiva esplicita — ipotesi alternative: profondità di elaborazione o stile di ascolto, non osservabili dal solo gaze.
 
 ---
 *Aggiornare questa lista a ogni nuova analisi; non rimuovere gli insight superati ma marcarli come [SUPERATO da I-nn].*

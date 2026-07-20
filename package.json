@@ -10,6 +10,7 @@
     "server": "node server.js",
     "dev": "node --watch server.js",
     "tobii": "py gaze/tobii_gaze.py --ws --ws-port 12346 --no-csv",
+    "results:html": "python -X utf8 -m nbconvert --to html --execute --ExecutePreprocessor.timeout=600 --output risultati.html --output-dir study/notebooks study/notebooks/risultati.ipynb",
     "kiosk": "start \"\" chrome --app=http://127.0.0.1:12345/session/index.html --start-maximized --no-first-run --disable-features=Translate"
   }
 }
