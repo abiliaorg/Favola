@@ -50,11 +50,16 @@ for pid, rr in recs.items():
         if seq in ("TI", "IT"):
             order_of[pid] = seq
 
+# F4 (gaze) e F6 (fogli test + demo) sono lo stesso bambino: id digitato diverso
+# su PC e su carta (incastro perfetto di orari, classe e dati complementari).
+# Fuso come F6; resta escluso perché ha visto entrambe le storie in images.
+ALIAS = {"F4": "F6"}
+
 EXCLUDED = {
-    "F1": "nessun gaze: ordine non verificabile", "F6": "nessun gaze: ordine non verificabile",
+    "F1": "nessun gaze: ordine non verificabile",
     "F2": "gaze parziale: ordine non verificabile", "F3": "gaze parziale: ordine non verificabile",
     "F10": "gaze parziale: ordine non verificabile", "F25": "gaze parziale: ordine non verificabile",
-    "F4": "somministrazione anomala (images+images)",
+    "F6": "= F4 nel gaze (stesso bambino); somministrazione anomala (images+images)",
     "F35": "somministrazione anomala (text+text)",
     "B19": "assente (nessun dato)",
 }
@@ -88,7 +93,8 @@ ws2.column_dimensions["B"].width = 46
 wb.save(STUDY / "mappatura_soggetti.xlsx")
 
 (STUDY / "mappatura_soggetti.json").write_text(
-    json.dumps({"mapping": mapping, "excluded": EXCLUDED}, indent=2, ensure_ascii=False),
+    json.dumps({"mapping": mapping, "excluded": EXCLUDED, "alias": ALIAS},
+               indent=2, ensure_ascii=False),
     encoding="utf-8")
 
 n_ti = sum(1 for v in mapping.values() if v.startswith("TI"))

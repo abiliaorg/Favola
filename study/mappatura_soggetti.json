@@ -51,13 +51,15 @@
   },
   "excluded": {
     "F1": "nessun gaze: ordine non verificabile",
-    "F6": "nessun gaze: ordine non verificabile",
     "F2": "gaze parziale: ordine non verificabile",
     "F3": "gaze parziale: ordine non verificabile",
     "F10": "gaze parziale: ordine non verificabile",
     "F25": "gaze parziale: ordine non verificabile",
-    "F4": "somministrazione anomala (images+images)",
+    "F6": "= F4 nel gaze (stesso bambino); somministrazione anomala (images+images)",
     "F35": "somministrazione anomala (text+text)",
     "B19": "assente (nessun dato)"
+  },
+  "alias": {
+    "F4": "F6"
   }
 }

@@ -42,13 +42,13 @@
 
 - **I-16 [MET] Bilanciamento classe × ordine imperfetto**: 1ª 11/11, 4ª 3/4, 5ª 2/2 ok; **2ª sbilanciata (7 TI / 3 IT)** e **3ª (4 TI / 1 IT)**. Da tenere presente in ogni analisi che aggreghi per classe.
 
-- **I-17 [MET] Esclusioni (9 soggetti)**: F1, F6 (nessun gaze), F2, F3, F10, F25 (gaze parziale) → ordine non verificabile; F4 (images+images), F35 (text+text) → somministrazione anomala; B19 assente. Coorte finale 48.
+- **I-17 [MET] Esclusioni (8 soggetti, post fusione I-51)**: F1 (nessun gaze), F2, F3, F10, F25 (gaze parziale) → ordine non verificabile; F6 (=F4 nel gaze, images+images) e F35 (text+text) → somministrazione anomala; B19 assente. Coorte finale 48.
 
 - **I-18 [MET] Incidenti di raccolta dati risolti**: la stessa registrazione attribuita a due bambini in due casi (eels 10:17 → F7, carpet 10:18 → b6; originali in `_scartati/`), refuso `` `F4 `` nel participantId, excel registrazioni rigenerato (104 registrazioni valide).
 
 - **I-19 [MET] Qualità gaze da considerare nell'analisi AOI**: B5/TI05 con entrambe le registrazioni degradate (61s/130 campioni; abort a 50.8s), F10 con tracking ~1 Hz (escluso comunque), F3 con video probabilmente riavviato (167s). Frequenza attesa ~10 Hz.
 
-- **I-20 [MET] Il paper trail non è completo**: F4 ha il gaze ma non compare né in test.xlsx né in demo.csv (fogli non trascritti?); F1/F6 viceversa hanno i test ma nessun gaze. demo.csv ha una riga duplicata (F35, valori identici).
+- **I-20 [MET, risolto da I-51] Il paper trail aveva due buchi speculari**: F4 con gaze ma senza fogli/demo, F6 con fogli/demo ma senza gaze → erano lo stesso bambino (fusione I-51). Resta: F1 con i test ma nessun gaze (registrazione persa/mai salvata); demo.csv con una riga duplicata (F35, valori identici, innocua).
 
 ## E. Gaze / AOI (analisi aggregata, metodo web/analysis con parametri concordati in `aoi_params.json`)
 
@@ -112,6 +112,8 @@
 - **I-22 → risolta da I-40**: nessuna interazione modalità × tipo di domanda (esplicite/inferenziali).
 - **I-23 → risolta da I-26**: il tempo sulle caption non predice il punteggio, in nessuna modalità.
 - **I-24 → risolta da I-39**: relazione descrittiva debole (r=+0.53 su 8 storie) tra densità di pittogrammi e resa in images; l'orso (densità minima) è l'unica storia con svantaggio images.
+
+- **I-51 [MET] Fusione F4 = F6 (terzo errore di identità della raccolta, risolto).** Il gaze "F4" (fox images 10:05 + carpet images 10:12, classe 2ª, postazione fra, con ~6 min di test in mezzo) e i dati cartacei "F6" (test volpe+tappeto, demo 7 anni M, zero gaze) combaciano perfettamente per orari, classe e complementarità: stesso bambino con id digitato diverso su PC e fogli. Fuso come **F6** (alias F4→F6 in `mappatura_soggetti.json`); resta **escluso** dal confronto appaiato perché ha visto entrambe le storie in images (caso II, speculare a F35 TT — la tipologia è affidabile: la selezione determina quale video viene riprodotto). Partecipanti effettivi: 55 (non 56); esclusioni: 8. Nessun numero delle analisi cambia. A differenza di F5→F7 e b5→b6 (campioni identici bit a bit), qui l'evidenza è circostanziale ma fortissima; documentata come inferenza.
 
 - **I-50 [NS] Lo sguardo non spiega l'interazione sesso × modalità (I-02).** M e F hanno pattern AOI quasi identici in entrambe le modalità (caption text M 54.4% vs F 48.2%, t=0.72; images M 68.5% vs F 65.9%, t=0.34; pittogrammi M 23.5% vs F 21.3%, t=0.47; volto sempre |t|<0.8). E il beneficio individuale di comprensione (images−text) non segue lo shift attentivo individuale: r=−0.15 con lo shift-caption, r=−0.26 con lo shift-volto, r=−0.18 con il dwell sui pittogrammi (tutti n.s., semmai di segno negativo). Se l'interazione di I-02 è reale, il meccanismo non è nell'allocazione visiva esplicita — ipotesi alternative: profondità di elaborazione o stile di ascolto, non osservabili dal solo gaze.
 

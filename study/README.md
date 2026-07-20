@@ -28,7 +28,7 @@ Verifiche fatte con `study/scripts/check_gaze_dupes.py` e `make_gaze_list.py`:
 - **Registrazioni duplicate con doppia attribuzione**: la stessa registrazione eels-images delle 10:17:02 esisteva sia come F5 sia come F7 (campioni identici bit per bit), e la carpet-images delle 10:18:52 sia come b5 sia come b6. Erano copie fatte a mano per correggere un'attribuzione errata, senza eliminare l'originale. Confermato che valgono **F7** e **b6**; gli originali mal attribuiti sono stati spostati (non cancellati) in `data/02_gaze/_scartati/`.
 - **Refuso** nel participantId di `20260706_100520_F4_2_fox_images.json`: `` `F4 `` → `F4` (corretto nel JSON).
 - **Excel registrazioni**: eliminato lo snapshot "registrazioni_gaze mattina.xlsx" e rigenerato un unico `data/02_gaze/registrazioni_gaze.xlsx` con **104 registrazioni valide** (esclusi test/prove: test, testaudio, PROVA, tommy, giulia, vittorio), ognuna contata una volta sola. Script: `fix_f4_and_regen.py`.
-- Nomi mai registrati (assenti): B19, F1*, F6*, F19, F27–F30, F34, F36–F39 (*F1 e F6 hanno però compilato i test cartacei).
+- Nomi mai registrati (assenti): B19, F1*, F19, F27–F30, F34, F36–F39 (*F1 ha però compilato i test cartacei). "F6" non aveva gaze perché il suo gaze era registrato con id "F4": stesso bambino, fuso come F6 (vedi I-51).
 
 ## 3. Transcript delle storie (`study/transcripts/`)
 
@@ -62,10 +62,10 @@ L'ordine di ogni soggetto è stato ricavato da **timestamp + modalità effettiva
 
 **Mappatura ID** (`study/mappatura_soggetti.xlsx` / `.json`, script `make_mapping.py`): i 48 soggetti validi sono rinominati **TI01–TI27 / IT01–IT21** con numerazione progressiva nell'ordine degli id originali (B1→TI01 … B27→TI26, F12→TI27; F7→IT01 … F41→IT21). I file grezzi (gaze JSON, test.xlsx) conservano gli id originali: la mappatura fa da ponte.
 
-**Esclusi dall'analisi (9)**: F1, F6 (nessun gaze), F2, F3, F10, F25 (gaze parziale) → ordine non verificabile; **F4** (entrambe le storie in images) e **F35** (entrambe in text) → somministrazione anomala; B19 (assente).
+**Esclusi dall'analisi (8)**: F1 (nessun gaze), F2, F3, F10, F25 (gaze parziale) → ordine non verificabile; **F6** (=F4 nel gaze: stesso bambino con id diverso su PC e fogli, entrambe le storie in images) e **F35** (entrambe in text) → somministrazione anomala; B19 (assente). Partecipanti effettivi: 55.
 
 **Anomalie note da tenere presenti**:
-- **F4 ha il gaze ma non compare né in test.xlsx né in demo.csv** (fogli non trascritti?).
+- **F4 = F6** (fusione documentata in I-51): gaze registrato come "F4", fogli test e demografia come "F6"; alias F4→F6 in `mappatura_soggetti.json`, file grezzi non toccati.
 - B5 (TI05): fox text incompleta (61s/75, 130 campioni) e carpet images abortita a 50.8s/67 — dati gaze di bassa qualità (i risultati non cambiano escludendolo).
 - F10: tracking quasi assente (78 campioni in 67s).
 - F3: bear text durata 167s (probabile riavvio del video).

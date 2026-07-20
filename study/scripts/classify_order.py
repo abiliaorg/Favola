@@ -21,6 +21,8 @@ GAZE = STUDY.parent / "data" / "02_gaze"
 data = json.loads((STUDY / "chiave_derivata.json").read_text(encoding="utf-8"))
 KEY = {k: v for k, v in data.items() if not k.startswith("_")}
 ALT = data.get("_accetta_anche", {})
+_map = json.loads((STUDY / "mappatura_soggetti.json").read_text(encoding="utf-8"))
+ALIAS = _map.get("alias", {})  # es. F4 -> F6: stesso bambino, id diverso su PC e fogli
 EN2IT = {"fox": "volpe e boscaiolo", "carpet": "tappeto", "cats": "gatta", "yawn": "sbadiglio",
          "dolphin": "delfino", "panda": "panda", "bear": "orso", "eels": "anguille"}
 FIRST_STORIES = {"volpe e boscaiolo", "gatta", "delfino", "anguille"}
@@ -35,6 +37,7 @@ for folder in sorted(GAZE.iterdir()):
     for f in sorted(folder.glob("*.json")):
         d = json.loads(f.read_text(encoding="utf-8"))
         pid = str(d.get("participantId", "")).strip("`").strip().upper()
+        pid = ALIAS.get(pid, pid)
         if not re.match(r"^[BF]\d+$", pid):
             continue
         st = EN2IT.get(d.get("story"))
