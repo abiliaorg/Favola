@@ -243,7 +243,7 @@ ax.bar(range(3), rates, color=[c for _, _, c in groups], width=0.55, edgecolor="
 for i, r in enumerate(rates):
     ax.annotate(f"{r:.0f}%", (i, r + 1.2), ha="center", fontsize=8)
 ax.set_xticks(range(3), [l for l, _, _ in groups])
-ax.set_ylabel("% of words fixated ≥ once")
+ax.set_ylabel("% of words gazed ≥ once")
 ax.set_title("A. Word capture rate")
 
 ax = axs[1]
@@ -254,8 +254,8 @@ for i, (l, (_, _, c)) in enumerate(zip(lat, groups)):
     ax.annotate(f"med {np.median(l):.2f}s", (i, np.median(l)), xytext=(0, 8),
                 textcoords="offset points", ha="center", fontsize=7, color=c)
 ax.set_xticks(range(3), [l for l, _, _ in groups])
-ax.set_ylabel("First-fixation latency (s)")
-ax.set_title("B. Latency of first look (fixated words)")
+ax.set_ylabel("First-look latency (s)")
+ax.set_title("B. Latency of first look (words gazed)")
 save(fig, "fig_words")
 
 # ---------------- Fig 7: moment of information ----------------
