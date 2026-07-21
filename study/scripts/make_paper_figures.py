@@ -1,9 +1,20 @@
 # -*- coding: utf-8 -*-
 """Figure del paper CHI (inglese, PDF vettoriale) in paper/figures/.
 
-Palette validata (dataviz skill): CC-T #0072B2, CC+P #D55E00 (identità di
-condizione, fissa in tutte le figure); AOI: words #56B4E9, pictograms #E69F00,
-band #F0E442, face #CC79A7, off-AOI grigio tratteggiato (texture).
+Palette semantica smorzata, validata con dataviz/validate_palette.js
+(lightness band, chroma, CVD e normal-vision separation, contrasto):
+- identità di condizione, fissa in tutte le figure: CC-T (testo) = blu
+  acciaio #3667A8, CC+P (pittogrammi) = terracotta #B4653A;
+- sotto-aree caption come declinazioni delle stesse famiglie: parole-testo
+  = acciaio chiaro #729ED8, pittogrammi = terracotta (stessa entità di CC+P),
+  banda residua = grigio-azzurro quasi neutro #C9D4DF (categoria residuale,
+  etichettata direttamente);
+- volto narratrice = prugna smorzato #92589B; fuori-AOI = grigio #BDBDBD
+  con tratteggio (assenza di contenuto);
+- fasce MT = rampa sequenziale monocroma blu-grigio (ordine di rendimento,
+  non categorie); esito corretto/sbagliato = pieno vs contorno nella tinta
+  della modalità (nessun colore semaforo); i valori annotati usano sempre
+  inchiostro neutro, mai il colore della serie.
 Stampa a video tutti i numeri esatti da inserire nel testo.
 """
 import csv
@@ -28,9 +39,10 @@ plt.rcParams.update({
     "axes.grid": True, "grid.color": "#e6e6e6", "grid.linewidth": 0.6,
     "axes.axisbelow": True, "figure.dpi": 200, "savefig.bbox": "tight",
 })
-C_T, C_P = "#0072B2", "#D55E00"          # CC-T / CC+P
-A_WORD, A_PIC, A_BAND, A_FACE = "#56B4E9", "#E69F00", "#F0E442", "#CC79A7"
-A_OFF = "#bdbdbd"
+C_T, C_P = "#3667A8", "#B4653A"          # CC-T (steel blue) / CC+P (terracotta)
+A_WORD, A_PIC, A_BAND, A_FACE = "#729ED8", "#B4653A", "#C9D4DF", "#92589B"
+A_OFF = "#BDBDBD"
+INK = "#333333"                           # annotazioni: sempre inchiostro neutro
 MODLAB = {"text": "CC-T", "images": "CC+P"}
 
 df = pd.read_csv(STUDY / "aoi_scores.csv")
@@ -83,11 +95,11 @@ ax.legend(frameon=False)
 
 ax = axs[1, 0]
 d = piv["diff"].dropna()
-ax.hist(d, bins=14, color="#8c8c8c", edgecolor="white")
+ax.hist(d, bins=14, color="#9AA7B4", edgecolor="white")
 ax.axvline(0, color="black", lw=1)
-ax.axvline(d.mean(), color=C_P, lw=1.8)
+ax.axvline(d.mean(), color=INK, lw=1.6, ls="--")
 ax.annotate(f"mean {d.mean():+.1f}", (d.mean(), ax.get_ylim()[1] * 0.92),
-            color=C_P, fontsize=8, ha="left", xytext=(3, 0), textcoords="offset points")
+            color=INK, fontsize=8, ha="left", xytext=(3, 0), textcoords="offset points")
 ax.set_xlabel("Within-child difference, CC+P − CC-T (pp)")
 ax.set_ylabel("Children")
 ax.set_title("C. Distribution of paired differences")
@@ -103,7 +115,7 @@ for b, y, ok in [(5, 0.9, False), (7.5, 0.6, True), (10, 0.3, True)]:
     ax.plot([-b, b], [y, y], color="#dddddd", lw=0.8, zorder=0)
     ax.annotate(f"±{b} pp: {'equivalent' if ok else 'inconclusive'}",
                 (b + 0.4, y), fontsize=7.5, va="center",
-                color="#1a7f37" if ok else "#8a6d00")
+                color="#3D7A4A" if ok else "#777777")
 ax.set_yticks([])
 ax.set_xlim(-14, 14)
 ax.set_xlabel("CC+P − CC-T (pp): 90% CI vs equivalence bounds")
@@ -160,7 +172,8 @@ ax.legend(frameon=False)
 
 ax = axs[1]
 FASCE = ["CCRD", "PSD", "RAD", "RIDI"]
-FCOL = {"CCRD": "#33a02c", "PSD": "#8fb8e8", "RAD": "#F0E442", "RIDI": "#e88a8a"}
+# rampa sequenziale monocroma (rendimento decrescente -> tinta piu' chiara)
+FCOL = {"CCRD": "#2F4F6F", "PSD": "#5F7F9E", "RAD": "#93A9BE", "RIDI": "#C8D3DD"}
 ft = (test.groupby(["Modalità", "Fascia MT"]).size().unstack(fill_value=0)
       .reindex(columns=FASCE).apply(lambda r: r / r.sum() * 100, axis=1)
       .reindex(["text", "images"]))
@@ -169,7 +182,8 @@ for f in FASCE:
     ax.barh([0, 1], ft[f].values, left=left, color=FCOL[f], edgecolor="white", label=f)
     for yi, (v, l) in enumerate(zip(ft[f].values, left)):
         if v > 7:
-            ax.annotate(f"{v:.0f}%", (l + v / 2, yi), ha="center", va="center", fontsize=7)
+            ax.annotate(f"{v:.0f}%", (l + v / 2, yi), ha="center", va="center", fontsize=7,
+                        color="white" if f in ("CCRD", "PSD") else INK)
     left += ft[f].values
 ax.set_yticks([0, 1], ["CC-T", "CC+P"])
 ax.set_xlabel("% of tests")
@@ -252,7 +266,7 @@ bp = ax.boxplot(lat, positions=range(3), widths=0.5, showfliers=False,
                 medianprops=dict(color="black"))
 for i, (l, (_, _, c)) in enumerate(zip(lat, groups)):
     ax.annotate(f"med {np.median(l):.2f}s", (i, np.median(l)), xytext=(0, 8),
-                textcoords="offset points", ha="center", fontsize=7, color=c)
+                textcoords="offset points", ha="center", fontsize=7, color=INK)
 ax.set_xticks(range(3), [l for l, _, _ in groups])
 ax.set_ylabel("First-look latency (s)")
 ax.set_title("B. Latency of first look (words gazed)")
@@ -267,11 +281,15 @@ xt, xl = [], []
 for mod, c in [("text", C_T), ("images", C_P)]:
     for corr, lab in [(1, "correct"), (0, "wrong")]:
         v = qi[(qi["mod"] == mod) & (qi.correct == corr)].pct_anchor
-        ax.boxplot(v, positions=[pos], widths=0.5, showfliers=False,
-                   boxprops=dict(color=c), whiskerprops=dict(color=c),
-                   capprops=dict(color=c), medianprops=dict(color="black"))
+        bp = ax.boxplot(v, positions=[pos], widths=0.5, showfliers=False,
+                        patch_artist=True,
+                        boxprops=dict(edgecolor=c),
+                        whiskerprops=dict(color=c), capprops=dict(color=c),
+                        medianprops=dict(color="black"))
+        # pieno = risposta corretta, vuoto = errata (stessa tinta della modalita')
+        bp["boxes"][0].set_facecolor(matplotlib.colors.to_rgba(c, 0.35) if corr else "white")
         ax.annotate(f"{v.mean():.0f}", (pos, v.mean()), xytext=(12, 0),
-                    textcoords="offset points", fontsize=7, color=c)
+                    textcoords="offset points", fontsize=7, color=INK)
         xt.append(pos); xl.append(f"{MODLAB[mod]}\n{lab}")
         pos += 1
     pos += 0.4

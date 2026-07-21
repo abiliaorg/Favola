@@ -55,9 +55,17 @@ df["good"] = df["good"].astype(str).str.lower().eq("true")
 # punteggi con fascia MT e dettagli risposte
 test = pd.read_excel(STUDY / "risultati_test.xlsx", sheet_name="Punteggi")
 
-COL_MOD = {"text": "#4c72b0", "images": "#dd8452"}
+# Palette semantica condivisa col paper (scripts/make_paper_figures.py):
+# text = blu acciaio, images = terracotta; sotto-aree caption declinazioni
+# delle stesse famiglie; volto = prugna; fuori-AOI = grigio neutro;
+# fasce MT = rampa sequenziale monocroma (ordine di rendimento).
+COL_MOD = {"text": "#3667A8", "images": "#B4653A"}
+COL_GRP = {"TI": "#3667A8", "IT": "#B4653A"}  # ordine: TI text-first, IT images-first
+AOI_COL = {"caption: parole": "#729ED8", "caption: immagini": "#B4653A",
+           "caption: banda": "#C9D4DF", "volto": "#92589B", "fuori AOI": "#BDBDBD"}
+COL_SEX = {"M": "#4D4D4D", "F": "#8C8C8C"}    # neutri: nessuno stereotipo cromatico
 FASCE = ["CCRD", "PSD", "RAD", "RIDI"]
-FASCE_COL = {"CCRD": "#67c27f", "PSD": "#8fb8e8", "RAD": "#f2d16b", "RIDI": "#e88a8a"}
+FASCE_COL = {"CCRD": "#2F4F6F", "PSD": "#5F7F9E", "RAD": "#93A9BE", "RIDI": "#C8D3DD"}
 
 print(f"Registrazioni/test: {len(df)}  ·  Soggetti: {df.newid.nunique()}  "
       f"(TI: {df[df.grp=='TI'].newid.nunique()}, IT: {df[df.grp=='IT'].newid.nunique()})")
@@ -68,11 +76,13 @@ md("## 1. La coorte (I-13, I-16)")
 code("""# Composizione: classe x gruppo, sesso, età
 kids = df.drop_duplicates("newid")[["newid", "grp", "classe", "sex", "age"]]
 fig, axs = plt.subplots(1, 3, figsize=(13, 3.4))
-pd.crosstab(kids.classe, kids.grp).plot.bar(ax=axs[0], color=["#4c72b0", "#dd8452"], rot=0)
+ct = pd.crosstab(kids.classe, kids.grp)
+ct.plot.bar(ax=axs[0], color=[COL_GRP[c] for c in ct.columns], rot=0)
 axs[0].set_title("Bambini per classe × gruppo"); axs[0].set_xlabel("classe"); axs[0].set_ylabel("n")
-pd.crosstab(kids.sex, kids.grp).plot.bar(ax=axs[1], color=["#4c72b0", "#dd8452"], rot=0)
+ct2 = pd.crosstab(kids.sex, kids.grp)
+ct2.plot.bar(ax=axs[1], color=[COL_GRP[c] for c in ct2.columns], rot=0)
 axs[1].set_title("Sesso × gruppo"); axs[1].set_xlabel("")
-sns.histplot(data=kids, x="age", hue="grp", multiple="dodge", discrete=True, ax=axs[2])
+sns.histplot(data=kids, x="age", hue="grp", multiple="dodge", discrete=True, palette=COL_GRP, ax=axs[2])
 axs[2].set_title("Età × gruppo"); axs[2].set_xlabel("età")
 plt.tight_layout(); plt.show()
 kids.groupby("grp").agg(n=("newid", "count"), M=("sex", lambda s: (s=="M").sum()),
@@ -94,12 +104,12 @@ axs[0].set_title("Punteggio per modalità"); axs[0].set_xlabel(""); axs[0].set_y
 
 for _, r in piv.iterrows():
     axs[1].plot([0, 1], [r["text"], r["images"]], color="grey", alpha=.4, lw=1)
-axs[1].plot([0, 1], [piv["text"].mean(), piv["images"].mean()], color="crimson", lw=3, marker="o")
-axs[1].set_xticks([0, 1], ["text", "images"]); axs[1].set_title("Coppie per bambino (rosso = media)")
+axs[1].plot([0, 1], [piv["text"].mean(), piv["images"].mean()], color="#333333", lw=3, marker="o")
+axs[1].set_xticks([0, 1], ["text", "images"]); axs[1].set_title("Coppie per bambino (nero = media)")
 axs[1].set_ylabel("punteggio %")
 
-sns.histplot(piv["diff"], bins=15, ax=axs[2], color="#937860")
-axs[2].axvline(0, color="k"); axs[2].axvline(piv["diff"].mean(), color="crimson", lw=2)
+sns.histplot(piv["diff"], bins=15, ax=axs[2], color="#9AA7B4")
+axs[2].axvline(0, color="k"); axs[2].axvline(piv["diff"].mean(), color="#333333", lw=2, ls="--")
 axs[2].set_title("Differenza images − text per bambino"); axs[2].set_xlabel("punti %")
 plt.tight_layout(); plt.show()
 
@@ -124,10 +134,10 @@ I maschi rendono meglio col testo, le femmine con le immagini.""")
 
 code("""fig, axs = plt.subplots(1, 2, figsize=(11, 4))
 sns.pointplot(data=df, x="mod", y="score", hue="sex", order=["text", "images"],
-              errorbar=("se", 1), dodge=.15, ax=axs[0], palette={"M": "#4c72b0", "F": "#c44e52"})
+              errorbar=("se", 1), dodge=.15, ax=axs[0], palette=COL_SEX)
 axs[0].set_title("Punteggio medio (±1 SE)"); axs[0].set_xlabel(""); axs[0].set_ylabel("punteggio %")
 
-sns.boxplot(data=piv, x="sex", y="diff", hue="sex", palette={"M": "#4c72b0", "F": "#c44e52"},
+sns.boxplot(data=piv, x="sex", y="diff", hue="sex", palette=COL_SEX,
             legend=False, ax=axs[1])
 sns.stripplot(data=piv, x="sex", y="diff", color=".25", size=4, ax=axs[1])
 axs[1].axhline(0, color="k", lw=1)
@@ -176,7 +186,7 @@ labels = {"pct_word": "caption: parole", "pct_image": "caption: immagini", "pct_
 comp = df.groupby("mod")[aoi_cols].mean().reindex(["text", "images"]).rename(columns=labels)
 
 fig, axs = plt.subplots(1, 2, figsize=(12.5, 4.2))
-comp.plot.barh(stacked=True, ax=axs[0], colormap="tab20")
+comp.plot.barh(stacked=True, ax=axs[0], color=[AOI_COL[c] for c in comp.columns])
 axs[0].set_title("Composizione media dello sguardo"); axs[0].set_xlabel("% campioni")
 axs[0].legend(fontsize=8, ncol=2)
 
@@ -185,7 +195,7 @@ sh = pd.DataFrame({
     "caption": pv["pct_caption"]["images"] - pv["pct_caption"]["text"],
     "volto":   pv["pct_face"]["images"] - pv["pct_face"]["text"],
 }).melt(var_name="AOI", value_name="diff")
-sns.boxplot(data=sh, x="AOI", y="diff", hue="AOI", palette=["#00a5bd", "#e0b13f"], legend=False, ax=axs[1])
+sns.boxplot(data=sh, x="AOI", y="diff", hue="AOI", palette=["#3667A8", "#92589B"], legend=False, ax=axs[1])
 sns.stripplot(data=sh, x="AOI", y="diff", color=".25", size=4, ax=axs[1])
 axs[1].axhline(0, color="k", lw=1)
 axs[1].set_title("Shift appaiato images − text (per bambino)"); axs[1].set_ylabel("punti %")
@@ -249,7 +259,7 @@ acc = qg.groupby(["mod", "any_anchor"])["correct"].agg(["mean", "count"]).reset_
 acc["% corrette"] = acc["mean"] * 100
 acc["ancora"] = np.where(acc.any_anchor == 1, "guardata", "non guardata")
 sns.barplot(data=acc, x="mod", y="% corrette", hue="ancora", order=["text", "images"],
-            palette=["#55a868", "#c44e52"], ax=axs[1])
+            palette={"guardata": "#4D4D4D", "non guardata": "#B0B0B0"}, ax=axs[1])
 axs[1].set_title("% risposte corrette se l'ancora è stata guardata"); axs[1].set_xlabel("")
 for c in axs[1].containers:
     axs[1].bar_label(c, fmt="%.0f%%", fontsize=9)
@@ -318,7 +328,7 @@ code("""try:
         sns.stripplot(data=q, x="mod", y="score", order=["text", "images"], color=".25", size=4, ax=axs[0])
         axs[0].set_title(f"Punteggi (n={len(q)})"); axs[0].set_ylabel("punteggio %"); axs[0].set_xlabel("")
         comp = q.groupby("mod")[aoi_cols].mean().reindex(["text", "images"]).rename(columns=labels)
-        comp.plot.barh(stacked=True, ax=axs[1], colormap="tab20", legend=False)
+        comp.plot.barh(stacked=True, ax=axs[1], color=[AOI_COL.get(c, "#BDBDBD") for c in comp.columns], legend=False)
         axs[1].set_title("AOI medie"); axs[1].set_xlabel("% campioni")
         plt.tight_layout(); plt.show()
         print(q.groupby("mod")["score"].agg(["count", "mean", "std"]).round(1))
