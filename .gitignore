@@ -158,3 +158,6 @@ study/tests/_sheets/
 
 # repo separato del paper (commit indipendenti)
 paper/
+
+# script one-shot di patch al testo del paper (target dentro paper/)
+study/scripts/patch_paper*.py
